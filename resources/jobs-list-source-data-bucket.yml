@@ -1,0 +1,34 @@
+Resources:
+  SourceDataBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: ${self:custom.sourceDataBucket}
+      CorsConfiguration:
+        CorsRules:
+          -
+            AllowedOrigins:
+              - '*'
+            AllowedHeaders:
+              - '*'
+            AllowedMethods:
+              - GET
+              - PUT
+              - POST
+              - DELETE
+              - HEAD
+            MaxAge: 3000
+      AccessControl: PublicRead
+  SourceDataBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket:
+        Ref: SourceDataBucket
+      PolicyDocument:
+        Statement:
+          - Sid: PublicReadGetObject
+            Effect: Allow
+            Principal: "*"
+            Action:
+              - s3:GetObject
+            Resource: arn:aws:s3:::${self:custom.sourceDataBucket}/*
+
