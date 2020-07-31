@@ -33,12 +33,12 @@ function domain () {
 #. ./cognito.sh setup
 
 
+# create jobs-service API domain
+domain
+
 # create resources and functions
 SERVICES=(resources)
 deploy
-
-# create jobs-service API domain
-domain
 
 # deploy jobs-service API functions
 #SERVICES=(jobs-service)
