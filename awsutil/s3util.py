@@ -24,10 +24,10 @@ def list_buckets():
     response = s3.list_buckets()
 
     # Output the bucket names
-    print('\nExisting buckets:')
+    print('\nBuckets:')
     if 'Buckets' in response:
         for bucket in response['Buckets']:
-            print(f'  {bucket["Name"]}')
+            print(f'Name: {bucket["Name"]}')
 
 
 def upload_file(file_name, bucket, object_name=None):
@@ -68,8 +68,8 @@ def list_files(bucket_name):
 
     # Output the bucket names
     print(f'\nBucket: {response["Name"]}')
-    print('\nExisting files:')
+    print('Contents:')
     if 'Contents' in response:
         for bucketFile in response['Contents']:
-            print(f'  {bucketFile["Key"]}')
+            print(f'Key: {bucketFile["Key"]}')
 
