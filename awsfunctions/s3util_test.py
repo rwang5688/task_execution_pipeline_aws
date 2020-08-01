@@ -1,8 +1,7 @@
 import sys
 import boto3
 from botocore.exceptions import ClientError
-import s3bucket
-import s3file
+import s3util
 
 
 def main():
@@ -23,15 +22,15 @@ def main():
     print(f'region = {region}')
     print(f'file_name = {file_name}')
 
-    s3bucket.list_buckets()
-    bucket = s3bucket.get_bucket(bucket_name)
+    s3util.list_buckets()
+    bucket = s3util.get_bucket(bucket_name)
     if bucket is None:
         printf(f'Bucket {bucket_name} does not exist. Exit.')
         return
 
-    s3file.list_files(bucket["Name"])
-    s3file.upload_file(file_name, bucket["Name"])
-    s3file.list_files(bucket["Name"])
+    s3util.list_files(bucket["Name"])
+    s3util.upload_file(file_name, bucket["Name"])
+    s3util.list_files(bucket["Name"])
 
 
 if __name__ == '__main__':
