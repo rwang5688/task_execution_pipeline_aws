@@ -26,9 +26,8 @@ def main():
     s3bucket.list_buckets()
     bucket = s3bucket.get_bucket(bucket_name)
     if bucket is None:
-        s3bucket.create_bucket(bucket_name, region)
-        bucket = s3bucket.get_bucket(bucket_name)
-    s3bucket.list_buckets()
+        printf(f'Bucket {bucket_name} does not exist. Exit.')
+        return
 
     s3file.list_files(bucket["Name"])
     s3file.upload_file(file_name, bucket["Name"])
