@@ -1,0 +1,6 @@
+{
+    "action": "submit",
+    "job": {
+      "source": "input.tar.gz"
+    }
+}
