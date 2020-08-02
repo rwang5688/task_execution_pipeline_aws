@@ -1,0 +1,66 @@
+service: crawler-service
+frameworkVersion: ">=1.30.0"
+plugins:
+  - serverless-dotenv-plugin
+custom:
+  accountid: ${env:AWS_ACCOUNT_ID}
+  region: ${env:AWS_DEFAULT_REGION, 'us-west-2'}
+  sourceDataBucket: ${env:JOBS_LIST_SOURCE_DATA_BUCKET}
+  submitJobQueue: ${env:JOBS_LIST_SUBMIT_JOB_QUEUE}
+  processJobQueue: ${env:JOBS_LIST_PROCESS_JOB_QUEUE}
+  jobsTable: ${env:JOBS_LIST_JOBS_TABLE}
+  dotenv:
+    path: ../.env
+
+provider:
+  name: aws
+  stage: dev
+  runtime: python3.8
+  region: ${env:AWS_DEFAULT_REGION, 'us-west-2'}
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - s3:GetObject
+      Resource: "arn:aws:s3:::${self:custom.sourceDataBucket}/*"
+    - Effect: Allow
+      Action:
+        - sqs:ListQueues
+      Resource: "arn:aws:sqs:${self:provider.region}:*:*"
+    - Effect: Allow
+      Action:
+        - sqs:ReceiveMessage
+        - sqs:DeleteMessage
+        - sqs:GetQueueUrl
+      Resource: "arn:aws:sqs:*:*:${self:custom.submitJobQueue}"
+    - Effect: Allow
+      Action:
+        - sqs:SendMessage
+        - sqs:DeleteMessage
+        - sqs:GetQueueUrl
+      Resource: "arn:aws:sqs:*:*:${self:custom.processJobQueue}"
+    - Effect: Allow
+      Action:
+        - dynamodb:DescribeTable
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource: "arn:aws:dynamodb:${self:custom.region}:${self:custom.accountid}:*"
+
+functions:
+  createJob:
+    handler: handler.createJob
+    role: arn:aws:iam::${self:custom.accountid}:role/jobs-list
+    environment:
+      ACCOUNT_ID: ${env:AWS_ACCOUNT_ID}
+      REGION: ${env:AWS_DEFAULT_REGION, 'us-west-2'}
+      SOURCE_DATA_BUCKET: ${env:JOBS_LIST_SOURCE_DATA_BUCKET}
+      SUBMIT_JOB_QUEUE: ${env:JOBS_LIST_SUBMIT_JOB_QUEUE}
+      PROCESS_JOB_QUEUE: ${env:JOBS_LIST_PROCESS_JOB_QUEUE}
+      JOBS_TABLE: ${env:JOBS_LIST_JOBS_TABLE}
+    events:
+      - sqs:
+          arn: "arn:aws:sqs:${self:provider.region}:${self:custom.accountid}:${self:custom.submitJobQueue}"
+

@@ -1,4 +1,4 @@
 {
     "git.ignoreLimitWarning": true,
-    "python.pythonPath": "awsutil\\.venv\\Scripts\\python.exe"
+    "python.pythonPath": "create-job\\.venv\\Scripts\\python.exe"
 }
