@@ -27,7 +27,7 @@ aws s3 rm s3://${JOBS_LIST_SOURCE_DATA_BUCKET} --recursive
 aws s3 rm s3://${JOBS_LIST_LOG_DATA_BUCKET} --recursive
 
 # delete jobs-service API domain
-domain
+# domain
 
 # remove resources and functions
 SERVICES=(resources)

@@ -1,4 +1,4 @@
 {
     "git.ignoreLimitWarning": true,
-    "python.pythonPath": "s3functions\\.venv\\Scripts\\python.exe"
+    "python.pythonPath": "awsutil\\.venv\\Scripts\\python.exe"
 }
