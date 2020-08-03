@@ -1,4 +1,4 @@
 {
     "git.ignoreLimitWarning": true,
-    "python.pythonPath": "create-job\\.venv\\Scripts\\python.exe"
+    "python.pythonPath": "submitJob\\.venv\\Scripts\\python.exe"
 }
