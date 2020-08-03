@@ -1,4 +1,4 @@
-service: crawler-service
+service: createJob
 frameworkVersion: ">=1.30.0"
 plugins:
   - serverless-dotenv-plugin
@@ -51,7 +51,7 @@ provider:
 
 functions:
   createJob:
-    handler: handler.createJob
+    handler: function.createJobs
     role: arn:aws:iam::${self:custom.accountid}:role/jobs-list
     environment:
       ACCOUNT_ID: ${env:AWS_ACCOUNT_ID}

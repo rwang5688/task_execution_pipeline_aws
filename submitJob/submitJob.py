@@ -71,23 +71,16 @@ def send_message(queue_name, source_name):
         print(f'\nQueue {queue_name} does not exist.')
         return False
 
-    # create message body strings
-    message_body = {'action': 'submit', 'job': {'source': source_name}}
-    message_body_pretty_string = jsonutil.get_pretty_string(message_body)
-    message_body_string = jsonutil.get_string(message_body)
-    print('\nMessageBody: (in pretty print)')
-    print(message_body_pretty_string)
-    print('\nMessageBody: (in single line)')
-    print(message_body_string)
-
     # send message
-    message_id = sqsutil.send_message(queue_url, message_body_string)
+    message_body = {"action": "submit", "job": {"source": source_name}}
+    message_id = sqsutil.send_message(queue_url, str(message_body))
     print(f'MessageId: {message_id}')
+    print(f'MessageBody: {message_body}')
 
     # receive message
     message = sqsutil.receive_message(queue_url)
     print('\nReceived message:')
-    print(jsonutil.get_pretty_string(message))
+    print(message)
 
     # successfully sent and received message
     return True

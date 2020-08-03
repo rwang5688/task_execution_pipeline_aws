@@ -50,6 +50,7 @@ def receive_message(queue_url):
     response = sqs.receive_message(
         QueueUrl=queue_url,
         AttributeNames=[
+            'SenderId',
             'SentTimestamp'
         ],
         MaxNumberOfMessages=1,
