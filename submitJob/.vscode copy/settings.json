@@ -1,0 +1,8 @@
+{
+    "git.ignoreLimitWarning": true,
+    "[python]": {
+        "editor.insertSpaces": true,
+        "editor.tabSize": 4
+    },
+    "python.pythonPath": ".venv\\Scripts\\python.exe"
+}
