@@ -5,31 +5,37 @@ from botocore.exceptions import ClientError
 import json
 import s3util
 import sqsutil
-import jsonutil
 
 
 def parse_arguments():
     import argparse
+    global tool_name
     global source_name
     global bucket_name
     global queue_name
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('source_name', help='The name of the source file to upload')
-    parser.add_argument('bucket_name', help='The name of the bucket to upload file.')
+    parser.add_argument('tool_name', help='The name of the tool to run')
+    parser.add_argument('source_name', help='The name of the source package to process')
+    parser.add_argument('bucket_name', help='The name of the bucket to upload source.')
     parser.add_argument('queue_name', help='The name of the queue to send message')
 
     args = parser.parse_args()
+    tool_name = args.tool_name
     source_name = args.source_name
     bucket_name = args.bucket_name
     queue_name = args.queue_name
 
     print('\nargs:')
+    print(f'tool_name = {tool_name}')
     print(f'source_name = {source_name}')
     print(f'bucket_name = {bucket_name}')
     print(f'queue_name = {queue_name}')
 
-    if source_name is None:
+    if tool_name is None:
+        print('tool_name is None.')
+        return False
+    elif source_name is None:
         print('source_name is None.')
         return False
     elif bucket_name is None:
@@ -72,7 +78,13 @@ def send_message(queue_name, source_name):
         return False
 
     # send message
-    message_body = {"action": "submit", "job": {"source": source_name}}
+    message_body = {
+        "action": "submit",
+        "job": {
+            "tool": tool_name,
+            "source": source_name
+        }
+    }
     message_id = sqsutil.send_message(queue_url, str(message_body))
     print(f'MessageId: {message_id}')
     print(f'MessageBody: {message_body}')

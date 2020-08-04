@@ -8,7 +8,7 @@ from aws_xray_sdk.core import xray_recorder
 from aws_xray_sdk.core import patch_all
 import s3util
 import sqsutil
-import jobstableutil
+import jobstable
 
 
 logger = logging.getLogger()
@@ -26,7 +26,7 @@ def preamble(event, context):
     return True
 
 
-def send_message(queue_name, job_id, source_name):
+def send_message(queue_name, item):
     # get queue url
     sqsutil.list_queues()
     queue_url = sqsutil.get_queue_url(queue_name)
@@ -35,7 +35,14 @@ def send_message(queue_name, job_id, source_name):
         return False
 
     # send message
-    message_body = {"action": "process", "job": {"id": job_id, "source": source_name}}
+    message_body = {
+        "action": "process",
+        "job": {
+            "id": item['id'],
+            "tool": item['tool'],
+            "source": item['source']
+        }
+    }
     message_id = sqsutil.send_message(queue_url, str(message_body))
     print(f'MessageId: {message_id}')
     print(f'MessageBody: {message_body}')
@@ -57,7 +64,7 @@ def createJob(event, context):
         return False
 
     # get jobs table
-    jobs_table = jobstableutil.get_jobs_table()
+    jobs_table = jobstable.get_jobs_table()
 
     # create jobs record
     event_records = event['Records']
@@ -66,23 +73,22 @@ def createJob(event, context):
         print(event_record)
 
         # create job record
-        job_id = jobstableutil.create_job_record(jobs_table, event_record)
-        item = jobstableutil.get_job_record(jobs_table, job_id)
+        job_id = jobstable.create_job_record(jobs_table, event_record)
+        item = jobstable.get_job_record(jobs_table, job_id)
         if item is None:
             print('create_job_record failed.  Exit')
             return False
         print('\nCreated Job Record:')
         print(item)
 
-        # send message
-        # ... hard code queue name for now
+        # if environment variable exists, use it
         queue_name = 'jobs-list-process-job-queue-rwang5688'
-        job_id = item['id']
-        source_name = item['source']
-        send_message(queue_name, job_id, source_name)
+        if 'JOBS_LIST_PROCESS_QUEUE' in os.environ:
+            queue_name = os.environ['JOBS_LIST_PROCESS_JOB_QUEUE']
+        send_message(queue_name, item)
 
         # update job status
-        success = jobstableutil.update_job_status(jobs_table, job_id, "started")
+        success = jobstable.update_job_status(jobs_table, job_id, "started", "")
 
     return True
 
