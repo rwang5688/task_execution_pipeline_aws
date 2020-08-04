@@ -2,6 +2,7 @@ service: createJob
 frameworkVersion: ">=1.30.0"
 plugins:
   - serverless-dotenv-plugin
+  - serverless-python-requirements
 custom:
   accountid: ${env:AWS_ACCOUNT_ID}
   region: ${env:AWS_DEFAULT_REGION, 'us-west-2'}
@@ -11,6 +12,8 @@ custom:
   jobsTable: ${env:JOBS_LIST_JOBS_TABLE}
   dotenv:
     path: ../.env
+  pythonRequirements:
+    dockerizePip: non-linux
 
 provider:
   name: aws
@@ -51,7 +54,7 @@ provider:
 
 functions:
   createJob:
-    handler: function.createJobs
+    handler: function.createJob
     role: arn:aws:iam::${self:custom.accountid}:role/jobs-list
     environment:
       ACCOUNT_ID: ${env:AWS_ACCOUNT_ID}
