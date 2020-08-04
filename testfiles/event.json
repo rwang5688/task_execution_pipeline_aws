@@ -1,21 +1,14 @@
-
 {
-    "Records": [
-      {
-        "messageId": "19dd0b57-b21e-4ac1-bd88-01bbb068cb78",
-        "receiptHandle": "MessageReceiptHandle",
-        "body": "Hello from SQS!",
-        "attributes": {
-          "ApproximateReceiveCount": "1",
-          "SentTimestamp": "1523232000000",
-          "SenderId": "123456789012",
-          "ApproximateFirstReceiveTimestamp": "1523232000001"
-        },
-        "messageAttributes": {},
-        "md5OfBody": "7b270e59b47ff90a553787216d55d91d",
-        "eventSource": "aws:sqs",
-        "eventSourceARN": "arn:aws:sqs:us-west-2:123456789012:MyQueue",
-        "awsRegion": "us-west-2"
-      }
-    ]
-  }
+  "Records": [
+    {
+      "attributes": {
+          "SenderId": "AIDA2GJJEXXSDZRNQYAAD",
+          "SentTimestamp": "1596432407513"
+      },
+      "body": "{'action': 'submit', 'job': {'tool': 'xvsa', 'source': 'source.tar.gz'}}",
+      "MD5OfBody": "8a793c04ba9f248a74d66cd8ed274e99",
+      "MessageId": "6455347b-412d-4f85-b3a0-c3fd75c560e4",
+      "ReceiptHandle": "AQEBOFtISlcTmD/itsbhy5D/zdVPRZ0B17taEzRRfUTDuyxtS/aMPDDuzbBfCoZ/xM65RZoPLagGUkJ0EMJvuasqy7qI1sHethq2TP2m1nN/fhLTPpvxs7AFj/9bFw9HawVYq9ajU47qxelGyVuLMwnXB2bYrB2judvXS73jf1uG4EXzD54ctQb22zGpwJrRRD1SRJ5FZKKS5P29R/Kb5M2WfAt0YLTHlfFPY5DsQUAiQrUUn6n/HWgXkYjCcTv1CRSMXI1TO5yA/qT/uzBLRPKUKUCu81ZaScaS42s5h6vbjjgZrlFMJVLBCUY9ErN+2TxhWC4Ovq7oAe9MbMrm4NuZmx8anXszOZv7WtFF/kZ3GGHHNnpkueTyyiitQYVf584O44YqjBjLf/6B0w/Dfiu9f8PtCEcTa35+aDiiIfBnDdo="
+    }
+  ]
+}

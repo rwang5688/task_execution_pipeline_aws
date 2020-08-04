@@ -65,6 +65,8 @@ def createJob(event, context):
 
     # get jobs table
     jobs_table = jobstable.get_jobs_table()
+    if jobs_table is None:
+        return False
 
     # create jobs record
     event_records = event['Records']
@@ -74,9 +76,12 @@ def createJob(event, context):
 
         # create job record
         job_id = jobstable.create_job_record(jobs_table, event_record)
+        if job_id is None:
+            print('create_job_record failed.  Exit')
+            return False
         item = jobstable.get_job_record(jobs_table, job_id)
         if item is None:
-            print('create_job_record failed.  Exit')
+            print('get_job_record failed.  Exit')
             return False
         print('\nCreated Job Record:')
         print(item)
@@ -90,6 +95,7 @@ def createJob(event, context):
         # update job status
         success = jobstable.update_job_status(jobs_table, job_id, "started", "")
 
+    # successfully processed all records
     return True
 
 
