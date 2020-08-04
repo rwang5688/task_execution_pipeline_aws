@@ -9,8 +9,10 @@ def get_jobs_table():
     dynamodb = boto3.resource('dynamodb')
     # if environment variable exists, use it
     jobs_table_name = 'jobs-list-jobs-table-rwang5688-dev'
-    if 'JOBS_LIST_JOBS_TABLE' in os.environ:
-        jobs_table_name = os.environ['JOBS_LIST_JOBS_TABLE']
+    if 'JOBS_TABLE' in os.environ:
+        if 'STAGE' in os.environ:
+            jobs_table_name = os.environ['JOBS_TABLE'] + '-' + os.environ['STAGE']
+    print(f'get_jobs_table: {jobs_table_name}')
     jobs_table = dynamodb.Table(jobs_table_name)
     if jobs_table is None:
         print(f'get_jobs_table: {jobs_table_name} is not found.')
@@ -18,12 +20,14 @@ def get_jobs_table():
 
 
 def create_job_record(jobs_table, event_record):
+    # make sure table is there
+    print(f'create_job_record: {jobs_table.name}')
+
+    # populate job record
     global job_record
     job_record = {}
     job_id = str(uuid.uuid4())
     event_body = eval(event_record['body'])
-
-    # populate job record
     job_record['id'] = job_id
     job_record['submitter_id'] = event_record['attributes']['SenderId']
     job_record['submit_timestamp'] = event_record['attributes']['SentTimestamp']
@@ -35,14 +39,13 @@ def create_job_record(jobs_table, event_record):
 
     # add to jobs table
     print(f'Job Record: {job_record}')
-    if jobs_table is None:
-        print('create_job_record: jobs_table is None.  Error.')
-        return None
     jobs_table.put_item(Item=job_record)
     return job_id
 
 
 def get_job_record(jobs_table, job_id):
+    # make sure table is there
+    print(f'get_job_record: {jobs_table.name}')
     response = jobs_table.get_item(
         Key={
             'id': job_id
@@ -53,6 +56,8 @@ def get_job_record(jobs_table, job_id):
 
 
 def update_job_status(jobs_table, job_id, job_status, job_log):
+    # make sure table is there
+    print(f'update_job_status: {jobs_table.name}')
     jobs_table.update_item(
         Key={
             'id': job_id

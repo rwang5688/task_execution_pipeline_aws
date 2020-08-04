@@ -88,8 +88,8 @@ def createJob(event, context):
 
         # if environment variable exists, use it
         queue_name = 'jobs-list-process-job-queue-rwang5688'
-        if 'JOBS_LIST_PROCESS_QUEUE' in os.environ:
-            queue_name = os.environ['JOBS_LIST_PROCESS_JOB_QUEUE']
+        if 'PROCESS_JOB_QUEUE' in os.environ:
+            queue_name = os.environ['PROCESS_JOB_QUEUE']
         send_message(queue_name, item)
 
         # update job status
