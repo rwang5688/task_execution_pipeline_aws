@@ -30,7 +30,7 @@ aws s3 rm s3://${JOBS_LIST_LOG_DATA_BUCKET} --recursive
 # domain
 
 # remove resources and functions
-SERVICES=(resources createJob)
+SERVICES=(createJob resources)
 remove
 
 # delete jobs database table
