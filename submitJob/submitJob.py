@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-import sys
 import boto3
 from botocore.exceptions import ClientError
 import json
