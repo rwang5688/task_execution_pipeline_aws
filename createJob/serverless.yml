@@ -54,7 +54,7 @@ provider:
 
 functions:
   createJob:
-    handler: function.createJob
+    handler: createJob.createJob
     role: arn:aws:iam::${self:custom.accountid}:role/jobs-list
     environment:
       ACCOUNT_ID: ${env:AWS_ACCOUNT_ID}

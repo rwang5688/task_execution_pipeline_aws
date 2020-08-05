@@ -56,7 +56,7 @@ def send_message(queue_name, item):
     return True
 
 
-# handler
+# createJob handler
 def createJob(event, context):
     success = preamble(event, context)
     if not success:
@@ -99,7 +99,7 @@ def createJob(event, context):
     return True
 
 
-# main function for testing and debugging handler
+# main function for testing createJob handler
 def main():
     xray_recorder.begin_segment('main_function')
     file = open('event.json', 'rb')
