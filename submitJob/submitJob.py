@@ -57,8 +57,8 @@ def upload_source(bucket_name, source_name):
 
     # upload file
     s3util.list_files(bucket["Name"])
-    okay = s3util.upload_file(source_name, bucket["Name"])
-    if not okay:
+    success = s3util.upload_file(source_name, bucket["Name"])
+    if not success:
         printf(f'Failed to upload source file: {source_name}.')
         return False
     s3util.list_files(bucket["Name"])
