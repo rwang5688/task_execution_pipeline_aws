@@ -110,7 +110,30 @@ def extract_source_files(source_name):
     return True
 
 
+def run_tool(tool_name):
+    process = subprocess.Popen([tool_name, 'input/preprocess/*.i', 'jobLog.py', 'log.v'],
+                            stdout=subprocess.PIPE,
+                            universal_newlines=True)
+
+    while True:
+        output = process.stdout.readline()
+        print(output.strip())
+        # Do something else
+        return_code = process.poll()
+        if return_code is not None:
+            print('RETURN CODE', return_code)
+            # Process has finished, read rest of the output
+            for output in process.stdout.readlines():
+                print(output.strip())
+            break
+
+    # finished extracting source files
+    return True
+
+
 def main():
+    print('\nStarting processJob.py ...')
+
     success = get_env_vars()
     if not success:
         print('get_env_vars failed.  Exit.')
@@ -146,6 +169,11 @@ def main():
     success = extract_source_files(source_name)
     if not success:
         print('extract_source_files failes.  Exit.')
+        return
+
+    success = run_tool(tool_name)
+    if not success:
+        print('run_tool failed.  Exit.')
         return
 
 
