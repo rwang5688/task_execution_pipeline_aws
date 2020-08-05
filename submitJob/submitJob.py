@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 import boto3
 from botocore.exceptions import ClientError
-import json
 import s3util
 import sqsutil
 
