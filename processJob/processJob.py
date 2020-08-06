@@ -47,23 +47,23 @@ def parse_message(message):
 
     message_body = eval(message['Body'])
     if message_body is None:
-        print('parse_message: No message body.')
+        print('parse_message: message body is missing.')
         return False
 
     job = message_body['job']
     job_id = job['id']
     if job_id is None:
-        print('parse_message: No job id.')
+        print('parse_message: job id is missing.')
         return False
 
     source_name = job['source']
     if source_name is None:
-        print('parse_message: No source name.')
+        print('parse_message: source name is missing.')
         return False
 
     tool_name = job['tool']
     if tool_name is None:
-        print('parse_message: No tool name.')
+        print('parse_message: tool name is missing.')
         return False
 
     # successfully parsed message
@@ -110,8 +110,8 @@ def extract_source_files(source_name):
     return True
 
 
-def run_tool(tool_name):
-    process = subprocess.Popen([tool_name, 'input/preprocess/*.i', 'jobLog.py', 'log.v'],
+def run_tool(tool_name, job_id):
+    process = subprocess.Popen([tool_name, 'input/preprocess/*.i', 'jobLog.py', job_id],
                             stdout=subprocess.PIPE,
                             universal_newlines=True)
 
@@ -184,7 +184,7 @@ def main():
         print('extract_source_files failes.  Exit.')
         return
 
-    success = run_tool(tool_name)
+    success = run_tool(tool_name, job_id)
     if not success:
         print('run_tool failed.  Exit.')
         return

@@ -1,10 +1,48 @@
 #include <iostream>
 using namespace std;
 
+#define SUCCESS 0
+#define ERROR -1
+
+
+/**
+ * Execute workload
+ */
+int execute_workload(int argc, char **argv)
+{
+    // simulate workload by executing "ls" cmd on .i file list
+    string command = "ls";
+    for (int i = 1; i < argc-2; i++) {
+        command.append(" " + string(argv[i]));
+    }
+    cout << "Executing: " << command << endl;
+    cout.flush();
+    system(command.c_str());
+
+    return SUCCESS;
+}
+
+
+/**
+ * Invoke callback
+ */
+int invoke_callback(string callback, string jobId, string jobStatus, string logFile)
+{
+    string command = "python " + callback + " " + jobId + " " + jobStatus + " " + logFile;
+    cout << "Executing: " << command << endl;
+    system(command.c_str());
+
+    return SUCCESS;
+}
+
+
+/**
+ * xvsa mock
+ */
 int main(int argc, char **argv)
 {
     // print arguments
-    cout << "Starting xvsa (mock) ..." << endl;
+    cout << "Starting xvsa mock ..." << endl;
     cout << "Number of arguments: " << argc << endl;
     for (int i = 0; i < argc; i++) {
         cout << i << ": " << argv[i] << endl;
@@ -13,23 +51,25 @@ int main(int argc, char **argv)
 
     // simulate workload when we have at least 4 arguments
     if (argc >= 4) {
-        // simulate scan by executing "ls" command on .i file list
-        string command1 = "ls";
-        for (int i = 1; i < argc-2; i++) {
-            command1.append(" " + string(argv[i]));
+        int success = SUCCESS;
+        success = execute_workload(argc, argv);
+        if (success != SUCCESS) {
+            cerr << "execute_workload failed.  Exit." << endl;
+            exit(ERROR);
         }
-        cout << "Executing: " << command1 << endl;
-        cout.flush();
-        system(command1.c_str());
 
-        // invoke callback function with logFile
+        // invoke callback function with jobId and logFile
         string callback = argv[argc-2];
-        string logFile = argv[argc-1];
-        string command2 = "python " + callback + " " + logFile;
-        cout << "Executing: " << command2 << endl;
-        system(command2.c_str());
+        string jobId = argv[argc-1];
+        string jobStatus = "complete";
+        string logFile = "log.v";
+        success = invoke_callback(callback, jobId, jobStatus, logFile);
+        if (success != SUCCESS) {
+            cerr << "invoke_callback failed.  Exit." << endl;
+            exit(ERROR);
+        }
     }
 
-    // done
-    return 0;
+    return SUCCESS;
 }
+
