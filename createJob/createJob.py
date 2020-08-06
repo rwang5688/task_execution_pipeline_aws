@@ -92,6 +92,9 @@ def createJob(event, context):
             queue_name = os.environ['PROCESS_JOB_QUEUE']
         send_message(queue_name, item)
 
+        # TO DO:
+        # Start ECS task!!!
+
         # update job status
         success = jobstable.update_job_status(jobs_table, job_id, "started", "")
 
