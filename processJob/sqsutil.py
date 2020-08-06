@@ -42,6 +42,7 @@ def send_message(queue_url, message_body):
     response = sqs.send_message(QueueUrl=queue_url, MessageBody=message_body)
     return response['MessageId']
 
+
 def receive_message(queue_url):
     # Create SQS client
     sqs = boto3.client('sqs')
@@ -66,13 +67,21 @@ def receive_message(queue_url):
     return message
 
 
-def delete_message(queue_url, receipt_handle):
+def delete_message(queue_url, message):
     # Create SQS client
     sqs = boto3.client('sqs')
+
+    # Get receipt handle
+    if message is None:
+        print('delete_message: message is None.  No receipt handle.')
+        return False
+    receipt_handle = message['ReceiptHandle']
 
     # Delete received message from queue
     sqs.delete_message(
         QueueUrl=queue_url,
         ReceiptHandle=receipt_handle
     )
+
+    return True
 

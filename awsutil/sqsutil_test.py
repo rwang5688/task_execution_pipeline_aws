@@ -37,9 +37,10 @@ def main():
     print(f'MessageId: {message_id}')
 
     message = sqsutil.receive_message(queue_url)
-    if message is not None:
-        receipt_handle = message['ReceiptHandle']
-        sqsutil.delete_message(queue_url, receipt_handle)
+    success = sqsutil.delete_message(queue_url, message)
+    if not success:
+        print('\ndelete_message failed.  Exit.')
+        return
     print('\nReceived and deleted message:')
     print(jsonutil.get_pretty_string(message))
 
