@@ -34,7 +34,7 @@ def create_job_record(jobs_table, event_record):
     job_record['tool'] = event_body['job']['tool']
     job_record['source'] = event_body['job']['source']
     job_record['job_status'] = 'created'
-    job_record['job_log'] = ''
+    job_record['logfile'] = ''
     job_record['update_timestamp'] = time.time_ns() // 1000000
 
     # add to jobs table
@@ -55,17 +55,17 @@ def get_job_record(jobs_table, job_id):
     return item
 
 
-def update_job_status(jobs_table, job_id, job_status, job_log):
+def update_job_status(jobs_table, job_id, job_status, logfile):
     # make sure table is there
     print(f'update_job_status: {jobs_table.name}')
     jobs_table.update_item(
         Key={
             'id': job_id
         },
-        UpdateExpression='SET job_status = :val1, job_log = :val2, update_timestamp = :val3',
+        UpdateExpression='SET job_status = :val1, logfile = :val2, update_timestamp = :val3',
         ExpressionAttributeValues={
             ':val1': job_status,
-            ':val2': job_log,
+            ':val2': logfile,
             ':val3': time.time_ns() // 1000000
         }
     )
