@@ -28,7 +28,7 @@ def receive_message(queue_name):
     sqsutil.list_queues()
     queue_url = sqsutil.get_queue_url(queue_name)
     if queue_url is None:
-        print(f'\nQueue {queue_name} does not exist.')
+        print(f'receive_message: {queue_name} does not exist.')
         return False
 
     # receive message
@@ -131,6 +131,19 @@ def run_tool(tool_name):
     return True
 
 
+def delete_message(queue_name, message):
+    # get queue url
+    sqsutil.list_queues()
+    queue_url = sqsutil.get_queue_url(queue_name)
+    if queue_url is None:
+        print(f'delete_message: {queue_name} does not exist.')
+        return False
+
+    # delete message
+    sqsutil.delete_message(queue_url, message)
+    return True
+
+
 def main():
     print('\nStarting processJob.py ...')
 
@@ -175,6 +188,14 @@ def main():
     if not success:
         print('run_tool failed.  Exit.')
         return
+
+    success = delete_message(queue_name, message)
+    if not success:
+        print('delete_message failed.  Exit.')
+
+    # if we got this far, we are really done ...
+    print('\nReceived and deleted message:')
+    print(message)
 
 
 if __name__ == '__main__':
