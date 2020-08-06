@@ -13,10 +13,10 @@ def parse_arguments():
     global queue_name
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('tool_name', help='The name of the tool to run')
-    parser.add_argument('source_name', help='The name of the source package to process')
+    parser.add_argument('tool_name', help='The name of the tool to run.')
+    parser.add_argument('source_name', help='The name of the source package to run.')
     parser.add_argument('bucket_name', help='The name of the bucket to upload source.')
-    parser.add_argument('queue_name', help='The name of the queue to send message')
+    parser.add_argument('queue_name', help='The name of the queue to send message.')
 
     args = parser.parse_args()
     tool_name = args.tool_name
@@ -24,26 +24,23 @@ def parse_arguments():
     bucket_name = args.bucket_name
     queue_name = args.queue_name
 
-    print('\nargs:')
-    print(f'tool_name = {tool_name}')
-    print(f'source_name = {source_name}')
-    print(f'bucket_name = {bucket_name}')
-    print(f'queue_name = {queue_name}')
-
     if tool_name is None:
-        print('tool_name is None.')
-        return False
-    elif source_name is None:
-        print('source_name is None.')
-        return False
-    elif bucket_name is None:
-        print('bucket_name is None.')
-        return False
-    elif queue_name is None:
-        print('queue_name is None.')
+        print('parse_arguments: tool_name is missing.')
         return False
 
-    # successfully parsed all arguments
+    if source_name is None:
+        print('parse_arguments: source_name is missing.')
+        return False
+
+    if bucket_name is None:
+        print('parse_arguments: bucket_name is missing.')
+        return False
+
+    if queue_name is None:
+        print('parse_arguments: queue_name is missing.')
+        return False
+
+    # success
     return True
 
 
@@ -52,14 +49,14 @@ def upload_source(bucket_name, source_name):
     s3util.list_buckets()
     bucket = s3util.get_bucket(bucket_name)
     if bucket is None:
-        printf(f'Bucket {bucket_name} does not exist.')
+        printf(f'upload_source: Bucket {bucket_name} does not exist.')
         return False
 
     # upload file
     s3util.list_files(bucket["Name"])
     success = s3util.upload_file(source_name, bucket["Name"])
     if not success:
-        printf(f'Failed to upload source file: {source_name}.')
+        printf(f'upload_source: Failed to upload source file {source_name}.')
         return False
     s3util.list_files(bucket["Name"])
 
@@ -67,12 +64,12 @@ def upload_source(bucket_name, source_name):
     return True
 
 
-def send_message(queue_name, source_name):
+def send_message(queue_name, tool_name, source_name):
     # get queue url
     sqsutil.list_queues()
     queue_url = sqsutil.get_queue_url(queue_name)
     if queue_url is None:
-        print(f'\nQueue {queue_name} does not exist.')
+        print(f'send_message: Queue {queue_name} does not exist.')
         return False
 
     # send message
@@ -99,15 +96,21 @@ def send_message(queue_name, source_name):
 def main():
     success = parse_arguments()
     if not success:
-        print('parse_artuments failed.  Exit.')
+        print('parse_arguments failed.  Exit.')
         return
+
+    print('\nargs:')
+    print(f'tool_name = {tool_name}')
+    print(f'source_name = {source_name}')
+    print(f'bucket_name = {bucket_name}')
+    print(f'queue_name = {queue_name}')
 
     success = upload_source(bucket_name, source_name)
     if not success:
         print('upload_source failed.  Exit.')
         return
 
-    success = send_message(queue_name, source_name)
+    success = send_message(queue_name, tool_name, source_name)
     if not success:
         print('upload_source failed.  Exit.')
         return
