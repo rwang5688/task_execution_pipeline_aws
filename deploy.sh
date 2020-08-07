@@ -37,7 +37,7 @@ function domain () {
 # domain
 
 # create resources and functions
-SERVICES=(resources createJob)
+SERVICES=(resources createJob updateJob)
 deploy
 
 # deploy jobs-service API functions

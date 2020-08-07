@@ -64,7 +64,7 @@ int main(int argc, char **argv)
         // execute callback function with jobId, jobStatus, jobLogfile
         string callback = argv[argc-2];
         string jobId = argv[argc-1];
-        string jobStatus = "complete";
+        string jobStatus = "completed";
         string jobLogfile = "log.v";
         success = execute_callback(callback, jobId, jobStatus, jobLogfile);
         if (success != SUCCESS) {
