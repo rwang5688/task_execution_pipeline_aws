@@ -18,27 +18,29 @@ function deploy () {
 
 
 function domain () {
-  cd resources
+  cd jobs-service
   npm install
   serverless create_domain
   cd ..
 }
 
 
-# (user-service sls deploy need to be done bf running this script
-# and we need to manually edit .env to add the various ids and arns)
-# create user pool domain
-# set user pool login and logout pages
-# extract user pool arn for deploying database CRUD service
+# Before running "deploy.sh" script:
+# Manually run "sls deploy user-service".
+# Manually edit .env file with Cognito setup required domain name base, user pool id and ARN.
+# user pool ARN required for user pool access to database CRUD operations in jobs service.
+
+# Given domain name base and user pool id:
+# create user pool domain.
+# set user pool registration and sign-in pages.
 #. ./cognito.sh setup
-
-
-# create jobs-service API domain
-# domain
 
 # create resources and functions
 SERVICES=(resources createJob updateJob)
 deploy
+
+# create jobs-service API domain
+# domain
 
 # deploy jobs-service API functions
 #SERVICES=(jobs-service)
