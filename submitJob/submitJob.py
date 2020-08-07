@@ -7,29 +7,29 @@ import sqsutil
 
 def parse_arguments():
     import argparse
-    global tool_name
-    global source_name
+    global job_tool
+    global job_source
     global bucket_name
     global queue_name
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('tool_name', help='The name of the tool to run.')
-    parser.add_argument('source_name', help='The name of the source package to run.')
+    parser.add_argument('job_tool', help='The name of the tool to run.')
+    parser.add_argument('job_source', help='The name of the source package to run.')
     parser.add_argument('bucket_name', help='The name of the bucket to upload source.')
     parser.add_argument('queue_name', help='The name of the queue to send message.')
 
     args = parser.parse_args()
-    tool_name = args.tool_name
-    source_name = args.source_name
+    job_tool = args.job_tool
+    job_source = args.job_source
     bucket_name = args.bucket_name
     queue_name = args.queue_name
 
-    if tool_name is None:
-        print('parse_arguments: tool_name is missing.')
+    if job_tool is None:
+        print('parse_arguments: job_tool is missing.')
         return False
 
-    if source_name is None:
-        print('parse_arguments: source_name is missing.')
+    if job_source is None:
+        print('parse_arguments: job_source is missing.')
         return False
 
     if bucket_name is None:
@@ -44,7 +44,7 @@ def parse_arguments():
     return True
 
 
-def upload_source(bucket_name, source_name):
+def upload_source(bucket_name, job_source):
     # get bucket
     s3util.list_buckets()
     bucket = s3util.get_bucket(bucket_name)
@@ -54,9 +54,9 @@ def upload_source(bucket_name, source_name):
 
     # upload file
     s3util.list_files(bucket["Name"])
-    success = s3util.upload_file(source_name, bucket["Name"])
+    success = s3util.upload_file(job_source, bucket["Name"])
     if not success:
-        printf(f'upload_source: Failed to upload source file {source_name}.')
+        printf(f'upload_source: Failed to upload source file {job_source}.')
         return False
     s3util.list_files(bucket["Name"])
 
@@ -64,7 +64,7 @@ def upload_source(bucket_name, source_name):
     return True
 
 
-def send_message(queue_name, tool_name, source_name):
+def send_message(queue_name, job_tool, job_source):
     # get queue url
     sqsutil.list_queues()
     queue_url = sqsutil.get_queue_url(queue_name)
@@ -76,8 +76,8 @@ def send_message(queue_name, tool_name, source_name):
     message_body = {
         "action": "submit",
         "job": {
-            "tool": tool_name,
-            "source": source_name
+            "tool": job_tool,
+            "source": job_source
         }
     }
     message_id = sqsutil.send_message(queue_url, str(message_body))
@@ -100,17 +100,17 @@ def main():
         return
 
     print('\nargs:')
-    print(f'tool_name = {tool_name}')
-    print(f'source_name = {source_name}')
+    print(f'job_tool = {job_tool}')
+    print(f'job_source = {job_source}')
     print(f'bucket_name = {bucket_name}')
     print(f'queue_name = {queue_name}')
 
-    success = upload_source(bucket_name, source_name)
+    success = upload_source(bucket_name, job_source)
     if not success:
         print('upload_source failed.  Exit.')
         return
 
-    success = send_message(queue_name, tool_name, source_name)
+    success = send_message(queue_name, job_tool, job_source)
     if not success:
         print('upload_source failed.  Exit.')
         return
