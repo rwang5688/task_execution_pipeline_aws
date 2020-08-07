@@ -1,7 +1,7 @@
 const uuid = require('uuid');
 const AWS = require('aws-sdk');
 const dynamoDb = new AWS.DynamoDB.DocumentClient();
-const TABLE_NAME = { TableName: process.env.TODO_TABLE };
+const TABLE_NAME = { TableName: process.env.JOBS_TABLE };
 
 // create HTTP response
 function respond (err, body, cb) {

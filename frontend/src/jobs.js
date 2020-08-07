@@ -1,12 +1,12 @@
 'use strict';
 
 import $ from 'jquery';
-import {view} from './todo-view';
+import {view} from './jobs-view';
 const todo = {activate};
 export {todo};
 
 /*jshint -W101 */
-const API_ROOT = `https://todolistapi.${process.env.TO_DO_LIST_DOMAIN}/api/todo/`;
+const API_ROOT = `https://jobslistapi.${process.env.JOBS_LIST_DOMAIN}/api/jobs/`;
 /*jshint +W101 */
 
 let auth;
@@ -14,11 +14,14 @@ let auth;
 
 function gather () {
   return {
-    id: $('#todo-id').val(),
-    dueDate: $('#todo-duedate').val(),
-    action: $('#todo-action').val(),
-    stat: $('#todo-stat').is(':checked') ? 'done' : 'open',
-    note: $('#todo-note').val()
+    job_id: $('#job_id').val(),
+    job_tool: $('#job_tool').val(),
+    job_source: $('#job_source').val(),
+    job_status: $('#job_status').val(),
+    job_logfile: $('#job_logfile').val(),
+    submitter_id: $('#submitter_id').val(),
+    submit_timestamp: $('submit_timestamp').val(),
+    update_timestamp: $('update_timestamp').val()
   };
 }
 
@@ -47,7 +50,7 @@ function create (cb) {
 
 function update (cb) {
   auth.session().then(session => {
-    $.ajax(API_ROOT + $('#todo-id').val(), {
+    $.ajax(API_ROOT + $('#job_id').val(), {
       data: JSON.stringify(gather()),
       contentType: 'application/json',
       type: 'PUT',
@@ -111,27 +114,27 @@ function list (cb) {
 
 
 function bindList () {
-  $('.todo-item-edit').unbind('click');
-  $('.todo-item-edit').on('click', (e) => {
+  $('.job-item-edit').unbind('click');
+  $('.job-item-edit').on('click', (e) => {
     view.renderEditArea(e.currentTarget.id);
   });
-  $('.todo-item-delete').unbind('click');
-  $('.todo-item-delete').on('click', (e) => {
+  $('.job-item-delete').unbind('click');
+  $('.job-item-delete').on('click', (e) => {
     del(e.currentTarget.id);
   });
 }
 
 
 function bindEdit () {
-  $('#input-todo').unbind('click');
-  $('#input-todo').on('click', e => {
+  $('#input-job').unbind('click');
+  $('#input-job').on('click', e => {
     e.preventDefault();
     view.renderEditArea();
   });
-  $('#todo-save').unbind('click');
-  $('#todo-save').on('click', e => {
+  $('#job-save').unbind('click');
+  $('#job-save').on('click', e => {
     e.preventDefault();
-    if ($('#todo-id').val().length > 0) {
+    if ($('#job_id').val().length > 0) {
       update(() => {
         view.renderAddButton();
       });

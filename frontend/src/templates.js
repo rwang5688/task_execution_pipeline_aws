@@ -1,39 +1,45 @@
 'use strict';
 
-export { todoListTpl, editTpl, addTpl, errTpl, navBarTpl, navBarScheduleTpl };
+export { jobsListTpl, editTpl, addTpl, errTpl, navBarTpl };
 
-function todoItemTpl (item) {
+function jobItemTpl (item) {
   /*jshint -W101 */
   return `
-    <div id="${item.id}" class="row list-group-item d-flex justify-content-between align-items-center">
+    <div id="${item.job_id}" class="row list-group-item d-flex justify-content-between align-items-center">
       <div class="col-sm-1"></div>
-      <div id="due-date" class="col-sm-2">${item.dueDate}</div>
-      <div id="action" class="col-sm-3 ">${item.action}</div>
-      <div id="note" class="col-sm-3">${item.note === null ? '' : item.note}</div>
-      <div id="stat" class="col-sm-1 badge badge-secondary badge-pill">${item.stat}</div>
-      <div id="${item.id}" class="col-sm-1 badge badge-danger badge-pill todo-item-delete">Delete</div>
-      <div id="${item.id}" class="col-sm-1 badge badge-primary badge-pill todo-item-edit">Edit</div>
+      <div id="job_tool" class="col-sm-2">${item.job_tool}</div>
+      <div id="job_source" class="col-sm-2 ">${item.job_source}</div>
+      <div id="job_status" class="col-sm-2">${item.job_status}</div>
+      <div id="job_logfile" class="col-sm-2 ">${item.job_logfile}</div>
+      <div id="submitter_id" class="col-sm-3">${item.submitter_id}</div>
+      <div id="submit_timestamp" class="col-sm-3 ">${item.submit_timestamp}</div>
+      <div id="update_timestamp" class="col-sm-3">${item.update_timestamp}</div>
+      <div id="${item.job_id}" class="col-sm-1 badge badge-danger badge-pill job-item-delete">Delete</div>
+      <div id="${item.job_id}" class="col-sm-1 badge badge-primary badge-pill job-item-edit">Edit</div>
     </div>`;
   /*jshint +W101 */
 }
 
 
-function todoListTpl (items) {
+function jobsListTpl (items) {
   let output = '';
   items.forEach(item => {
-    output += todoItemTpl(item);
+    output += jobItemTpl(item);
   });
 
 
   /*jshint -W101 */
   return `
-  <div id="todo-list">
+  <div id="jobs-list">
     <div class="row list-group-item d-flex justify-content-between align-items-center">
-      <div class="col-sm-1"></div>
-      <div class="col-sm-2">Due</div>
-      <div class="col-sm-3">Action</div>
-      <div class="col-sm-3">Notes</div>
-      <div class="col-sm-1">Status</div>
+      <div class="col-sm-1">Job Id</div>
+      <div class="col-sm-2">Tool</div>
+      <div class="col-sm-2">Source</div>
+      <div class="col-sm-2">Status</div>
+      <div class="col-sm-2">Logfile</div>
+      <div class="col-sm-3">Submitter Id</div>
+      <div class="col-sm-3">Submit Timestamp</div>
+      <div class="col-sm-3">Update Timestamp</div>
       <div class="col-sm-1"></div>
       <div class="col-sm-1"></div>
     </div>
@@ -55,30 +61,38 @@ function editTpl () {
     <div class="row">
       <div class="col-sm-6">
         <div class="row">
-          <div class="col-sm-1"></div><div class="col-sm-1">Due: </div><div class="col-sm-6"><input  class="w-100" type="text" id="todo-duedate"></div>
+          <div class="col-sm-1"></div><div class="col-sm-1">Tool: </div><div class="col-sm-6"><input  class="w-100" type="text" id="job_tool"></div>
         </div>
         <div class="row">&nbsp;</div>
         <div class="row">
-          <div class="col-sm-1"></div><div class="col-sm-1">Action: </div><div class="col-sm-6"><input class="w-100" type="text" id="todo-action"></div>
+          <div class="col-sm-1"></div><div class="col-sm-1">Source: </div><div class="col-sm-6"><input class="w-100" type="text" id="job_source"></div>
         </div>
         <div class="row">&nbsp;</div>
         <div class="row">
-          <div class="col-sm-1"></div><div class="col-sm-1">Done: </div><div class="col-sm-6"><input type="checkbox" id="todo-stat"></div>
+          <div class="col-sm-1"></div><div class="col-sm-1">Status: </div><div class="col-sm-6"><input class="w-100" type="text" id="job_status"></div>
+        </div>
+        <div class="row">&nbsp;</div>
+        <div class="row">
+          <div class="col-sm-1"></div><div class="col-sm-1">Logfile: </div><div class="col-sm-6"><input class="w-100" type="text" id="job_logfile"></div>
+        </div>
+        <div class="row">&nbsp;</div>
+        <div class="row">
+          <div class="col-sm-1"></div><div class="col-sm-1">Submitter Id: </div><div class="col-sm-6"><input class="w-100" type="text" id="submitter_id"></div>
+        </div>
+        <div class="row">&nbsp;</div>
+        <div class="row">
+          <div class="col-sm-1"></div><div class="col-sm-1">Submit Timestamp: </div><div class="col-sm-6"><input class="w-100" type="text" id="submit_timestamp"></div>
+        </div>
+        <div class="row">&nbsp;</div>
+        <div class="row">
+          <div class="col-sm-1"></div><div class="col-sm-1">Update Timestamp: </div><div class="col-sm-6"><input class="w-100" type="text" id="update_timestamp"></div>
         </div>
         <div class="row">&nbsp;</div>
         <div class="row">
           <div class="col-sm-1"></div>
           <div class="col-sm-1"><button id="todo-save">save</button></div>
           <div class="col-sm-1"><button id="todo-cancel">cancel</button></div>
-          <input type="hidden" id="todo-id">
-        </div>
-      </div>
-      <div class="col-sm-6">
-        <div class="row">
-          <div class="col-sm-1">Note: </div>
-          <div class="col-sm-6">
-            <textarea id="todo-note" rows="5" cols="50" maxlength="5000" wrap="hard"></textarea>
-          </div>
+          <input type="hidden" id="job_id">
         </div>
       </div>
     </div>`;
@@ -115,13 +129,5 @@ function navBarTpl (isAuth) {
       ${link}
     </li>
   </ul>`;
-}
-
-
-function navBarScheduleTpl () {
-  return `
-    <li class="nav-item">
-      <button id='todo-schedule'>schedule</button>
-    </li>`;
 }
 
