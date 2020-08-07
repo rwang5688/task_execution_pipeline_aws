@@ -25,15 +25,37 @@ function domain () {
 }
 
 
-# Before running "deploy.sh" script:
-# Manually run "sls deploy user-service".
-# Manually edit .env file with Cognito setup required domain name base, user pool id and ARN.
-# user pool ARN required for user pool access to database CRUD operations in jobs service.
+# As workaround due to non-Unix environment,
+# Perform these manual deployment steps before running "deploy.sh" script:
 
-# Given domain name base and user pool id:
+# 1) Deploy user-service
+# "cd user-service"
+# "serverless deploy"
+
+# 2) Edit .env file and replace Cognito domain name base, user pool id and ARN.
+# Require user pool ARN to enable user pool access to DynamoDB CRUD operations in jobs service.
+# Lines below are from "cognito.sh":
+    # echo '#>>'>>.env
+    # export JOBS_LIST_COGNITO_DOMAIN=$JOBS_LIST_COGNITO_DOMAIN_BASE.auth.us-west-2.amazoncognito.com
+    # echo JOBS_LIST_COGNITO_DOMAIN=$JOBS_LIST_COGNITO_DOMAIN>>.env
+
+    # export JOBS_LIST_USER_POOL_ID=`aws cognito-idp list-user-pools --max-results 1 | jq -r '.UserPools | .[0].Id'`
+    # echo JOBS_LIST_USER_POOL_ID=$JOBS_LIST_USER_POOL_ID>>.env
+
+    # export JOBS_LIST_USER_POOL_CLIENT_ID=`aws cognito-idp list-user-pool-clients --user-pool-id $JOBS_LIST_USER_POOL_ID | jq -r '.UserPoolClients | .[0].ClientId'`
+    # echo JOBS_LIST_USER_POOL_CLIENT_ID=$JOBS_LIST_USER_POOL_CLIENT_ID>>.env
+
+    # export JOBS_LIST_USER_POOL_ARN=`aws cognito-idp describe-user-pool --user-pool-id $JOBS_LIST_USER_POOL_ID | jq -r '.UserPool.Arn'`
+    # echo JOBS_LIST_USER_POOL_ARN=$JOBS_LIST_USER_POOL_ARN>>.env
+
+    # export JOBS_LIST_ID_POOL_ID=`aws cognito-identity list-identity-pools --max-results 1 | jq -r '.IdentityPools | .[0].IdentityPoolId'`
+    # echo JOBS_LIST_ID_POOL_ID=$JOBS_LIST_ID_POOL_ID>>.env
+    # echo '#<<'>>.env
+
+# Given Cognito domain name base and user pool id:
 # create user pool domain.
 # set user pool registration and sign-in pages.
-#. ./cognito.sh setup
+. ./cognito.sh setup
 
 # create resources and functions
 SERVICES=(resources createJob updateJob)
