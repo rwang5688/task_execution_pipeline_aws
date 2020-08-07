@@ -8,7 +8,7 @@ custom:
   region: ${env:AWS_DEFAULT_REGION, 'us-west-2'}
   logDataBucket: ${env:JOBS_LIST_LOG_DATA_BUCKET}
   updateJobQueue: ${env:JOBS_LIST_UPDATE_JOB_QUEUE}
-  updateJobLogStreamQueue: ${env:JOBS_LIST_UPDATE_JOB_LOG_STREAM_QUEUE}
+  updateJobLogStreamQueue: ${env:JOBS_LIST_UPDATE_JOBS_LOG_STREAM_QUEUE}
   jobsTable: ${env:JOBS_LIST_JOBS_TABLE}
   dotenv:
     path: ../.env
@@ -53,17 +53,17 @@ provider:
       Resource: "arn:aws:dynamodb:${self:custom.region}:${self:custom.accountid}:*"
 
 functions:
-  createJob:
-    handler: createJob.createJob
+  updateJob:
+    handler: updateJob.updateJob
     role: arn:aws:iam::${self:custom.accountid}:role/jobs-list
     environment:
       ACCOUNT_ID: ${env:AWS_ACCOUNT_ID}
       REGION: ${env:AWS_DEFAULT_REGION, 'us-west-2'}
       LOG_DATA_BUCKET: ${env:JOBS_LIST_LOG_DATA_BUCKET}
       UPDATE_JOB_QUEUE: ${env:JOBS_LIST_UPDATE_JOB_QUEUE}
-      UPDATE_JOB_LOG-STREAM_QUEUE: ${env:JOBS_LIST_UPDATE_JOB_LOG_STREAM_QUEUE}
+      UPDATE_JOBS_LOG_STREAM_QUEUE: ${env:JOBS_LIST_UPDATE_JOBS_LOG_STREAM_QUEUE}
       JOBS_TABLE: ${env:JOBS_LIST_JOBS_TABLE}
-      STAGE: ${env:self:provider.stage}
+      STAGE: ${self:provider.stage}
     events:
       - sqs:
           arn: "arn:aws:sqs:${self:provider.region}:${self:custom.accountid}:${self:custom.updateJobQueue}"

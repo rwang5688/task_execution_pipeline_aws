@@ -19,7 +19,7 @@ def get_env_vars():
     if 'JOBS_LIST_PROCESS_JOB_QUEUE' in os.environ:
         queue_name = os.environ['JOBS_LIST_PROCESS_JOB_QUEUE']
 
-    # successfully got environment variables
+    # success
     return True
 
 
