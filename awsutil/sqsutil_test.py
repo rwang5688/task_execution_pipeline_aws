@@ -45,10 +45,15 @@ def main():
     print(f'MessageBody: {message_body}')
 
     message = sqsutil.receive_message(queue_url)
+    if message is None:
+        print('receive_message failed.  Exit.')
+        return
+
     success = sqsutil.delete_message(queue_url, message)
     if not success:
-        print('\ndelete_message failed.  Exit.')
+        print('delete_message failed.  Exit.')
         return
+
     print('\nReceived and deleted message:')
     print(message)
 
