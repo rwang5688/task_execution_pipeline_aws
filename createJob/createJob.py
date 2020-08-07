@@ -26,6 +26,51 @@ def preamble(event, context):
     return True
 
 
+def parse_event_record(event_record):
+    global job_tool
+    global job_source
+    global submitter_id
+    global submit_timestamp
+
+    event_body = eval(event_record['body'])
+    if event_body is None:
+        print('parse_event: event body is missing.')
+        return False
+
+    job = event_body['job']
+    if job is None:
+        print('parse_event: job is missing.')
+        return False
+
+    job_tool = job['job_tool']
+    if job_tool is None:
+        print('parse_message: job tool is missing.')
+        return False
+
+    job_source = job['job_source']
+    if job_source is None:
+        print('parse_message: job source is missing.')
+        return False
+
+    event_attributes = event_record['attributes']
+    if event_attributes is None:
+        print('parse_event: event attributes are missing.')
+        return False
+
+    submitter_id = event_attributes['SenderId']
+    if submitter_id is None:
+        print('parse_event: sender id is missing.')
+        return False
+
+    submit_timestamp = event_attributes['SentTimestamp']
+    if submit_timestamp is None:
+        print('parse_event: sent timestamp is missing.')
+        return False
+
+    # success
+    return True
+
+
 def send_message(queue_name, item):
     # get queue url
     sqsutil.list_queues()
@@ -76,21 +121,34 @@ def createJob(event, context):
     event_records = event['Records']
     for event_record in event_records:
         # debug: print event record
-        print('Event Record:')
+        print('Event record:')
         print(event_record)
 
+        # parse event record
+        success = parse_event_record(event_record)
+        if not success:
+            print('parse_event_record failed.  Next.')
+            continue
+
+        # debug: print job record attributes
+        print('Job record attributes:')
+        print(f'job_tool: {job_tool}')
+        print(f'job_source: {job_source}')
+        print(f'submitter_id: {submitter_id}')
+        print(f'submit_timestamp: {submit_timestamp}')
+
         # create job record
-        job_id = jobstable.create_job_record(jobs_table, event_record)
+        job_id = jobstable.create_job_record(jobs_table, job_tool, job_source, submitter_id, submit_timestamp)
         if job_id is None:
-            print('create_job_record failed.  Exit')
-            return False
+            print('create_job_record failed.  Next.')
+            continue
 
         # debug: get and print job record
         item = jobstable.get_job_record(jobs_table, job_id)
         if item is None:
-            print('get_job_record failed.  Exit')
-            return False
-        print('Job Record:')
+            print('get_job_record failed.  Next.')
+            continue
+        print('Job record:')
         print(item)
 
         # set process job queue name
@@ -101,8 +159,8 @@ def createJob(event, context):
         # send job context to process job queue
         success = send_message(queue_name, item)
         if not success:
-            print('send_message failed.  Exit.')
-            return False
+            print('send_message failed.  Next.')
+            continue
 
         # TO DO:
         # Start ECS task to process job!!!
@@ -111,8 +169,11 @@ def createJob(event, context):
         job_status = "started"
         job_logfile = ""
         success = jobstable.update_job_status(jobs_table, job_id, job_status, job_logfile)
+        if not success:
+            print('update_job_status failed.  Next.')
+            continue
 
-    # successfully processed all records
+    # success
     return True
 
 

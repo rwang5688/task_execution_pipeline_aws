@@ -23,18 +23,17 @@ def get_jobs_table():
     return jobs_table
 
 
-def create_job_record(jobs_table, event_record):
+def create_job_record(jobs_table, job_tool, job_source, submitter_id, submit_timestamp):
     # populate job record
     job_record = {}
     job_id = str(uuid.uuid4())
-    event_body = eval(event_record['body'])
     job_record['job_id'] = job_id
-    job_record['job_tool'] = event_body['job']['job_tool']
-    job_record['job_source'] = event_body['job']['job_source']
+    job_record['job_tool'] = job_tool
+    job_record['job_source'] = job_source
     job_record['job_status'] = 'created'
     job_record['job_logfile'] = ''
-    job_record['submitter_id'] = event_record['attributes']['SenderId']
-    job_record['submit_timestamp'] = event_record['attributes']['SentTimestamp']
+    job_record['submitter_id'] = submitter_id
+    job_record['submit_timestamp'] = submit_timestamp
     job_record['update_timestamp'] = time.time_ns() // 1000000
 
     # add to jobs table and return job id
