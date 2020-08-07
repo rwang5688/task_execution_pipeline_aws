@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-import sys
 import boto3
 from botocore.exceptions import ClientError
 import sqsutil
@@ -10,8 +9,8 @@ def main():
     import argparse
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('queue_name', help='The name of the queue to send.')
     parser.add_argument('file_name', help='The name of the message file to send and receive')
+    parser.add_argument('queue_name', help='The name of the queue to send.')
 
     args = parser.parse_args()
 
@@ -29,12 +28,21 @@ def main():
         return
 
     message_body = jsonutil.get_json_data(file_name)
+
+    # test pretty string: this is not used for sending
     message_body_pretty_string = jsonutil.get_pretty_string(message_body)
-    message_body_string = jsonutil.get_string(message_body)
-    message_id = sqsutil.send_message(queue_url, message_body_string)
-    print('\nMessageBody: (in pretty print)')
+    print('\nMessageBody: (pretty string)')
     print(message_body_pretty_string)
+
+    # test string: this is not used for sending
+    message_body_string = jsonutil.get_string(message_body)
+    print('\nMessageBody: (string)')
+    print(message_body_string)
+
+    # use str(message_body) for sending
+    message_id = sqsutil.send_message(queue_url, str(message_body))
     print(f'MessageId: {message_id}')
+    print(f'MessageBody: {message_body}')
 
     message = sqsutil.receive_message(queue_url)
     success = sqsutil.delete_message(queue_url, message)
@@ -42,7 +50,7 @@ def main():
         print('\ndelete_message failed.  Exit.')
         return
     print('\nReceived and deleted message:')
-    print(jsonutil.get_pretty_string(message))
+    print(message)
 
 
 if __name__ == '__main__':
