@@ -40,16 +40,17 @@ SERVICES=(resources createJob updateJob)
 deploy
 
 # create jobs-service API domain
-# domain
+#domain
 
 # deploy jobs-service API functions
 #SERVICES=(jobs-service)
 #deploy
 
 # pack frontend js into one file
-# deploy frontend app
 #cd frontend
 #npm run build
+
+# deploy frontend app
 #aws s3 sync dist/ s3://$JOBS_LIST_APPS_BUCKET
 #cd ..
 
