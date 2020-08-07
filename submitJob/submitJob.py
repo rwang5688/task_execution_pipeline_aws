@@ -76,8 +76,8 @@ def send_message(queue_name, job_tool, job_source):
     message_body = {
         "action": "submit",
         "job": {
-            "tool": job_tool,
-            "source": job_source
+            "job_tool": job_tool,
+            "job_source": job_source
         }
     }
     message_id = sqsutil.send_message(queue_url, str(message_body))
