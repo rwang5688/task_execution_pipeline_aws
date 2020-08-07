@@ -29,10 +29,13 @@ def receive_message(queue_name):
     queue_url = sqsutil.get_queue_url(queue_name)
     if queue_url is None:
         print(f'receive_message: {queue_name} does not exist.')
-        return False
+        return None
 
     # receive message
     message = sqsutil.receive_message(queue_url)
+    if message is None:
+        print('receive_message: cannot retrieve message.')
+        return None
     print('\nReceived message:')
     print(message)
 
@@ -42,8 +45,8 @@ def receive_message(queue_name):
 
 def parse_message(message):
     global job_id
-    global source_name
-    global tool_name
+    global job_tool
+    global job_source
 
     message_body = eval(message['Body'])
     if message_body is None:
@@ -51,49 +54,49 @@ def parse_message(message):
         return False
 
     job = message_body['job']
-    job_id = job['id']
+    if job is None:
+        print('parse_message: job is missing.')
+        return False
+
+    job_id = job['job_id']
     if job_id is None:
         print('parse_message: job id is missing.')
         return False
 
-    source_name = job['source']
-    if source_name is None:
-        print('parse_message: source name is missing.')
+    job_tool = job['job_tool']
+    if job_tool is None:
+        print('parse_message: job tool is missing.')
         return False
 
-    tool_name = job['tool']
-    if tool_name is None:
-        print('parse_message: tool name is missing.')
+    job_source = job['job_source']
+    if job_source is None:
+        print('parse_message: job source is missing.')
         return False
 
-    # successfully parsed message
+    # success
     return True
 
 
-def download_source(bucket_name, source_name):
+def download_source_blob(bucket_name, job_source):
     # get bucket
     s3util.list_buckets()
     bucket = s3util.get_bucket(bucket_name)
     if bucket is None:
-        printf(f'Bucket {bucket_name} does not exist.')
-        return False
+        printf(f'download_source_file: Bucket {bucket_name} does not exist.')
+        return None
 
     # download file
-    file_name = source_name
-    success = s3util.download_file(bucket_name, source_name, file_name)
+    source_blob = job_source
+    success = s3util.download_file(bucket_name, job_source, source_blob)
     if not success:
-        printf(f'Failed to download source file: {source_name}.')
-        return False
+        printf(f'download_source_file: Failed to download job source {job_source}.')
+        return None
 
-    # successfully uploaded file
-    return True
+    # success
+    return source_blob
 
 
-def extract_source_files(source_name):
-    process = subprocess.Popen(['tar', '-xvf', source_name],
-                            stdout=subprocess.PIPE,
-                            universal_newlines=True)
-
+def read_process_stdout(process):
     while True:
         output = process.stdout.readline()
         print(output.strip())
@@ -106,28 +109,26 @@ def extract_source_files(source_name):
                 print(output.strip())
             break
 
-    # finished extracting source files
+
+def extract_source_files(source_blob):
+    # command: "$ tar -xvf $(job_source)"
+    process = subprocess.Popen(['tar', '-xvf', source_blob],
+                            stdout=subprocess.PIPE,
+                            universal_newlines=True)
+    read_process_stdout(process)
+
+    # success
     return True
 
 
-def run_tool(tool_name, job_id):
-    process = subprocess.Popen([tool_name, 'input/preprocess/*.i', 'jobLog.py', job_id],
+def execute_tool(job_tool, job_id):
+    # command: "$ $(job_tool) source/preprocess/*.i jobLog.py $(job_id)"
+    process = subprocess.Popen([job_tool, 'source/preprocess/*.i', 'jobLog.py', job_id],
                             stdout=subprocess.PIPE,
                             universal_newlines=True)
+    read_process_stdout(process)
 
-    while True:
-        output = process.stdout.readline()
-        print(output.strip())
-        # Do something else
-        return_code = process.poll()
-        if return_code is not None:
-            print('RETURN CODE', return_code)
-            # Process has finished, read rest of the output
-            for output in process.stdout.readlines():
-                print(output.strip())
-            break
-
-    # finished extracting source files
+    # success
     return True
 
 
@@ -152,7 +153,7 @@ def main():
         print('get_env_vars failed.  Exit.')
         return
 
-    print('\nEnv vars:')
+    print('Env vars:')
     print(f'bucket_name: {bucket_name}')
     print(f'queue_name: {queue_name}')
 
@@ -161,7 +162,7 @@ def main():
         print('receive_message failed.  Exit.')
         return
 
-    print('\nMessage:')
+    print('Message:')
     print(message)
 
     success = parse_message(message)
@@ -169,31 +170,34 @@ def main():
         print('parse_message failed.  Exit.')
         return
 
-    print('\nBody attributes:')
+    print('Body.job:')
     print(f'job_id: {job_id}')
-    print(f'source_name: {source_name}')
-    print(f'tool_name: {tool_name}')
+    print(f'job_tool: {job_tool}')
+    print(f'job_source: {job_source}')
 
-    success = download_source(bucket_name, source_name)
-    if not success:
-        print('upload_source failed.  Exit.')
+    source_blob = download_source_blob(bucket_name, job_source)
+    if source_blob is None:
+        print('download_source_blob failed.  Exit.')
         return
 
-    success = extract_source_files(source_name)
+    print(f'source_blob: {source_blob}')
+
+    success = extract_source_files(source_blob)
     if not success:
-        print('extract_source_files failes.  Exit.')
+        print('extract_source_files failed.  Exit.')
         return
 
-    success = run_tool(tool_name, job_id)
+    success = execute_tool(job_tool, job_id)
     if not success:
-        print('run_tool failed.  Exit.')
+        print('execute_tool failed.  Exit.')
         return
 
     success = delete_message(queue_name, message)
     if not success:
         print('delete_message failed.  Exit.')
+        return
 
-    # if we got this far, we are really done ...
+    # success
     print('\nReceived and deleted message:')
     print(message)
 

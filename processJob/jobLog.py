@@ -11,17 +11,17 @@ def parse_arguments():
     import argparse
     global job_id
     global job_status
-    global logfile_name
+    global job_logfile
 
     parser = argparse.ArgumentParser()
     parser.add_argument('job_id', help='The id of the job to update.')
     parser.add_argument('job_status', help='The status of the job to update.')
-    parser.add_argument('logfile_name', help='The name of the log file to update.')
+    parser.add_argument('job_logfile', help='The logfile of the job to update.')
 
     args = parser.parse_args()
     job_id = args.job_id
     job_status = args.job_status
-    logfile_name = args.logfile_name
+    job_logfile = args.job_logfile
 
     if job_id is None:
         print('parse_arguments: job_id is missing.')
@@ -31,8 +31,8 @@ def parse_arguments():
         print('parse_arguments: job_status is missing.')
         return False
 
-    if logfile_name is None:
-        print('parse_arguments: logfile_name is missing.')
+    if job_logfile is None:
+        print('parse_arguments: job_logfile is missing.')
         return False
 
     # success
@@ -51,31 +51,31 @@ def get_env_vars():
     if 'JOBS_LIST_UPDATE_JOB_QUEUE' in os.environ:
         queue_name = os.environ['JOBS_LIST_UPDATE_JOB_QUEUE']
 
-    # successfully got environment variables
+    # success
     return True
 
 
-def upload_logfile(bucket_name, logfile_name):
+def upload_logfile(bucket_name, job_logfile):
     # get bucket
     s3util.list_buckets()
     bucket = s3util.get_bucket(bucket_name)
     if bucket is None:
-        printf(f'upload_log: Bucket {bucket_name} does not exist.')
+        printf(f'upload_logfile: Bucket {bucket_name} does not exist.')
         return False
 
     # upload file
     s3util.list_files(bucket["Name"])
-    success = s3util.upload_file(logfile_name, bucket["Name"])
+    success = s3util.upload_file(job_logfile, bucket["Name"])
     if not success:
-        printf(f'upload_log: Failed to upload log file {logfile_name}.')
+        printf(f'upload_logfile: Failed to upload log file {job_logfile}.')
         return False
     s3util.list_files(bucket["Name"])
 
-    # successfully uploaded file
+    # success
     return True
 
 
-def send_message(queue_name, job_id, job_status, logfile_name):
+def send_message(queue_name, job_id, job_status, job_logfile):
     # get queue url
     sqsutil.list_queues()
     queue_url = sqsutil.get_queue_url(queue_name)
@@ -87,9 +87,9 @@ def send_message(queue_name, job_id, job_status, logfile_name):
     message_body = {
         "action": "update",
         "job": {
-            "id": job_id,
+            "job_id": job_id,
             "job_status": job_status,
-            "logfile": logfile_name
+            "job_logfile": job_logfile
         }
     }
     message_id = sqsutil.send_message(queue_url, str(message_body))
@@ -98,10 +98,13 @@ def send_message(queue_name, job_id, job_status, logfile_name):
 
     # receive message
     message = sqsutil.receive_message(queue_url)
-    print('\nReceived message:')
+    if message is None:
+        print(f'send_message: cannot retrieve sent messge.')
+        print(f'(When downstream Lambda function is running, missing message is expected.)')
+    print('Received message:')
     print(message)
 
-    # successfully sent and received message
+    # success
     return True
 
 
@@ -113,28 +116,28 @@ def main():
         print('parse_arguments failed.  Exit.')
         return
 
-    print('\nargs:')
+    print('args:')
     print(f'job_id = {job_id}')
     print(f'job_status = {job_status}')
-    print(f'logfile_name = {logfile_name}')
+    print(f'job_logfile = {job_logfile}')
 
     success = get_env_vars()
     if not success:
         print('get_env_vars failed.  Exit.')
         return
 
-    print('\nEnv vars:')
+    print('Env vars:')
     print(f'bucket_name: {bucket_name}')
     print(f'queue_name: {queue_name}')
 
-    success = upload_logfile(bucket_name, logfile_name)
+    success = upload_logfile(bucket_name, job_logfile)
     if not success:
         print('upload_logfile failed.  Exit.')
         return
 
-    success = send_message(queue_name, job_id, job_status, logfile_name)
+    success = send_message(queue_name, job_id, job_status, job_logfile)
     if not success:
-        print('upload_log failed.  Exit.')
+        print('send_message failed.  Exit.')
         return
 
 
