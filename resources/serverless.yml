@@ -1,9 +1,7 @@
 service: jobs-list-resources
 frameworkVersion: ">=1.30.0"
 plugins:
-#  - serverless-domain-manager
   - serverless-dotenv-plugin
-#  - serverless-offline
 custom:
   accountid: ${env:AWS_ACCOUNT_ID}
   region: ${env:AWS_DEFAULT_REGION, 'us-west-2'}
@@ -15,18 +13,8 @@ custom:
   updateJobQueue: ${env:JOBS_LIST_UPDATE_JOB_QUEUE}
   updateJobsLogStreamQueue: ${env:JOBS_LIST_UPDATE_JOBS_LOG_STREAM_QUEUE}
   jobsTable: ${env:JOBS_LIST_JOBS_TABLE}
-  domain: ${env:JOBS_LIST_DOMAIN}
   dotenv:
     path: ../.env
-#  customDomain:
-#    domainName: 'jobslistapi.${self:custom.domain}'
-#    stage: ${self:provider.stage}
-#    basePath: api
-#    certificateName: '*.${self:custom.domain}'
-#    createRoute53Record: true
-#    endpointType: regional
-#  serverless-offline:
-#    port: 3000
 
 provider:
   name: aws
