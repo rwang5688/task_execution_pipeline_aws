@@ -24,12 +24,13 @@ int execute_workload(int argc, char **argv)
 
 
 /**
- * Invoke callback
+ * Execute callback
  */
-int invoke_callback(string callback, string jobId, string jobStatus, string logFile)
+int execute_callback(string callback, string jobId, string jobStatus, string jobLogfile)
 {
-    string command = "python " + callback + " " + jobId + " " + jobStatus + " " + logFile;
+    string command = "python " + callback + " " + jobId + " " + jobStatus + " " + jobLogfile;
     cout << "Executing: " << command << endl;
+    cout.flush();
     system(command.c_str());
 
     return SUCCESS;
@@ -49,23 +50,25 @@ int main(int argc, char **argv)
     }
     cout.flush();
 
-    // simulate workload when we have at least 4 arguments
+    // execute workload if we have enough arguments
     if (argc >= 4) {
         int success = SUCCESS;
+
+        // execute workload
         success = execute_workload(argc, argv);
         if (success != SUCCESS) {
             cerr << "execute_workload failed.  Exit." << endl;
             exit(ERROR);
         }
 
-        // invoke callback function with jobId and logFile
+        // execute callback function with jobId, jobStatus, jobLogfile
         string callback = argv[argc-2];
         string jobId = argv[argc-1];
         string jobStatus = "complete";
-        string logFile = "log.v";
-        success = invoke_callback(callback, jobId, jobStatus, logFile);
+        string jobLogfile = "log.v";
+        success = execute_callback(callback, jobId, jobStatus, jobLogfile);
         if (success != SUCCESS) {
-            cerr << "invoke_callback failed.  Exit." << endl;
+            cerr << "execute_callback failed.  Exit." << endl;
             exit(ERROR);
         }
     }

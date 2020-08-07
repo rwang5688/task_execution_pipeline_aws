@@ -60,7 +60,7 @@ def upload_source(bucket_name, job_source):
         return False
     s3util.list_files(bucket["Name"])
 
-    # successfully uploaded file
+    # success
     return True
 
 
@@ -102,7 +102,7 @@ def main():
         print('parse_arguments failed.  Exit.')
         return
 
-    print('\nargs:')
+    print('args:')
     print(f'job_tool = {job_tool}')
     print(f'job_source = {job_source}')
     print(f'bucket_name = {bucket_name}')
