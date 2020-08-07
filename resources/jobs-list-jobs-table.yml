@@ -5,11 +5,11 @@ Resources:
     Properties:
       AttributeDefinitions:
         -
-          AttributeName: id
+          AttributeName: job_id
           AttributeType: S
       KeySchema:
         -
-          AttributeName: id
+          AttributeName: job_id
           KeyType: HASH
       ProvisionedThroughput:
         ReadCapacityUnits: 1

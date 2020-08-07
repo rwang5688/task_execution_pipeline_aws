@@ -84,12 +84,15 @@ def send_message(queue_name, job_tool, job_source):
     print(f'MessageId: {message_id}')
     print(f'MessageBody: {message_body}')
 
-    # receive message
+    # debug: receive message
     message = sqsutil.receive_message(queue_url)
-    print('\nReceived message:')
+    if message is None:
+        print(f'send_message: cannot retrieve sent messge.')
+        print(f'(When downstream Lambda function is running, missing message is expected.)')
+    print('Received message:')
     print(message)
 
-    # successfully sent and received message
+    # success
     return True
 
 
@@ -112,7 +115,7 @@ def main():
 
     success = send_message(queue_name, job_tool, job_source)
     if not success:
-        print('upload_source failed.  Exit.')
+        print('send_message failed.  Exit.')
         return
 
 
