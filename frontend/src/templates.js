@@ -6,14 +6,14 @@ function jobItemTpl (item) {
   /*jshint -W101 */
   return `
     <div id="${item.job_id}" class="row list-group-item d-flex justify-content-between align-items-center">
-      <div class="col-sm-1"></div>
+      <div id="job_id" class="col-sm-2">${item.job_id}</div>
       <div id="job_tool" class="col-sm-2">${item.job_tool}</div>
-      <div id="job_source" class="col-sm-2 ">${item.job_source}</div>
+      <div id="job_source" class="col-sm-2">${item.job_source}</div>
       <div id="job_status" class="col-sm-2">${item.job_status}</div>
-      <div id="job_logfile" class="col-sm-2 ">${item.job_logfile}</div>
-      <div id="submitter_id" class="col-sm-3">${item.submitter_id}</div>
-      <div id="submit_timestamp" class="col-sm-3 ">${item.submit_timestamp}</div>
-      <div id="update_timestamp" class="col-sm-3">${item.update_timestamp}</div>
+      <div id="job_logfile" class="col-sm-2">${item.job_logfile}</div>
+      <div id="submitter_id" class="col-sm-2">${item.submitter_id}</div>
+      <div id="submit_timestamp" class="col-sm-2">${item.submit_timestamp}</div>
+      <div id="update_timestamp" class="col-sm-2">${item.update_timestamp}</div>
       <div id="${item.job_id}" class="col-sm-1 badge badge-danger badge-pill job-item-delete">Delete</div>
       <div id="${item.job_id}" class="col-sm-1 badge badge-primary badge-pill job-item-edit">Edit</div>
     </div>`;
@@ -32,14 +32,14 @@ function jobsListTpl (items) {
   return `
   <div id="jobs-list">
     <div class="row list-group-item d-flex justify-content-between align-items-center">
-      <div class="col-sm-1">Job Id</div>
+      <div class="col-sm-2">Job Id</div>
       <div class="col-sm-2">Tool</div>
       <div class="col-sm-2">Source</div>
       <div class="col-sm-2">Status</div>
       <div class="col-sm-2">Logfile</div>
-      <div class="col-sm-3">Submitter Id</div>
-      <div class="col-sm-3">Submit Timestamp</div>
-      <div class="col-sm-3">Update Timestamp</div>
+      <div class="col-sm-2">Submitter Id</div>
+      <div class="col-sm-2">Submit Timestamp</div>
+      <div class="col-sm-2">Update Timestamp</div>
       <div class="col-sm-1"></div>
       <div class="col-sm-1"></div>
     </div>

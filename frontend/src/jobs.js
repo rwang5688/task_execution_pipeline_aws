@@ -2,8 +2,8 @@
 
 import $ from 'jquery';
 import {view} from './jobs-view';
-const todo = {activate};
-export {todo};
+const jobs = {activate};
+export {jobs};
 
 /*jshint -W101 */
 const API_ROOT = `https://jobslistapi.${process.env.JOBS_LIST_DOMAIN}/api/jobs/`;
