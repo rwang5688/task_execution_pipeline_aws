@@ -1,4 +1,4 @@
-service: jobs-service
+service: jobs-list-service
 frameworkVersion: ">=1.30.0"
 plugins:
   - serverless-offline
@@ -12,7 +12,7 @@ custom:
   dotenv:
     path: ../.env
   customDomain:
-    domainName: 'jobsapi.${self:custom.domain}'
+    domainName: 'jobslistapi.${self:custom.domain}'
     stage: ${self:provider.stage}
     basePath: api
     certificateName: '*.${self:custom.domain}'

@@ -15,7 +15,7 @@ function remove () {
 
 
 function domain () {
-  cd resources
+  cd jobs-service
   serverless delete_domain
   cd ..
 }
