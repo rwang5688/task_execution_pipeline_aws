@@ -10,5 +10,7 @@ RUN pip3 install --upgrade pip
 RUN pip3 install --no-cache-dir boto3
 
 RUN apt install -y g++
-
 RUN make
+
+RUN /bin/sh env.sh
+
