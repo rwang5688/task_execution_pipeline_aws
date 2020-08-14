@@ -1,11 +1,19 @@
+import os
 import logging
 import boto3
 from botocore.exceptions import ClientError
 
 
+def get_sqs_client():
+    region_name = 'us-west-2'
+    if 'AWS_DEFAULT_REGION' in os.environ:
+        region_name = os.environ['AWS_DEFAULT_REGION']
+    sqs = boto3.client('sqs', region_name=region_name)
+    return sqs
+
+
 def get_queue_url(queue_name):
-    # Create SQS client
-    sqs = boto3.client('sqs')
+    sqs = get_sqs_client()
 
     # Make sure queue name exists
     response = sqs.list_queues()
@@ -21,8 +29,7 @@ def get_queue_url(queue_name):
 
 
 def list_queues():
-    # Create SQS client
-    sqs = boto3.client('sqs')
+    sqs = get_sqs_client()
 
     # List SQS queues
     response = sqs.list_queues()
@@ -35,8 +42,7 @@ def list_queues():
 
 
 def send_message(queue_url, message_body):
-    # Create SQS client
-    sqs = boto3.client('sqs')
+    sqs = get_sqs_client()
 
     # Send message to SQS queue
     response = sqs.send_message(QueueUrl=queue_url, MessageBody=message_body)
@@ -44,8 +50,7 @@ def send_message(queue_url, message_body):
 
 
 def receive_message(queue_url):
-    # Create SQS client
-    sqs = boto3.client('sqs')
+    sqs = get_sqs_client()
 
     # Receive message from SQS queue
     response = sqs.receive_message(
@@ -68,8 +73,7 @@ def receive_message(queue_url):
 
 
 def delete_message(queue_url, message):
-    # Create SQS client
-    sqs = boto3.client('sqs')
+    sqs = get_sqs_client()
 
     # Get receipt handle
     if message is None:
