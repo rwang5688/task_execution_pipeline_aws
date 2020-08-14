@@ -5,10 +5,24 @@ from botocore.exceptions import ClientError
 
 
 def get_s3_client():
+    aws_access_key_id = "AKIA2GJJEXXSJZPSMU6C"
+    if 'AWS_ACCESS_KEY' in os.environ:
+        aws_access_key_id = os.environ['AWS_ACCESS_KEY']
+    aws_secret_access_key = "1X7F/mP2yebPYWbeueJg4ZREZF+yGZKafUe/1iS5"
+    if 'AWS_SECRET_ACCESS_KEY' in os.environ:
+        aws_secret_access_key = os.environ['AWS_SECRET_ACCESS_KEY']
     region_name = 'us-west-2'
     if 'AWS_DEFAULT_REGION' in os.environ:
         region_name = os.environ['AWS_DEFAULT_REGION']
-    s3 = boto3.client('s3', region_name=region_name)
+
+    print(f'region_name={region_name}')
+    print(f'aws_access_key_id={aws_access_key_id}')
+    print(f'aws_secret_access_key={aws_secret_access_key}')
+
+    s3 = boto3.client('s3',
+        aws_access_key_id = aws_access_key_id,
+        aws_secret_access_key = aws_secret_access_key,
+        region_name=region_name)
     return s3
 
 

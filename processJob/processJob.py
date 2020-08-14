@@ -123,7 +123,8 @@ def extract_source_files(source_blob):
 
 def execute_tool(job_tool, job_id):
     # command: "$ $(job_tool) source/preprocess/*.i jobLog.py $(job_id)"
-    process = subprocess.Popen([job_tool, 'source/preprocess/*.i', 'jobLog.py', job_id],
+    prog = './' + job_tool
+    process = subprocess.Popen([prog, 'source/preprocess/*.i', 'jobLog.py', job_id],
                             stdout=subprocess.PIPE,
                             universal_newlines=True)
     read_process_stdout(process)
