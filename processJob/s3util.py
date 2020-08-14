@@ -5,10 +5,10 @@ from botocore.exceptions import ClientError
 
 
 def get_s3_client():
-    aws_access_key_id = "AKIA2GJJEXXSJZPSMU6C"
+    aws_access_key_id = ""
     if 'AWS_ACCESS_KEY' in os.environ:
         aws_access_key_id = os.environ['AWS_ACCESS_KEY']
-    aws_secret_access_key = "1X7F/mP2yebPYWbeueJg4ZREZF+yGZKafUe/1iS5"
+    aws_secret_access_key = ""
     if 'AWS_SECRET_ACCESS_KEY' in os.environ:
         aws_secret_access_key = os.environ['AWS_SECRET_ACCESS_KEY']
     region_name = 'us-west-2'
