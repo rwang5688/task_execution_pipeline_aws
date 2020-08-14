@@ -28,7 +28,7 @@ int execute_workload(int argc, char **argv)
  */
 int execute_callback(string callback, string jobId, string jobStatus, string jobLogfile)
 {
-    string command = "python " + callback + " " + jobId + " " + jobStatus + " " + jobLogfile;
+    string command = "python3 " + callback + " " + jobId + " " + jobStatus + " " + jobLogfile;
     cout << "Executing: " << command << endl;
     cout.flush();
     system(command.c_str());
