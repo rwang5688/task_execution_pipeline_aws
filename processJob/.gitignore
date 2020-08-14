@@ -138,6 +138,7 @@ dmypy.json
 cython_debug/
 
 # processJob: executables and outputs
+aws-admin_accessKeys.csv
 xvsa
 xvsa.exe
 *.tar.gz
