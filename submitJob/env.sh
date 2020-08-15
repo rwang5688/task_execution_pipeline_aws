@@ -1,3 +1,4 @@
+#!/bin/bash
 # AWS specific environment variables
 export AWS_ACCOUNT_ID=700702834148
 export AWS_DEFAULT_REGION=us-west-2
