@@ -1,7 +1,6 @@
 #!/bin/bash
 AWS_ACCOUNT_ID=700702834148
 AWS_DEFAULT_REGION=us-west-2
-AWS_REGION=us-west-2
 
 # environment definitons for to-do-list application
 TARGET_REGION=us-west-2
