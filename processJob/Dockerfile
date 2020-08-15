@@ -14,11 +14,14 @@ WORKDIR /processJob
 # compile XVSA mock
 RUN make
 
-# install AWS CLI V2 and configure AWS credentials
+# download and install AWS CLI V2
 RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
 RUN unzip awscliv2.zip
 RUN ./aws/install
+
+# configure AWS credentials
 RUN aws configure import –csv file://aws-admin_accessKeys.csv
 
-# set jobs-list-aws environment variables
-RUN /bin/sh env.sh
+# set entry point
+ENTRYPOINT ["/bin/sh", "processJob.sh"]
+
