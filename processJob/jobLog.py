@@ -7,6 +7,22 @@ import s3util
 import sqsutil
 
 
+def get_env_vars():
+    global bucket_name
+    global queue_name
+
+    bucket_name = ''
+    if 'JOBS_LIST_LOG_DATA_BUCKET' in os.environ:
+        bucket_name = os.environ['JOBS_LIST_LOG_DATA_BUCKET']
+
+    queue_name = ''
+    if 'JOBS_LIST_UPDATE_JOB_QUEUE' in os.environ:
+        queue_name = os.environ['JOBS_LIST_UPDATE_JOB_QUEUE']
+
+    # success
+    return True
+
+
 def parse_arguments():
     import argparse
     global job_id
@@ -34,22 +50,6 @@ def parse_arguments():
     if job_logfile is None:
         print('parse_arguments: job_logfile is missing.')
         return False
-
-    # success
-    return True
-
-
-def get_env_vars():
-    global bucket_name
-    global queue_name
-
-    bucket_name = 'jobs-list-log-data-bucket-rwang5688'
-    if 'JOBS_LIST_LOG_DATA_BUCKET' in os.environ:
-        bucket_name = os.environ['JOBS_LIST_LOG_DATA_BUCKET']
-
-    queue_name = 'jobs-list-update-job-queue-rwang5688'
-    if 'JOBS_LIST_UPDATE_JOB_QUEUE' in os.environ:
-        queue_name = os.environ['JOBS_LIST_UPDATE_JOB_QUEUE']
 
     # success
     return True
@@ -111,6 +111,15 @@ def send_message(queue_name, job_id, job_status, job_logfile):
 def main():
     print('\nStarting jobLog.py ...')
 
+    success = get_env_vars()
+    if not success:
+        print('get_env_vars failed.  Exit.')
+        return
+
+    print('Env vars:')
+    print(f'bucket_name: {bucket_name}')
+    print(f'queue_name: {queue_name}')
+
     success = parse_arguments()
     if not success:
         print('parse_arguments failed.  Exit.')
@@ -120,15 +129,6 @@ def main():
     print(f'job_id = {job_id}')
     print(f'job_status = {job_status}')
     print(f'job_logfile = {job_logfile}')
-
-    success = get_env_vars()
-    if not success:
-        print('get_env_vars failed.  Exit.')
-        return
-
-    print('Env vars:')
-    print(f'bucket_name: {bucket_name}')
-    print(f'queue_name: {queue_name}')
 
     success = upload_logfile(bucket_name, job_logfile)
     if not success:
