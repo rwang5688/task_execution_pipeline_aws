@@ -151,7 +151,7 @@ def createJob(event, context):
         print(item)
 
         # set process job queue name
-        queue_name = 'jobs-list-process-job-queue-rwang5688'
+        queue_name = ''
         if 'PROCESS_JOB_QUEUE' in os.environ:
             queue_name = os.environ['PROCESS_JOB_QUEUE']
 

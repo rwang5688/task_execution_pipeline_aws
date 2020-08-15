@@ -9,7 +9,7 @@ def get_jobs_table():
     dynamodb = boto3.resource('dynamodb')
 
     # set jobs table name
-    jobs_table_name = 'jobs-list-jobs-table-rwang5688-dev'
+    jobs_table_name = ''
     if 'JOBS_TABLE' in os.environ:
         if 'STAGE' in os.environ:
             jobs_table_name = os.environ['JOBS_TABLE'] + '-' + os.environ['STAGE']
