@@ -1,28 +1,38 @@
-#!/usr/bin/env python
+import os
 import boto3
 from botocore.exceptions import ClientError
 import s3util
 import sqsutil
 
 
+def get_env_vars():
+    global bucket_name
+    global queue_name
+
+    bucket_name = ''
+    if 'JOBS_LIST_SOURCE_DATA_BUCKET' in os.environ:
+        bucket_name = os.environ['JOBS_LIST_SOURCE_DATA_BUCKET']
+
+    queue_name = ''
+    if 'JOBS_LIST_SUBMIT_JOB_QUEUE' in os.environ:
+        queue_name = os.environ['JOBS_LIST_SUBMIT_JOB_QUEUE']
+
+    # success
+    return True
+
+
 def parse_arguments():
     import argparse
     global job_tool
     global job_source
-    global bucket_name
-    global queue_name
 
     parser = argparse.ArgumentParser()
     parser.add_argument('job_tool', help='The name of the tool to run.')
     parser.add_argument('job_source', help='The name of the source package to run.')
-    parser.add_argument('bucket_name', help='The name of the bucket to upload source.')
-    parser.add_argument('queue_name', help='The name of the queue to send message.')
 
     args = parser.parse_args()
     job_tool = args.job_tool
     job_source = args.job_source
-    bucket_name = args.bucket_name
-    queue_name = args.queue_name
 
     if job_tool is None:
         print('parse_arguments: job_tool is missing.')
@@ -30,14 +40,6 @@ def parse_arguments():
 
     if job_source is None:
         print('parse_arguments: job_source is missing.')
-        return False
-
-    if bucket_name is None:
-        print('parse_arguments: bucket_name is missing.')
-        return False
-
-    if queue_name is None:
-        print('parse_arguments: queue_name is missing.')
         return False
 
     # success
@@ -97,16 +99,25 @@ def send_message(queue_name, job_tool, job_source):
 
 
 def main():
+    print('\nStarting submitJob.py ...')
+
+    success = get_env_vars()
+    if not success:
+        print('get_env_vars failed.  Exit.')
+        return
+
+    print('Env vars:')
+    print(f'bucket_name: {bucket_name}')
+    print(f'queue_name: {queue_name}')
+
     success = parse_arguments()
     if not success:
         print('parse_arguments failed.  Exit.')
         return
 
-    print('args:')
+    print('Args:')
     print(f'job_tool = {job_tool}')
     print(f'job_source = {job_source}')
-    print(f'bucket_name = {bucket_name}')
-    print(f'queue_name = {queue_name}')
 
     success = upload_source(bucket_name, job_source)
     if not success:
