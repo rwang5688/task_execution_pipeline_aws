@@ -139,7 +139,7 @@ def updateJob(event, context):
         print(item)
 
         # set update jobs log stream queue name
-        queue_name = 'jobs-list-update-jobs-log-stream-queue-rwang5688'
+        queue_name = ''
         if 'UPDATE_JOBS_LOG_STREAM_QUEUE' in os.environ:
             queue_name = os.environ['UPDATE_JOBS_LOG_STREAM_QUEUE']
 

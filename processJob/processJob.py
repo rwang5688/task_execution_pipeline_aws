@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 import os
 import subprocess
 import boto3
@@ -11,11 +10,11 @@ def get_env_vars():
     global bucket_name
     global queue_name
 
-    bucket_name = 'jobs-list-source-data-bucket-rwang5688'
+    bucket_name = ''
     if 'JOBS_LIST_SOURCE_DATA_BUCKET' in os.environ:
         bucket_name = os.environ['JOBS_LIST_SOURCE_DATA_BUCKET']
 
-    queue_name = 'jobs-list-process-job-queue-rwang5688'
+    queue_name = ''
     if 'JOBS_LIST_PROCESS_JOB_QUEUE' in os.environ:
         queue_name = os.environ['JOBS_LIST_PROCESS_JOB_QUEUE']
 
