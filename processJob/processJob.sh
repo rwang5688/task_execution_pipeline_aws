@@ -1,5 +1,7 @@
 #!/bin/bash
+# set env vars
 . ./env.sh
-. ./checkenv.sh
+
+# execute script
 python3 ./processJob.py
 

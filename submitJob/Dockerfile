@@ -5,7 +5,6 @@ RUN apt update -y
 RUN apt install -y python3.8 python3-pip python3.8-dev
 RUN pip3 install --upgrade pip
 RUN pip3 install --no-cache-dir boto3
-RUN apt install -y g++
 
 # download and install AWS CLI V2
 RUN apt install -y curl unzip
@@ -14,16 +13,13 @@ RUN unzip awscliv2.zip
 RUN ./aws/install
 
 # create working directory
-ADD . /processJob
-WORKDIR /processJob
-
-# compile XVSA mock
-RUN make
+ADD . /submitJob
+WORKDIR /submitJob
 
 # import AWS credentials
 RUN aws configure import --csv "file://aws-admin_accessKeys.csv"
 RUN cat ~/.aws/credentials
 
 # set entry point
-ENTRYPOINT ["/bin/sh", "processJob.sh"]
+ENTRYPOINT ["/bin/sh", "submitJob.sh"]
 
