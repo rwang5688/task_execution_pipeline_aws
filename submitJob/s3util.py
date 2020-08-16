@@ -10,7 +10,8 @@ def get_s3_client():
         region_name = os.environ['AWS_DEFAULT_REGION']
     print(f'get_s3_client: region_name={region_name}')
 
-    s3 = boto3.client('s3',
+    session = boto3.Session(profile_name='aws-admin')
+    s3 = session.client('s3',
         region_name=region_name)
     return s3
 

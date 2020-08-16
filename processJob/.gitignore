@@ -137,7 +137,7 @@ dmypy.json
 # Cython debug symbols
 cython_debug/
 
-# processJob: executables and outputs
+# processJob: credentials, executables, outputs
 aws-admin_accessKeys.csv
 xvsa
 xvsa.exe
