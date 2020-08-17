@@ -6,8 +6,8 @@ from botocore.exceptions import ClientError
 
 def get_sqs_client():
     region_name = ''
-    if 'AWS_DEFAULT_REGION' in os.environ:
-        region_name = os.environ['AWS_DEFAULT_REGION']
+    if 'TARGET_REGION' in os.environ:
+        region_name = os.environ['TARGET_REGION']
     print(f'get_sqs_client: region_name={region_name}')
 
     session = boto3.Session(profile_name='aws-admin')

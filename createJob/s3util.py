@@ -6,8 +6,8 @@ from botocore.exceptions import ClientError
 
 def get_s3_client():
     region_name = ''
-    if 'AWS_DEFAULT_REGION' in os.environ:
-        region_name = os.environ['AWS_DEFAULT_REGION']
+    if 'TARGET_REGION' in os.environ:
+        region_name = os.environ['TARGET_REGION']
     print(f'get_s3_client: region_name={region_name}')
 
     s3 = boto3.client('s3',

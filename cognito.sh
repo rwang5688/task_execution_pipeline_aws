@@ -6,7 +6,7 @@
 case $1 in
   setup)
     # echo '#>>'>>.env
-    # export JOBS_LIST_COGNITO_DOMAIN=$JOBS_LIST_COGNITO_DOMAIN_BASE.auth.us-west-2.amazoncognito.com
+    # export JOBS_LIST_COGNITO_DOMAIN=$JOBS_LIST_COGNITO_DOMAIN_BASE.auth.$TARGET_REGION.amazoncognito.com
     # echo JOBS_LIST_COGNITO_DOMAIN=$JOBS_LIST_COGNITO_DOMAIN>>.env
 
     # export JOBS_LIST_USER_POOL_ID=`aws cognito-idp list-user-pools --max-results 1 | jq -r '.UserPools | .[0].Id'`
