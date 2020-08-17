@@ -1,7 +1,7 @@
 #!/bin/bash
 # AWS specific environment variables
 export AWS_ACCOUNT_ID=700702834148
-export AWS_DEFAULT_REGION=us-west-2
+export TARGET_REGION=us-west-2
 
 # jobs-list workflow and database specific environment variables
 export JOBS_LIST_SOURCE_DATA_BUCKET=jobs-list-source-data-bucket-rwang5688

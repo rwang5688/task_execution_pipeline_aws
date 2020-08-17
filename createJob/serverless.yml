@@ -5,7 +5,7 @@ plugins:
   - serverless-python-requirements
 custom:
   accountid: ${env:AWS_ACCOUNT_ID}
-  region: ${env:AWS_DEFAULT_REGION, 'us-west-2'}
+  region: ${env:TARGET_REGION}
   sourceDataBucket: ${env:JOBS_LIST_SOURCE_DATA_BUCKET}
   submitJobQueue: ${env:JOBS_LIST_SUBMIT_JOB_QUEUE}
   processJobQueue: ${env:JOBS_LIST_PROCESS_JOB_QUEUE}
@@ -19,7 +19,7 @@ provider:
   name: aws
   stage: dev
   runtime: python3.8
-  region: ${env:AWS_DEFAULT_REGION, 'us-west-2'}
+  region: ${env:TARGET_REGION}
   iamRoleStatements:
     - Effect: Allow
       Action:
@@ -58,7 +58,7 @@ functions:
     role: arn:aws:iam::${self:custom.accountid}:role/jobs-list
     environment:
       ACCOUNT_ID: ${env:AWS_ACCOUNT_ID}
-      REGION: ${env:AWS_DEFAULT_REGION, 'us-west-2'}
+      REGION: ${env:TARGET_REGION}
       SOURCE_DATA_BUCKET: ${env:JOBS_LIST_SOURCE_DATA_BUCKET}
       SUBMIT_JOB_QUEUE: ${env:JOBS_LIST_SUBMIT_JOB_QUEUE}
       PROCESS_JOB_QUEUE: ${env:JOBS_LIST_PROCESS_JOB_QUEUE}

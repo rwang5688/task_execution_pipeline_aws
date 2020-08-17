@@ -1,14 +1,13 @@
 {
-  "name": "resources",
+  "name": "user-service",
   "version": "1.0.0",
-  "description": "jobs-list resources",
+  "description": "user-service",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
-    "jobs-list",
-    "resources"
+    "user-service"
   ],
   "author": "rwang5688@outlook.com",
   "license": "ISC",
