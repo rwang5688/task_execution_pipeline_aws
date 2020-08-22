@@ -20,8 +20,8 @@ function gather () {
     job_status: $('#job_status').val(),
     job_logfile: $('#job_logfile').val(),
     submitter_id: $('#submitter_id').val(),
-    submit_timestamp: $('submit_timestamp').val(),
-    update_timestamp: $('update_timestamp').val()
+    submit_timestamp: $('#submit_timestamp').val(),
+    update_timestamp: $('#update_timestamp').val()
   };
 }
 
@@ -70,9 +70,9 @@ function update (cb) {
 }
 
 
-function del (id) {
+function del (job_id) {
   auth.session().then(session => {
-    $.ajax(API_ROOT + id, {
+    $.ajax(API_ROOT + job_id, {
       type: 'DELETE',
       headers: {
         Authorization: session.idToken.jwtToken
@@ -116,11 +116,11 @@ function list (cb) {
 function bindList () {
   $('.job-item-edit').unbind('click');
   $('.job-item-edit').on('click', (e) => {
-    view.renderEditArea(e.currentTarget.id);
+    view.renderEditArea(e.currentTarget.job_id);
   });
   $('.job-item-delete').unbind('click');
   $('.job-item-delete').on('click', (e) => {
-    del(e.currentTarget.id);
+    del(e.currentTarget.job_id);
   });
 }
 
@@ -144,8 +144,8 @@ function bindEdit () {
       });
     }
   });
-  $('#todo-cancel').unbind('click');
-  $('#todo-cancel').on('click', e => {
+  $('#job-cancel').unbind('click');
+  $('#job-cancel').on('click', e => {
     e.preventDefault();
     view.renderAddButton();
   });

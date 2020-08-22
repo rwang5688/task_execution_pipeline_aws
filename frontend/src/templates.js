@@ -47,7 +47,7 @@ function jobsListTpl (items) {
   </div>
   <div id="edit-area" class="list-group">
     <li class="list-group-item d-flex justify-content-between align-items-center">
-      <span id="input-todo" class="badge badge-success badge-pill">new</span>
+      <span id="input-job" class="badge badge-success badge-pill">new</span>
     </li>
   </div>`;
   /*jshint +W101 */
@@ -90,8 +90,8 @@ function editTpl () {
         <div class="row">&nbsp;</div>
         <div class="row">
           <div class="col-sm-1"></div>
-          <div class="col-sm-1"><button id="todo-save">save</button></div>
-          <div class="col-sm-1"><button id="todo-cancel">cancel</button></div>
+          <div class="col-sm-1"><button id="job-save">save</button></div>
+          <div class="col-sm-1"><button id="job-cancel">cancel</button></div>
           <input type="hidden" id="job_id">
         </div>
       </div>
@@ -103,7 +103,7 @@ function editTpl () {
 function addTpl () {
   /*jshint -W101 */
   return `<li class="list-group-item d-flex justify-content-between align-items-center">
-    <span id="input-todo" class="badge badge-success badge-pill">new</span>
+    <span id="input-job" class="badge badge-success badge-pill">new</span>
   </li>`;
   /*jshint +W101 */
 }
