@@ -47,7 +47,7 @@ function create (event, context, cb) {
   const data = JSON.parse(event.body);
   removeEmpty(data);
 
-  data.id = uuid.v1();
+  data.job_id = uuid.v1();
   data.modifiedTime = new Date().getTime();
 
   const params = { ...TABLE_NAME, Item: data };
@@ -59,7 +59,7 @@ function create (event, context, cb) {
 // read
 function read (event, context, cb) {
   'use strict';
-  const params = { ...TABLE_NAME, Key: { job_id: event.pathParameters.id } };
+  const params = { ...TABLE_NAME, Key: { job_id: event.pathParameters.job_id } };
   dynamoDb.get(params, (err, data) => {
     respond(err, data, cb);
   });
@@ -71,7 +71,7 @@ function update (event, context, cb) {
   const data = JSON.parse(event.body);
   removeEmpty(data);
 
-  data.job_id = event.pathParameters.id;
+  data.job_id = event.pathParameters.job_id;
   data.modifiedTime = new Date().getTime();
   const params = { ...TABLE_NAME, Item: data };
 
@@ -85,7 +85,7 @@ function update (event, context, cb) {
 // delete
 function del (event, context, cb) {
   'use strict';
-  const params = { ...TABLE_NAME, Key: { job_id: event.pathParameters.id } };
+  const params = { ...TABLE_NAME, Key: { job_id: event.pathParameters.job_id } };
   dynamoDb.delete(params, (err, data) => {
     respond(err, data, cb);
   });
