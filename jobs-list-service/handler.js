@@ -31,25 +31,25 @@ function respond (err, body, cb) {
     body: JSON.stringify(body)
   };
 
-  cb(null, response);
-}
+  // debug
+  console.log(response);
 
-// remove empty action and note
-function removeEmpty (data) {
-  'use strict';
-  if (data.action.length === 0) { data.action = null; }
-  if (data.note.length === 0) { data.note = null; }
+  cb(null, response);
 }
 
 // create
 function create (event, context, cb) {
   'use strict';
+  // debug
+  console.log('event: ' + JSON.stringify(event));
   const data = JSON.parse(event.body);
-  removeEmpty(data);
 
   data.job_id = uuid.v1();
-  data.modifiedTime = new Date().getTime();
+  data.submit_timestamp = new Date().getTime();
+  data.update_timestamp = data.submit_timestamp;
 
+  // debug
+  console.log('create job_id: ' + data.job_id);
   const params = { ...TABLE_NAME, Item: data };
   dynamoDb.put(params, (err, data) => {
     respond(err, {data: data}, cb);
@@ -59,6 +59,10 @@ function create (event, context, cb) {
 // read
 function read (event, context, cb) {
   'use strict';
+  // debug
+  console.log('event: ' + JSON.stringify(event));
+  // debug
+  console.log('read job_id: ' + event.pathParameters.job_id);
   const params = { ...TABLE_NAME, Key: { job_id: event.pathParameters.job_id } };
   dynamoDb.get(params, (err, data) => {
     respond(err, data, cb);
@@ -68,11 +72,14 @@ function read (event, context, cb) {
 // update
 function update (event, context, cb) {
   'use strict';
+  // debug
+  console.log('event: ' + JSON.stringify(event));
   const data = JSON.parse(event.body);
-  removeEmpty(data);
 
+  // debug
+  console.log('update job_id: ' + event.pathParameters.job_id);
   data.job_id = event.pathParameters.job_id;
-  data.modifiedTime = new Date().getTime();
+  data.update_timestamp = new Date().getTime();
   const params = { ...TABLE_NAME, Item: data };
 
   dynamoDb.put(params, (err, data) => {
@@ -85,6 +92,10 @@ function update (event, context, cb) {
 // delete
 function del (event, context, cb) {
   'use strict';
+  // debug
+  console.log('event: ' + JSON.stringify(event));
+  // debug
+  console.log('del job_id: ' + event.pathParameters.job_id);
   const params = { ...TABLE_NAME, Key: { job_id: event.pathParameters.job_id } };
   dynamoDb.delete(params, (err, data) => {
     respond(err, data, cb);

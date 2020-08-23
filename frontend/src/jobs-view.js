@@ -18,18 +18,18 @@ function renderAddButton () {
 }
 
 
-function renderEditArea (job_id) {
+function renderEditArea (id) {
   $('#edit-area').html(editTpl());
   setTimeout(function () {
-    if (job_id) {
-      $('#job_id').val(job_id);
-      $('#job_tool').val($('#' + job_id + ' #job_tool').text());
-      $('#job_source').val($('#' + job_id + ' #job_source').text());
-      $('#job_status').val($('#' + job_id + ' #job_status').text());
-      $('#job_logfile').val($('#' + job_id + ' #job_logfile').text());
-      $('#submitter_id').val($('#' + job_id + ' #submitter_id').text());
-      $('#submit_timestamp').val($('#' + job_id + ' #submit_timestamp').text());
-      $('#update_timestamp').val($('#' + job_id + ' #update_timestamp').text());
+    if (id) {
+      $('#job-id').val(id);
+      $('#job-tool').val($('#' + id + ' #job_tool').text());
+      $('#job-source').val($('#' + id + ' #job_source').text());
+      $('#job-status').val($('#' + id + ' #job_status').text());
+      $('#job-logfile').val($('#' + id + ' #job_logfile').text());
+      $('#submitter-id').val($('#' + id + ' #submitter_id').text());
+      $('#submit-timestamp').val($('#' + id + ' #submit_timestamp').text());
+      $('#update-timestamp').val($('#' + id + ' #update_timestamp').text());
     }
   }, 100);
 }

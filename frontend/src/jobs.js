@@ -14,14 +14,14 @@ let auth;
 
 function gather () {
   return {
-    job_id: $('#job_id').val(),
-    job_tool: $('#job_tool').val(),
-    job_source: $('#job_source').val(),
-    job_status: $('#job_status').val(),
-    job_logfile: $('#job_logfile').val(),
-    submitter_id: $('#submitter_id').val(),
-    submit_timestamp: $('#submit_timestamp').val(),
-    update_timestamp: $('#update_timestamp').val()
+    job_id: $('#job-id').val(),
+    job_tool: $('#job-tool').val(),
+    job_source: $('#job-source').val(),
+    job_status: $('#job-status').val(),
+    job_logfile: $('#job-logfile').val(),
+    submitter_id: $('#submitter-id').val(),
+    submit_timestamp: $('#submit-timestamp').val(),
+    update_timestamp: $('#update-timestamp').val()
   };
 }
 
@@ -50,7 +50,7 @@ function create (cb) {
 
 function update (cb) {
   auth.session().then(session => {
-    $.ajax(API_ROOT + $('#job_id').val(), {
+    $.ajax(API_ROOT + $('#job-id').val(), {
       data: JSON.stringify(gather()),
       contentType: 'application/json',
       type: 'PUT',
@@ -70,9 +70,9 @@ function update (cb) {
 }
 
 
-function del (job_id) {
+function del (id) {
   auth.session().then(session => {
-    $.ajax(API_ROOT + job_id, {
+    $.ajax(API_ROOT + id, {
       type: 'DELETE',
       headers: {
         Authorization: session.idToken.jwtToken
@@ -116,11 +116,11 @@ function list (cb) {
 function bindList () {
   $('.job-item-edit').unbind('click');
   $('.job-item-edit').on('click', (e) => {
-    view.renderEditArea(e.currentTarget.job_id);
+    view.renderEditArea(e.currentTarget.id);
   });
   $('.job-item-delete').unbind('click');
   $('.job-item-delete').on('click', (e) => {
-    del(e.currentTarget.job_id);
+    del(e.currentTarget.id);
   });
 }
 
@@ -134,7 +134,7 @@ function bindEdit () {
   $('#job-save').unbind('click');
   $('#job-save').on('click', e => {
     e.preventDefault();
-    if ($('#job_id').val().length > 0) {
+    if ($('#job-id').val().length > 0) {
       update(() => {
         view.renderAddButton();
       });
