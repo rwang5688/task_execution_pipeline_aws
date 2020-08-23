@@ -57,7 +57,7 @@ functions:
     events:
       - http:
           method: GET
-          path: jobs/{id}
+          path: jobs/{job_id}
           cors: true
           authorizer:
             arn: '${self:custom.userPoolArn}'
@@ -67,7 +67,7 @@ functions:
     events:
       - http:
           method: PUT
-          path: jobs/{id}
+          path: jobs/{job_id}
           cors: true
           authorizer:
             arn: '${self:custom.userPoolArn}'
@@ -77,7 +77,7 @@ functions:
     events:
       - http:
           method: DELETE
-          path: jobs/{id}
+          path: jobs/{job_id}
           cors: true
           authorizer:
             arn: '${self:custom.userPoolArn}'
