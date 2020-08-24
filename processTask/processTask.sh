@@ -3,5 +3,5 @@
 . ./env.sh
 
 # execute script
-python3 ./processJob.py
+python3 ./processTask.py
 

@@ -11,12 +11,12 @@ def get_env_vars():
     global queue_name
 
     bucket_name = ''
-    if 'JOBS_LIST_SOURCE_DATA_BUCKET' in os.environ:
-        bucket_name = os.environ['JOBS_LIST_SOURCE_DATA_BUCKET']
+    if 'TASK_LIST_SOURCE_DATA_BUCKET' in os.environ:
+        bucket_name = os.environ['TASK_LIST_SOURCE_DATA_BUCKET']
 
     queue_name = ''
-    if 'JOBS_LIST_PROCESS_JOB_QUEUE' in os.environ:
-        queue_name = os.environ['JOBS_LIST_PROCESS_JOB_QUEUE']
+    if 'TASK_LIST_PROCESS_TASK_QUEUE' in os.environ:
+        queue_name = os.environ['TASK_LIST_PROCESS_TASK_QUEUE']
 
     # success
     return True
@@ -43,52 +43,52 @@ def receive_message(queue_name):
 
 
 def parse_message(message):
-    global job_id
-    global job_tool
-    global job_source
+    global task_id
+    global task_tool
+    global task_source
 
     message_body = eval(message['Body'])
     if message_body is None:
         print('parse_message: message body is missing.')
         return False
 
-    job = message_body['job']
-    if job is None:
-        print('parse_message: job is missing.')
+    task = message_body['task']
+    if task is None:
+        print('parse_message: task is missing.')
         return False
 
-    job_id = job['job_id']
-    if job_id is None:
-        print('parse_message: job id is missing.')
+    task_id = task['task_id']
+    if task_id is None:
+        print('parse_message: task id is missing.')
         return False
 
-    job_tool = job['job_tool']
-    if job_tool is None:
-        print('parse_message: job tool is missing.')
+    task_tool = task['task_tool']
+    if task_tool is None:
+        print('parse_message: task tool is missing.')
         return False
 
-    job_source = job['job_source']
-    if job_source is None:
-        print('parse_message: job source is missing.')
+    task_source = task['task_source']
+    if task_source is None:
+        print('parse_message: task source is missing.')
         return False
 
     # success
     return True
 
 
-def download_source_blob(bucket_name, job_source):
+def download_source_blob(bucket_name, task_source):
     # get bucket
     s3util.list_buckets()
     bucket = s3util.get_bucket(bucket_name)
     if bucket is None:
-        printf(f'download_source_file: Bucket {bucket_name} does not exist.')
+        print(f'download_source_file: Bucket {bucket_name} does not exist.')
         return None
 
     # download file
-    source_blob = job_source
-    success = s3util.download_file(bucket_name, job_source, source_blob)
+    source_blob = task_source
+    success = s3util.download_file(bucket_name, task_source, source_blob)
     if not success:
-        printf(f'download_source_file: Failed to download job source {job_source}.')
+        print(f'download_source_file: Failed to download task source {task_source}.')
         return None
 
     # success
@@ -110,7 +110,7 @@ def read_process_stdout(process):
 
 
 def extract_source_files(source_blob):
-    # command: "$ tar -xvf $(job_source)"
+    # command: "$ tar -xvf $(task_source)"
     process = subprocess.Popen(['tar', '-xvf', source_blob],
                             stdout=subprocess.PIPE,
                             universal_newlines=True)
@@ -120,10 +120,10 @@ def extract_source_files(source_blob):
     return True
 
 
-def execute_tool(job_tool, job_id):
-    # command: "$ $(job_tool) source/preprocess/*.i jobLog.py $(job_id)"
-    prog = './' + job_tool
-    process = subprocess.Popen([prog, 'source/preprocess/*.i', 'jobLog.py', job_id],
+def execute_tool(task_tool, task_id):
+    # command: "$ $(task_tool) source/preprocess/*.i taskLog.py $(task_id)"
+    prog = './' + task_tool
+    process = subprocess.Popen([prog, 'source/preprocess/*.i', 'taskLog.py', task_id],
                             stdout=subprocess.PIPE,
                             universal_newlines=True)
     read_process_stdout(process)
@@ -146,7 +146,7 @@ def delete_message(queue_name, message):
 
 
 def main():
-    print('\nStarting processJob.py ...')
+    print('\nStarting processTask.py ...')
 
     success = get_env_vars()
     if not success:
@@ -170,12 +170,12 @@ def main():
         print('parse_message failed.  Exit.')
         return
 
-    print('Body.job:')
-    print(f'job_id: {job_id}')
-    print(f'job_tool: {job_tool}')
-    print(f'job_source: {job_source}')
+    print('Body.task:')
+    print(f'task_id: {task_id}')
+    print(f'task_tool: {task_tool}')
+    print(f'task_source: {task_source}')
 
-    source_blob = download_source_blob(bucket_name, job_source)
+    source_blob = download_source_blob(bucket_name, task_source)
     if source_blob is None:
         print('download_source_blob failed.  Exit.')
         return
@@ -187,7 +187,7 @@ def main():
         print('extract_source_files failed.  Exit.')
         return
 
-    success = execute_tool(job_tool, job_id)
+    success = execute_tool(task_tool, task_id)
     if not success:
         print('execute_tool failed.  Exit.')
         return
