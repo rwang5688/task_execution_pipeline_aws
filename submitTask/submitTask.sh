@@ -7,5 +7,5 @@ aws configure import --csv "file://aws-admin_accessKeys.csv"
 cat ~/.aws/credentials
 
 # execute script
-python3 ./submitJob.py $1 $2
+python3 ./submitTask.py $1 $2
 
