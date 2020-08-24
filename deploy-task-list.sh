@@ -66,6 +66,7 @@ deploy
 
 # pack frontend js into one file
 cd frontend
+npm install
 npm run build
 
 # deploy frontend app

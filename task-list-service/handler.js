@@ -1,7 +1,7 @@
 const uuid = require('uuid');
 const AWS = require('aws-sdk');
 const dynamoDb = new AWS.DynamoDB.DocumentClient();
-const TABLE_NAME = { TableName: process.env.JOBS_TABLE };
+const TABLE_NAME = { TableName: process.env.TASK_TABLE };
 
 // create HTTP response
 function respond (err, body, cb) {
@@ -62,8 +62,8 @@ function read (event, context, cb) {
   // debug
   console.log('event: ' + JSON.stringify(event));
   // debug
-  console.log('read job_id: ' + event.pathParameters.job_id);
-  const params = { ...TABLE_NAME, Key: { job_id: event.pathParameters.job_id } };
+  console.log('read job_id: ' + event.pathParameters.id);
+  const params = { ...TABLE_NAME, Key: { job_id: event.pathParameters.id } };
   dynamoDb.get(params, (err, data) => {
     respond(err, data, cb);
   });
@@ -77,8 +77,8 @@ function update (event, context, cb) {
   const data = JSON.parse(event.body);
 
   // debug
-  console.log('update job_id: ' + event.pathParameters.job_id);
-  data.job_id = event.pathParameters.job_id;
+  console.log('update job_id: ' + event.pathParameters.id);
+  data.job_id = event.pathParameters.id;
   data.update_timestamp = new Date().getTime();
   const params = { ...TABLE_NAME, Item: data };
 
@@ -95,8 +95,8 @@ function del (event, context, cb) {
   // debug
   console.log('event: ' + JSON.stringify(event));
   // debug
-  console.log('del job_id: ' + event.pathParameters.job_id);
-  const params = { ...TABLE_NAME, Key: { job_id: event.pathParameters.job_id } };
+  console.log('del job_id: ' + event.pathParameters.id);
+  const params = { ...TABLE_NAME, Key: { job_id: event.pathParameters.id } };
   dynamoDb.delete(params, (err, data) => {
     respond(err, data, cb);
   });
