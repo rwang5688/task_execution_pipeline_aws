@@ -1,18 +1,18 @@
 Resources:
-  JobsTable:
+  TaskTable:
     Type: 'AWS::DynamoDB::Table'
     DeletionPolicy: Retain
     Properties:
       AttributeDefinitions:
         -
-          AttributeName: job_id
+          AttributeName: task_id
           AttributeType: S
       KeySchema:
         -
-          AttributeName: job_id
+          AttributeName: task_id
           KeyType: HASH
       ProvisionedThroughput:
         ReadCapacityUnits: 1
         WriteCapacityUnits: 1
-      TableName: '${self:custom.jobsTable}-${self:provider.stage}'
+      TableName: '${self:custom.taskTable}-${self:provider.stage}'
 

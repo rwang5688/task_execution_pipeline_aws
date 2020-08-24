@@ -1,18 +1,18 @@
-service: jobs-list-resources
+service: task-list-resources
 frameworkVersion: ">=1.30.0"
 plugins:
   - serverless-dotenv-plugin
 custom:
   accountid: ${env:AWS_ACCOUNT_ID}
   region: ${env:TARGET_REGION}
-  appsBucket: ${env:JOBS_LIST_APPS_BUCKET}
-  sourceDataBucket: ${env:JOBS_LIST_SOURCE_DATA_BUCKET}
-  logDataBucket: ${env:JOBS_LIST_LOG_DATA_BUCKET}
-  submitJobQueue: ${env:JOBS_LIST_SUBMIT_JOB_QUEUE}
-  processJobQueue: ${env:JOBS_LIST_PROCESS_JOB_QUEUE}
-  updateJobQueue: ${env:JOBS_LIST_UPDATE_JOB_QUEUE}
-  updateJobsLogStreamQueue: ${env:JOBS_LIST_UPDATE_JOBS_LOG_STREAM_QUEUE}
-  jobsTable: ${env:JOBS_LIST_JOBS_TABLE}
+  appsBucket: ${env:TASK_LIST_APPS_BUCKET}
+  sourceDataBucket: ${env:TASK_LIST_SOURCE_DATA_BUCKET}
+  logDataBucket: ${env:TASK_LIST_LOG_DATA_BUCKET}
+  submitTaskQueue: ${env:TASK_LIST_SUBMIT_TASK_QUEUE}
+  processTaskQueue: ${env:TASK_LIST_PROCESS_TASK_QUEUE}
+  updateTaskQueue: ${env:TASK_LIST_UPDATE_TASK_QUEUE}
+  updateTaskLogStreamQueue: ${env:TASK_LIST_UPDATE_TASK_LOG_STREAM_QUEUE}
+  taskTable: ${env:TASK_LIST_TASK_TABLE}
   dotenv:
     path: ../.env
 
@@ -23,9 +23,9 @@ provider:
   region: ${env:TARGET_REGION}
 
 resources:
-  - ${file(./jobs-list-apps-bucket.yml)}
-  - ${file(./jobs-list-source-data-bucket.yml)}
-  - ${file(./jobs-list-log-data-bucket.yml)}
-  - ${file(./jobs-list-queues.yml)}
-  - ${file(./jobs-list-jobs-table.yml)}
+  - ${file(./task-list-apps-bucket.yml)}
+  - ${file(./task-list-source-data-bucket.yml)}
+  - ${file(./task-list-log-data-bucket.yml)}
+  - ${file(./task-list-queues.yml)}
+  - ${file(./task-list-task-table.yml)}
 
