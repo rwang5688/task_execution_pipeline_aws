@@ -1,0 +1,18 @@
+Resources:
+  SubmitTaskQueue:
+    Type: "AWS::SQS::Queue"
+    Properties:
+      QueueName: "${self:custom.submitTaskQueue}"
+  ProcessTaskQueue:
+    Type: "AWS::SQS::Queue"
+    Properties:
+      QueueName: "${self:custom.processTaskQueue}"
+  UpdateTaskQueue:
+    Type: "AWS::SQS::Queue"
+    Properties:
+      QueueName: "${self:custom.updateTaskQueue}"
+  UpdateTaskLogStreamQueue:
+    Type: "AWS::SQS::Queue"
+    Properties:
+      QueueName: "${self:custom.updateTaskLogStreamQueue}"
+
