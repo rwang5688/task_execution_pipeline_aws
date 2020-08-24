@@ -10,12 +10,12 @@ def get_env_vars():
     global queue_name
 
     bucket_name = ''
-    if 'JOBS_LIST_SOURCE_DATA_BUCKET' in os.environ:
-        bucket_name = os.environ['JOBS_LIST_SOURCE_DATA_BUCKET']
+    if 'TASK_LIST_SOURCE_DATA_BUCKET' in os.environ:
+        bucket_name = os.environ['TASK_LIST_SOURCE_DATA_BUCKET']
 
     queue_name = ''
-    if 'JOBS_LIST_SUBMIT_JOB_QUEUE' in os.environ:
-        queue_name = os.environ['JOBS_LIST_SUBMIT_JOB_QUEUE']
+    if 'TASK_LIST_SUBMIT_TASK_QUEUE' in os.environ:
+        queue_name = os.environ['TASK_LIST_SUBMIT_TASK_QUEUE']
 
     # success
     return True
@@ -23,42 +23,42 @@ def get_env_vars():
 
 def parse_arguments():
     import argparse
-    global job_tool
-    global job_source
+    global task_tool
+    global task_source
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('job_tool', help='The name of the tool to run.')
-    parser.add_argument('job_source', help='The name of the source package to run.')
+    parser.add_argument('task_tool', help='The name of the tool to run.')
+    parser.add_argument('task_source', help='The name of the source package to run.')
 
     args = parser.parse_args()
-    job_tool = args.job_tool
-    job_source = args.job_source
+    task_tool = args.task_tool
+    task_source = args.task_source
 
-    if job_tool is None:
-        print('parse_arguments: job_tool is missing.')
+    if task_tool is None:
+        print('parse_arguments: task_tool is missing.')
         return False
 
-    if job_source is None:
-        print('parse_arguments: job_source is missing.')
+    if task_source is None:
+        print('parse_arguments: task_source is missing.')
         return False
 
     # success
     return True
 
 
-def upload_source(bucket_name, job_source):
+def upload_source(bucket_name, task_source):
     # get bucket
     s3util.list_buckets()
     bucket = s3util.get_bucket(bucket_name)
     if bucket is None:
-        printf(f'upload_source: Bucket {bucket_name} does not exist.')
+        print(f'upload_source: Bucket {bucket_name} does not exist.')
         return False
 
     # upload file
     s3util.list_files(bucket["Name"])
-    success = s3util.upload_file(job_source, bucket["Name"])
+    success = s3util.upload_file(task_source, bucket["Name"])
     if not success:
-        printf(f'upload_source: Failed to upload source file {job_source}.')
+        print(f'upload_source: Failed to upload source file {task_source}.')
         return False
     s3util.list_files(bucket["Name"])
 
@@ -66,7 +66,7 @@ def upload_source(bucket_name, job_source):
     return True
 
 
-def send_message(queue_name, job_tool, job_source):
+def send_message(queue_name, task_tool, task_source):
     # get queue url
     sqsutil.list_queues()
     queue_url = sqsutil.get_queue_url(queue_name)
@@ -77,9 +77,9 @@ def send_message(queue_name, job_tool, job_source):
     # send message
     message_body = {
         "action": "submit",
-        "job": {
-            "job_tool": job_tool,
-            "job_source": job_source
+        "task": {
+            "task_tool": task_tool,
+            "task_source": task_source
         }
     }
     message_id = sqsutil.send_message(queue_url, str(message_body))
@@ -116,15 +116,15 @@ def main():
         return
 
     print('Args:')
-    print(f'job_tool = {job_tool}')
-    print(f'job_source = {job_source}')
+    print(f'task_tool = {task_tool}')
+    print(f'task_source = {task_source}')
 
-    success = upload_source(bucket_name, job_source)
+    success = upload_source(bucket_name, task_source)
     if not success:
         print('upload_source failed.  Exit.')
         return
 
-    success = send_message(queue_name, job_tool, job_source)
+    success = send_message(queue_name, task_tool, task_source)
     if not success:
         print('send_message failed.  Exit.')
         return
