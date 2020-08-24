@@ -1,13 +1,13 @@
 {
-  "name": "createjob",
+  "name": "createTask",
   "version": "1.0.0",
-  "description": "createJob",
+  "description": "createTask",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
-    "createJob"
+    "createTask"
   ],
   "author": "rwang5688@outlook.com",
   "license": "ISC",
