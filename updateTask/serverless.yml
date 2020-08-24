@@ -1,4 +1,4 @@
-service: updateJob
+service: updateTask
 frameworkVersion: ">=1.30.0"
 plugins:
   - serverless-dotenv-plugin
@@ -6,10 +6,10 @@ plugins:
 custom:
   accountid: ${env:AWS_ACCOUNT_ID}
   region: ${env:TARGET_REGION}
-  logDataBucket: ${env:JOBS_LIST_LOG_DATA_BUCKET}
-  updateJobQueue: ${env:JOBS_LIST_UPDATE_JOB_QUEUE}
-  updateJobLogStreamQueue: ${env:JOBS_LIST_UPDATE_JOBS_LOG_STREAM_QUEUE}
-  jobsTable: ${env:JOBS_LIST_JOBS_TABLE}
+  logDataBucket: ${env:TASK_LIST_LOG_DATA_BUCKET}
+  updateTaskQueue: ${env:TASK_LIST_UPDATE_TASK_QUEUE}
+  updateTaskLogStreamQueue: ${env:TASK_LIST_UPDATE_TASK_LOG_STREAM_QUEUE}
+  taskTable: ${env:TASK_LIST_TASK_TABLE}
   dotenv:
     path: ../.env
   pythonRequirements:
@@ -34,13 +34,13 @@ provider:
         - sqs:ReceiveMessage
         - sqs:DeleteMessage
         - sqs:GetQueueUrl
-      Resource: "arn:aws:sqs:*:*:${self:custom.updateJobQueue}"
+      Resource: "arn:aws:sqs:*:*:${self:custom.updateTaskQueue}"
     - Effect: Allow
       Action:
         - sqs:SendMessage
         - sqs:DeleteMessage
         - sqs:GetQueueUrl
-      Resource: "arn:aws:sqs:*:*:${self:custom.updateJobLogStreamQueue}"
+      Resource: "arn:aws:sqs:*:*:${self:custom.updateTaskLogStreamQueue}"
     - Effect: Allow
       Action:
         - dynamodb:DescribeTable
@@ -53,18 +53,18 @@ provider:
       Resource: "arn:aws:dynamodb:${self:custom.region}:${self:custom.accountid}:*"
 
 functions:
-  updateJob:
-    handler: updateJob.updateJob
-    role: arn:aws:iam::${self:custom.accountid}:role/jobs-list
+  updateTask:
+    handler: updateTask.updateTask
+    role: arn:aws:iam::${self:custom.accountid}:role/task-list
     environment:
       ACCOUNT_ID: ${env:AWS_ACCOUNT_ID}
       REGION: ${env:TARGET_REGION}
-      LOG_DATA_BUCKET: ${env:JOBS_LIST_LOG_DATA_BUCKET}
-      UPDATE_JOB_QUEUE: ${env:JOBS_LIST_UPDATE_JOB_QUEUE}
-      UPDATE_JOBS_LOG_STREAM_QUEUE: ${env:JOBS_LIST_UPDATE_JOBS_LOG_STREAM_QUEUE}
-      JOBS_TABLE: ${env:JOBS_LIST_JOBS_TABLE}
+      LOG_DATA_BUCKET: ${env:TASK_LIST_LOG_DATA_BUCKET}
+      UPDATE_TASK_QUEUE: ${env:TASK_LIST_UPDATE_TASK_QUEUE}
+      UPDATE_TASK_LOG_STREAM_QUEUE: ${env:TASK_LIST_UPDATE_TASK_LOG_STREAM_QUEUE}
+      TASK_TABLE: ${env:TASK_LIST_TASK_TABLE}
       STAGE: ${self:provider.stage}
     events:
       - sqs:
-          arn: "arn:aws:sqs:${self:provider.region}:${self:custom.accountid}:${self:custom.updateJobQueue}"
+          arn: "arn:aws:sqs:${self:provider.region}:${self:custom.accountid}:${self:custom.updateTaskQueue}"
 

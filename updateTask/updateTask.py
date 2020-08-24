@@ -7,7 +7,7 @@ from aws_xray_sdk.core import xray_recorder
 from aws_xray_sdk.core import patch_all
 import s3util
 import sqsutil
-import jobstable
+import tasktable
 
 
 logger = logging.getLogger()
@@ -26,33 +26,33 @@ def preamble(event, context):
 
 
 def parse_event_record(event_record):
-    global job_id
-    global job_status
-    global job_logfile
+    global task_id
+    global task_status
+    global task_logfile
 
     event_body = eval(event_record['body'])
     if event_body is None:
         print('parse_event: event body is missing.')
         return False
 
-    job = event_body['job']
-    if job is None:
-        print('parse_event: job is missing.')
+    task = event_body['task']
+    if task is None:
+        print('parse_event: task is missing.')
         return False
 
-    job_id = job['job_id']
-    if job_id is None:
-        print('parse_message: job id is missing.')
+    task_id = task['task_id']
+    if task_id is None:
+        print('parse_message: task id is missing.')
         return False
 
-    job_status = job['job_status']
-    if job_status is None:
-        print('parse_message: job status is missing.')
+    task_status = task['task_status']
+    if task_status is None:
+        print('parse_message: task status is missing.')
         return False
 
-    job_logfile = job['job_logfile']
-    if job_logfile is None:
-        print('parse_message: job logfile is missing.')
+    task_logfile = task['task_logfile']
+    if task_logfile is None:
+        print('parse_message: task logfile is missing.')
         return False
 
     # success
@@ -70,10 +70,10 @@ def send_message(queue_name, item):
     # send message
     message_body = {
         "action": "update_log_stream",
-        "job": {
-            "job_id": item['job_id'],
-            "job_status": item['job_status'],
-            "job_logfile": item['job_logfile']
+        "task": {
+            "task_id": item['task_id'],
+            "task_status": item['task_status'],
+            "task_logfile": item['task_logfile']
         }
     }
     message_id = sqsutil.send_message(queue_url, str(message_body))
@@ -92,20 +92,20 @@ def send_message(queue_name, item):
     return True
 
 
-# updateJob handler
-def updateJob(event, context):
+# updateTask handler
+def updateTask(event, context):
     success = preamble(event, context)
     if not success:
         print('preamble failed. Exit.')
         return False
 
-    # get jobs table
-    jobs_table = jobstable.get_jobs_table()
-    if jobs_table is None:
-        print('get_jobs_table failed.  Exit.')
+    # get task table
+    task_table = tasktable.get_task_table()
+    if task_table is None:
+        print('get_task_table failed.  Exit.')
         return False
 
-    # create jobs record
+    # create task record
     event_records = event['Records']
     for event_record in event_records:
         # debug: print event record
@@ -118,32 +118,32 @@ def updateJob(event, context):
             print('parse_event_record failed.  Exit.')
             continue
 
-        # debug: print job record attributes
-        print('Job record attributes:')
-        print(f'job_id: {job_id}')
-        print(f'job_status: {job_status}')
-        print(f'job_logfile: {job_logfile}')
+        # debug: print task record attributes
+        print('Task record attributes:')
+        print(f'task_id: {task_id}')
+        print(f'task_status: {task_status}')
+        print(f'task_logfile: {task_logfile}')
 
-        # update job status
-        success = jobstable.update_job_status(jobs_table, job_id, job_status, job_logfile)
+        # update task status
+        success = tasktable.update_task_status(task_table, task_id, task_status, task_logfile)
         if not success:
-            print('update_job_status failed.  Next.')
+            print('update_task_status failed.  Next.')
             continue
 
-        # debug: get and print job record
-        item = jobstable.get_job_record(jobs_table, job_id)
+        # debug: get and print task record
+        item = tasktable.get_task_record(task_table, task_id)
         if item is None:
-            print('get_job_record failed.  Next.')
+            print('get_task_record failed.  Next.')
             continue
-        print('Job record:')
+        print('Task record:')
         print(item)
 
-        # set update jobs log stream queue name
+        # set update task log stream queue name
         queue_name = ''
-        if 'UPDATE_JOBS_LOG_STREAM_QUEUE' in os.environ:
-            queue_name = os.environ['UPDATE_JOBS_LOG_STREAM_QUEUE']
+        if 'UPDATE_TASK_LOG_STREAM_QUEUE' in os.environ:
+            queue_name = os.environ['UPDATE_TASK_LOG_STREAM_QUEUE']
 
-        # send job context to update jobs log stream queue
+        # send task context to update task log stream queue
         success = send_message(queue_name, item)
         if not success:
             print('send_message failed.  Next.')
@@ -153,7 +153,7 @@ def updateJob(event, context):
     return True
 
 
-# main function for testing updateJob handler
+# main function for testing updateTask handler
 def main():
     xray_recorder.begin_segment('main_function')
     file = open('event.json', 'rb')
@@ -166,7 +166,7 @@ def main():
         # create sample context
         context = {'requestid': '1234'}
         # invoke handler
-        result = updateJob(event, context)
+        result = updateTask(event, context)
         # print response
         print('## RESPONSE')
         print(str(result))

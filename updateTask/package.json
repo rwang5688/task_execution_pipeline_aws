@@ -1,13 +1,13 @@
 {
-  "name": "updatejob",
+  "name": "updateTask",
   "version": "1.0.0",
-  "description": "updatejob",
+  "description": "updateTask",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
-    "updatejob"
+    "updateTask"
   ],
   "author": "rwang5688@outlook.com",
   "license": "ISC",
