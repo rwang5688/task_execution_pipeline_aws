@@ -1,7 +1,0 @@
-{
-    "action": "submit",
-    "job": {
-      "job_tool": "xvsa",
-      "job_source": "source.tar.gz"
-    }
-}

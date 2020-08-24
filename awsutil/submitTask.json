@@ -1,0 +1,7 @@
+{
+    "action": "submit",
+    "task": {
+      "task_tool": "xvsa",
+      "task_source": "source.tar.gz"
+    }
+}

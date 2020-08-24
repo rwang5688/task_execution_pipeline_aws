@@ -7,7 +7,7 @@ from aws_xray_sdk.core import xray_recorder
 from aws_xray_sdk.core import patch_all
 import s3util
 import sqsutil
-import jobstable
+import tasktable
 
 
 logger = logging.getLogger()
@@ -26,8 +26,8 @@ def preamble(event, context):
 
 
 def parse_event_record(event_record):
-    global job_tool
-    global job_source
+    global task_tool
+    global task_source
     global submitter_id
     global submit_timestamp
 
@@ -36,19 +36,19 @@ def parse_event_record(event_record):
         print('parse_event: event body is missing.')
         return False
 
-    job = event_body['job']
-    if job is None:
-        print('parse_event: job is missing.')
+    task = event_body['task']
+    if task is None:
+        print('parse_event: task is missing.')
         return False
 
-    job_tool = job['job_tool']
-    if job_tool is None:
-        print('parse_message: job tool is missing.')
+    task_tool = task['task_tool']
+    if task_tool is None:
+        print('parse_message: task tool is missing.')
         return False
 
-    job_source = job['job_source']
-    if job_source is None:
-        print('parse_message: job source is missing.')
+    task_source = task['task_source']
+    if task_source is None:
+        print('parse_message: task source is missing.')
         return False
 
     event_attributes = event_record['attributes']
@@ -81,10 +81,10 @@ def send_message(queue_name, item):
     # send message
     message_body = {
         "action": "process",
-        "job": {
-            "job_id": item['job_id'],
-            "job_tool": item['job_tool'],
-            "job_source": item['job_source']
+        "task": {
+            "task_id": item['task_id'],
+            "task_tool": item['task_tool'],
+            "task_source": item['task_source']
         }
     }
     message_id = sqsutil.send_message(queue_url, str(message_body))
@@ -103,20 +103,20 @@ def send_message(queue_name, item):
     return True
 
 
-# createJob handler
-def createJob(event, context):
+# createTask handler
+def createTask(event, context):
     success = preamble(event, context)
     if not success:
         print('preamble failed. Exit.')
         return False
 
-    # get jobs table
-    jobs_table = jobstable.get_jobs_table()
-    if jobs_table is None:
-        print('get_jobs_table failed.  Exit.')
+    # get task table
+    task_table = tasktable.get_task_table()
+    if task_table is None:
+        print('get_task_table failed.  Exit.')
         return False
 
-    # create jobs record
+    # create task record
     event_records = event['Records']
     for event_record in event_records:
         # debug: print event record
@@ -129,54 +129,54 @@ def createJob(event, context):
             print('parse_event_record failed.  Next.')
             continue
 
-        # debug: print job record attributes
-        print('Job record attributes:')
-        print(f'job_tool: {job_tool}')
-        print(f'job_source: {job_source}')
+        # debug: print task record attributes
+        print('Task record attributes:')
+        print(f'task_tool: {task_tool}')
+        print(f'task_source: {task_source}')
         print(f'submitter_id: {submitter_id}')
         print(f'submit_timestamp: {submit_timestamp}')
 
-        # create job record
-        job_id = jobstable.create_job_record(jobs_table, job_tool, job_source, submitter_id, submit_timestamp)
-        if job_id is None:
-            print('create_job_record failed.  Next.')
+        # create task record
+        task_id = tasktable.create_task_record(task_table, task_tool, task_source, submitter_id, submit_timestamp)
+        if task_id is None:
+            print('create_task_record failed.  Next.')
             continue
 
-        # debug: get and print job record
-        item = jobstable.get_job_record(jobs_table, job_id)
+        # debug: get and print task record
+        item = tasktable.get_task_record(task_table, task_id)
         if item is None:
-            print('get_job_record failed.  Next.')
+            print('get_task_record failed.  Next.')
             continue
-        print('Job record:')
+        print('Task record:')
         print(item)
 
-        # set process job queue name
+        # set process task queue name
         queue_name = ''
-        if 'PROCESS_JOB_QUEUE' in os.environ:
-            queue_name = os.environ['PROCESS_JOB_QUEUE']
+        if 'PROCESS_TASK_QUEUE' in os.environ:
+            queue_name = os.environ['PROCESS_TASK_QUEUE']
 
-        # send job context to process job queue
+        # send task context to process task queue
         success = send_message(queue_name, item)
         if not success:
             print('send_message failed.  Next.')
             continue
 
         # TO DO:
-        # Start ECS task to process job!!!
+        # Start ECS task to process task!!!
 
-        # update job status
-        job_status = "started"
-        job_logfile = ""
-        success = jobstable.update_job_status(jobs_table, job_id, job_status, job_logfile)
+        # update task status
+        task_status = "started"
+        task_logfile = ""
+        success = tasktable.update_task_status(task_table, task_id, task_status, task_logfile)
         if not success:
-            print('update_job_status failed.  Next.')
+            print('update_task_status failed.  Next.')
             continue
 
     # success
     return True
 
 
-# main function for testing createJob handler
+# main function for testing createTask handler
 def main():
     xray_recorder.begin_segment('main_function')
     file = open('event.json', 'rb')
@@ -189,7 +189,7 @@ def main():
         # create sample context
         context = {'requestid': '1234'}
         # invoke handler
-        result = createJob(event, context)
+        result = createTask(event, context)
         # print response
         print('## RESPONSE')
         print(str(result))
