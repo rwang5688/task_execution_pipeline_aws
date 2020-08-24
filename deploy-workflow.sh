@@ -18,6 +18,6 @@ function deploy () {
 
 
 # create resources and functions
-SERVICES=(resources createJob updateJob)
+SERVICES=(resources createTask updateTask)
 deploy
 

@@ -1,6 +1,6 @@
 #!/bin/bash
 . ./.env
 . checkenv.sh
-. remove-jobs-list.sh
+. remove-task-list.sh
 . remove-workflow.sh
 

@@ -1,4 +1,4 @@
-service: jobs-list-user-service
+service: task-list-user-service
 frameworkVersion: ">=1.30.0"
 plugins:
   - serverless-dotenv-plugin
