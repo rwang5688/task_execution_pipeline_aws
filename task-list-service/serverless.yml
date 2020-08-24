@@ -1,4 +1,4 @@
-service: jobs-list-service
+service: task-list-service
 frameworkVersion: ">=1.30.0"
 plugins:
   - serverless-offline
@@ -7,12 +7,12 @@ plugins:
 custom:
   region: ${env:TARGET_REGION}
   accountid: ${env:AWS_ACCOUNT_ID}
-  domain: ${env:JOBS_LIST_DOMAIN}
-  userPoolArn: ${env:JOBS_LIST_USER_POOL_ARN}
+  domain: ${env:TASK_LIST_DOMAIN}
+  userPoolArn: ${env:TASK_LIST_USER_POOL_ARN}
   dotenv:
     path: ../.env
   customDomain:
-    domainName: 'jobslistapi.${self:custom.domain}'
+    domainName: 'tasklistapi.${self:custom.domain}'
     stage: ${self:provider.stage}
     basePath: api
     certificateName: '*.${self:custom.domain}'
@@ -27,7 +27,7 @@ provider:
   stage: ${opt:stage, 'dev'}
   region: ${env:TARGET_REGION}
   environment:
-    JOBS_TABLE: '${env:JOBS_LIST_JOBS_TABLE}-${self:provider.stage}'
+    TASK_TABLE: '${env:TASK_LIST_TASK_TABLE}-${self:provider.stage}'
   iamRoleStatements:
     - Effect: Allow
       Action:
@@ -43,51 +43,51 @@ provider:
 functions:
   create:
     handler: handler.create
-    role: arn:aws:iam::${self:custom.accountid}:role/jobs-list
+    role: arn:aws:iam::${self:custom.accountid}:role/task-list
     events:
       - http:
           method: POST
-          path: jobs
+          path: task
           cors: true
           authorizer:
             arn: '${self:custom.userPoolArn}'
   read:
     handler: handler.read
-    role: arn:aws:iam::${self:custom.accountid}:role/jobs-list
+    role: arn:aws:iam::${self:custom.accountid}:role/task-list
     events:
       - http:
           method: GET
-          path: jobs/{job_id}
+          path: task/{id}
           cors: true
           authorizer:
             arn: '${self:custom.userPoolArn}'
   update:
     handler: handler.update
-    role: arn:aws:iam::${self:custom.accountid}:role/jobs-list
+    role: arn:aws:iam::${self:custom.accountid}:role/task-list
     events:
       - http:
           method: PUT
-          path: jobs/{job_id}
+          path: task/{id}
           cors: true
           authorizer:
             arn: '${self:custom.userPoolArn}'
   delete:
     handler: handler.del
-    role: arn:aws:iam::${self:custom.accountid}:role/jobs-list
+    role: arn:aws:iam::${self:custom.accountid}:role/task-list
     events:
       - http:
           method: DELETE
-          path: jobs/{job_id}
+          path: task/{id}
           cors: true
           authorizer:
             arn: '${self:custom.userPoolArn}'
   list:
     handler: handler.list
-    role: arn:aws:iam::${self:custom.accountid}:role/jobs-list
+    role: arn:aws:iam::${self:custom.accountid}:role/task-list
     events:
       - http:
           method: GET
-          path: jobs
+          path: task
           cors: true
           authorizer:
             arn: '${self:custom.userPoolArn}'

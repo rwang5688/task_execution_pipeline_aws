@@ -1,13 +1,13 @@
 {
-  "name": "jobs-service",
+  "name": "task-list-service",
   "version": "1.0.0",
-  "description": "jobs-service",
+  "description": "task-list-service",
   "main": "handler.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
-    "jobs-service"
+    "task-list-service"
   ],
   "author": "rwang5688@outlook.com",
   "license": "ISC",

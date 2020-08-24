@@ -2,14 +2,14 @@
 
 import $ from 'jquery';
 import 'webpack-jquery-ui/datepicker';
-import { jobsListTpl, addTpl, editTpl, errTpl } from './templates';
+import { taskListTpl, addTpl, editTpl, errTpl } from './templates';
 
 const view = { renderList, renderAddButton, renderEditArea, renderError };
 export { view };
 
 
 function renderList (body) {
-  $('#content').html(jobsListTpl(body.Items));
+  $('#content').html(taskListTpl(body.Items));
 }
 
 
@@ -22,11 +22,11 @@ function renderEditArea (id) {
   $('#edit-area').html(editTpl());
   setTimeout(function () {
     if (id) {
-      $('#job-id').val(id);
-      $('#job-tool').val($('#' + id + ' #job_tool').text());
-      $('#job-source').val($('#' + id + ' #job_source').text());
-      $('#job-status').val($('#' + id + ' #job_status').text());
-      $('#job-logfile').val($('#' + id + ' #job_logfile').text());
+      $('#task-id').val(id);
+      $('#task-tool').val($('#' + id + ' #task_tool').text());
+      $('#task-source').val($('#' + id + ' #task_source').text());
+      $('#task-status').val($('#' + id + ' #task_status').text());
+      $('#task-logfile').val($('#' + id + ' #task_logfile').text());
       $('#submitter-id').val($('#' + id + ' #submitter_id').text());
       $('#submit-timestamp').val($('#' + id + ' #submit_timestamp').text());
       $('#update-timestamp').val($('#' + id + ' #update_timestamp').text());

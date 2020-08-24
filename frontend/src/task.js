@@ -1,12 +1,12 @@
 'use strict';
 
 import $ from 'jquery';
-import {view} from './jobs-view';
-const jobs = {activate};
-export {jobs};
+import {view} from './task-view';
+const task = {activate};
+export {task};
 
 /*jshint -W101 */
-const API_ROOT = `https://jobslistapi.${process.env.JOBS_LIST_DOMAIN}/api/jobs/`;
+const API_ROOT = `https://tasklistapi.${process.env.TASK_LIST_DOMAIN}/api/task/`;
 /*jshint +W101 */
 
 let auth;
@@ -14,11 +14,11 @@ let auth;
 
 function gather () {
   return {
-    job_id: $('#job-id').val(),
-    job_tool: $('#job-tool').val(),
-    job_source: $('#job-source').val(),
-    job_status: $('#job-status').val(),
-    job_logfile: $('#job-logfile').val(),
+    task_id: $('#task-id').val(),
+    task_tool: $('#task-tool').val(),
+    task_source: $('#task-source').val(),
+    task_status: $('#task-status').val(),
+    task_logfile: $('#task-logfile').val(),
     submitter_id: $('#submitter-id').val(),
     submit_timestamp: $('#submit-timestamp').val(),
     update_timestamp: $('#update-timestamp').val()
@@ -50,7 +50,7 @@ function create (cb) {
 
 function update (cb) {
   auth.session().then(session => {
-    $.ajax(API_ROOT + $('#job-id').val(), {
+    $.ajax(API_ROOT + $('#task-id').val(), {
       data: JSON.stringify(gather()),
       contentType: 'application/json',
       type: 'PUT',
@@ -114,27 +114,27 @@ function list (cb) {
 
 
 function bindList () {
-  $('.job-item-edit').unbind('click');
-  $('.job-item-edit').on('click', (e) => {
+  $('.task-item-edit').unbind('click');
+  $('.task-item-edit').on('click', (e) => {
     view.renderEditArea(e.currentTarget.id);
   });
-  $('.job-item-delete').unbind('click');
-  $('.job-item-delete').on('click', (e) => {
+  $('.task-item-delete').unbind('click');
+  $('.task-item-delete').on('click', (e) => {
     del(e.currentTarget.id);
   });
 }
 
 
 function bindEdit () {
-  $('#input-job').unbind('click');
-  $('#input-job').on('click', e => {
+  $('#input-task').unbind('click');
+  $('#input-task').on('click', e => {
     e.preventDefault();
     view.renderEditArea();
   });
-  $('#job-save').unbind('click');
-  $('#job-save').on('click', e => {
+  $('#task-save').unbind('click');
+  $('#task-save').on('click', e => {
     e.preventDefault();
-    if ($('#job-id').val().length > 0) {
+    if ($('#task-id').val().length > 0) {
       update(() => {
         view.renderAddButton();
       });
@@ -144,8 +144,8 @@ function bindEdit () {
       });
     }
   });
-  $('#job-cancel').unbind('click');
-  $('#job-cancel').on('click', e => {
+  $('#task-cancel').unbind('click');
+  $('#task-cancel').on('click', e => {
     e.preventDefault();
     view.renderAddButton();
   });

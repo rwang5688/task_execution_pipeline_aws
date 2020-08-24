@@ -15,14 +15,14 @@ function remove () {
 
 
 function domain () {
-  cd jobs-list-service
+  cd task-list-service
   serverless delete_domain
   cd ..
 }
 
 
 # remove frontend apps
-aws s3 rm s3://${JOBS_LIST_APPS_BUCKET} --recursive
+aws s3 rm s3://${TASK_LIST_APPS_BUCKET} --recursive
 
 # remove jobs-service API functions
 SERVICES=(jobs-list-service)
