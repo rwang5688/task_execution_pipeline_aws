@@ -25,7 +25,7 @@ function domain () {
 aws s3 rm s3://${TASK_LIST_APPS_BUCKET} --recursive
 
 # remove jobs-service API functions
-SERVICES=(jobs-list-service)
+SERVICES=(task-list-service)
 remove
 
 # delete jobs-service API domain
