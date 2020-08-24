@@ -2,5 +2,5 @@
 . ./.env
 . checkenv.sh
 . deploy-workflow.sh
-. deploy-jobs-list.sh
+. deploy-task-list.sh
 
