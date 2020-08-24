@@ -26,9 +26,9 @@ int execute_workload(int argc, char **argv)
 /**
  * Execute callback
  */
-int execute_callback(string callback, string jobId, string jobStatus, string jobLogfile)
+int execute_callback(string callback, string taskId, string taskStatus, string taskLogfile)
 {
-    string command = "python3 " + callback + " " + jobId + " " + jobStatus + " " + jobLogfile;
+    string command = "python3 " + callback + " " + taskId + " " + taskStatus + " " + taskLogfile;
     cout << "Executing: " << command << endl;
     cout.flush();
     system(command.c_str());
@@ -61,12 +61,12 @@ int main(int argc, char **argv)
             exit(ERROR);
         }
 
-        // execute callback function with jobId, jobStatus, jobLogfile
+        // execute callback function with taskId, taskStatus, taskLogfile
         string callback = argv[argc-2];
-        string jobId = argv[argc-1];
-        string jobStatus = "completed";
-        string jobLogfile = "log.v";
-        success = execute_callback(callback, jobId, jobStatus, jobLogfile);
+        string taskId = argv[argc-1];
+        string taskStatus = "completed";
+        string taskLogfile = "log.v";
+        success = execute_callback(callback, taskId, taskStatus, taskLogfile);
         if (success != SUCCESS) {
             cerr << "execute_callback failed.  Exit." << endl;
             exit(ERROR);

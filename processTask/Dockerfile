@@ -14,8 +14,8 @@ RUN unzip awscliv2.zip
 RUN ./aws/install
 
 # create working directory
-ADD . /processJob
-WORKDIR /processJob
+ADD . /processTask
+WORKDIR /processTask
 
 # compile XVSA mock
 RUN make
@@ -25,5 +25,5 @@ RUN aws configure import --csv "file://aws-admin_accessKeys.csv"
 RUN cat ~/.aws/credentials
 
 # set entry point
-ENTRYPOINT ["/bin/sh", "processJob.sh"]
+ENTRYPOINT ["/bin/sh", "processTask.sh"]
 

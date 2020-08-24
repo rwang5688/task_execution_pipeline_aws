@@ -11,12 +11,12 @@ def get_env_vars():
     global queue_name
 
     bucket_name = ''
-    if 'JOBS_LIST_LOG_DATA_BUCKET' in os.environ:
-        bucket_name = os.environ['JOBS_LIST_LOG_DATA_BUCKET']
+    if 'TASK_LIST_LOG_DATA_BUCKET' in os.environ:
+        bucket_name = os.environ['TASK_LIST_LOG_DATA_BUCKET']
 
     queue_name = ''
-    if 'JOBS_LIST_UPDATE_JOB_QUEUE' in os.environ:
-        queue_name = os.environ['JOBS_LIST_UPDATE_JOB_QUEUE']
+    if 'TASK_LIST_UPDATE_TASK_QUEUE' in os.environ:
+        queue_name = os.environ['TASK_LIST_UPDATE_TASK_QUEUE']
 
     # success
     return True
@@ -24,49 +24,49 @@ def get_env_vars():
 
 def parse_arguments():
     import argparse
-    global job_id
-    global job_status
-    global job_logfile
+    global task_id
+    global task_status
+    global task_logfile
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('job_id', help='The id of the job to update.')
-    parser.add_argument('job_status', help='The status of the job to update.')
-    parser.add_argument('job_logfile', help='The logfile of the job to update.')
+    parser.add_argument('task_id', help='The id of the task to update.')
+    parser.add_argument('task_status', help='The status of the task to update.')
+    parser.add_argument('task_logfile', help='The logfile of the task to update.')
 
     args = parser.parse_args()
-    job_id = args.job_id
-    job_status = args.job_status
-    job_logfile = args.job_logfile
+    task_id = args.task_id
+    task_status = args.task_status
+    task_logfile = args.task_logfile
 
-    if job_id is None:
-        print('parse_arguments: job_id is missing.')
+    if task_id is None:
+        print('parse_arguments: task_id is missing.')
         return False
 
-    if job_status is None:
-        print('parse_arguments: job_status is missing.')
+    if task_status is None:
+        print('parse_arguments: task_status is missing.')
         return False
 
-    if job_logfile is None:
-        print('parse_arguments: job_logfile is missing.')
+    if task_logfile is None:
+        print('parse_arguments: task_logfile is missing.')
         return False
 
     # success
     return True
 
 
-def upload_logfile(bucket_name, job_logfile):
+def upload_logfile(bucket_name, task_logfile):
     # get bucket
     s3util.list_buckets()
     bucket = s3util.get_bucket(bucket_name)
     if bucket is None:
-        printf(f'upload_logfile: Bucket {bucket_name} does not exist.')
+        print(f'upload_logfile: Bucket {bucket_name} does not exist.')
         return False
 
     # upload file
     s3util.list_files(bucket["Name"])
-    success = s3util.upload_file(job_logfile, bucket["Name"])
+    success = s3util.upload_file(task_logfile, bucket["Name"])
     if not success:
-        printf(f'upload_logfile: Failed to upload log file {job_logfile}.')
+        print(f'upload_logfile: Failed to upload log file {task_logfile}.')
         return False
     s3util.list_files(bucket["Name"])
 
@@ -74,7 +74,7 @@ def upload_logfile(bucket_name, job_logfile):
     return True
 
 
-def send_message(queue_name, job_id, job_status, job_logfile):
+def send_message(queue_name, task_id, task_status, task_logfile):
     # get queue url
     sqsutil.list_queues()
     queue_url = sqsutil.get_queue_url(queue_name)
@@ -85,10 +85,10 @@ def send_message(queue_name, job_id, job_status, job_logfile):
     # send message
     message_body = {
         "action": "update",
-        "job": {
-            "job_id": job_id,
-            "job_status": job_status,
-            "job_logfile": job_logfile
+        "task": {
+            "task_id": task_id,
+            "task_status": task_status,
+            "task_logfile": task_logfile
         }
     }
     message_id = sqsutil.send_message(queue_url, str(message_body))
@@ -108,7 +108,7 @@ def send_message(queue_name, job_id, job_status, job_logfile):
 
 
 def main():
-    print('\nStarting jobLog.py ...')
+    print('\nStarting taskLog.py ...')
 
     success = get_env_vars()
     if not success:
@@ -125,16 +125,16 @@ def main():
         return
 
     print('args:')
-    print(f'job_id = {job_id}')
-    print(f'job_status = {job_status}')
-    print(f'job_logfile = {job_logfile}')
+    print(f'task_id = {task_id}')
+    print(f'task_status = {task_status}')
+    print(f'task_logfile = {task_logfile}')
 
-    success = upload_logfile(bucket_name, job_logfile)
+    success = upload_logfile(bucket_name, task_logfile)
     if not success:
         print('upload_logfile failed.  Exit.')
         return
 
-    success = send_message(queue_name, job_id, job_status, job_logfile)
+    success = send_message(queue_name, task_id, task_status, task_logfile)
     if not success:
         print('send_message failed.  Exit.')
         return
