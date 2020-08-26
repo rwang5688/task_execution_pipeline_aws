@@ -21,7 +21,7 @@ WORKDIR /processTask
 RUN make
 
 # import AWS credentials
-RUN aws configure import --csv "file://aws-admin_accessKeys.csv"
+RUN aws configure import --csv "file://aws-admin_credentials.csv"
 RUN cat ~/.aws/credentials
 
 # set entry point
