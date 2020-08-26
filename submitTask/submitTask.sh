@@ -3,7 +3,7 @@
 . ./env.sh
 
 # import AWS credentials
-aws configure import --csv "file://aws-admin_accessKeys.csv"
+aws configure import --csv "file://aws-admin_credentials.csv"
 cat ~/.aws/credentials
 
 # execute script
