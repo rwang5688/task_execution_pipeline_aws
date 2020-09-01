@@ -43,6 +43,19 @@ def list_buckets():
             print(f'Name: {bucket["Name"]}')
 
 
+def list_files(bucket_name):
+    # Retrieve the list of existing files
+    s3 = get_s3_client()
+    response = s3.list_objects_v2(Bucket=bucket_name)
+
+    # Output the bucket names
+    print(f'\nBucket: {response["Name"]}')
+    print('Contents:')
+    if 'Contents' in response:
+        for bucketFile in response['Contents']:
+            print(f'Key: {bucketFile["Key"]}')
+
+
 def upload_file(file_name, bucket, object_name=None):
     if object_name is None:
         object_name = file_name
@@ -67,17 +80,4 @@ def download_file(bucket_name, object_name, file_name=None):
         logging.error(e)
         return False
     return True
-
-
-def list_files(bucket_name):
-    # Retrieve the list of existing files
-    s3 = get_s3_client()
-    response = s3.list_objects_v2(Bucket=bucket_name)
-
-    # Output the bucket names
-    print(f'\nBucket: {response["Name"]}')
-    print('Contents:')
-    if 'Contents' in response:
-        for bucketFile in response['Contents']:
-            print(f'Key: {bucketFile["Key"]}')
 
