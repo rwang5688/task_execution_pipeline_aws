@@ -1,4 +1,6 @@
 import os
+import json
+import uuid
 import boto3
 from botocore.exceptions import ClientError
 import s3util
@@ -6,12 +8,17 @@ import sqsutil
 
 
 def get_env_vars():
-    global bucket_name
+    global source_bucket_name
+    global result_bucket_name
     global queue_name
 
-    bucket_name = ''
+    source_bucket_name = ''
     if 'TASK_LIST_SOURCE_DATA_BUCKET' in os.environ:
-        bucket_name = os.environ['TASK_LIST_SOURCE_DATA_BUCKET']
+        source_bucket_name = os.environ['TASK_LIST_SOURCE_DATA_BUCKET']
+
+    result_bucket_name = ''
+    if 'TASK_LIST_RESULT_DATA_BUCKET' in os.environ:
+        result_bucket_name = os.environ['TASK_LIST_RESULT_DATA_BUCKET']
 
     queue_name = ''
     if 'TASK_LIST_SUBMIT_TASK_QUEUE' in os.environ:
@@ -23,27 +30,27 @@ def get_env_vars():
 
 def parse_arguments():
     import argparse
-    global task_tool
-    global task_source
+    global task_config_file_name
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('task_tool', help='The name of the tool to run.')
-    parser.add_argument('task_source', help='The name of the source package to run.')
+    parser.add_argument('task_config_file_name', help='task config file name.')
 
     args = parser.parse_args()
-    task_tool = args.task_tool
-    task_source = args.task_source
+    task_config_file_name = args.task_config_file_name
 
-    if task_tool is None:
-        print('parse_arguments: task_tool is missing.')
-        return False
-
-    if task_source is None:
-        print('parse_arguments: task_source is missing.')
+    if task_config_file_name is None:
+        print('parse_arguments: task_config_file_name is missing.')
         return False
 
     # success
     return True
+
+
+def get_json_data(file_name):
+    with open(file_name) as f:
+        data = json.load(f)
+        return data
+    return None
 
 
 def upload_source(bucket_name, task_source):
@@ -107,7 +114,8 @@ def main():
         return
 
     print('Env vars:')
-    print(f'bucket_name: {bucket_name}')
+    print(f'source_bucket_name: {source_bucket_name}')
+    print(f'result_bucket_name: {result_bucket_name}')
     print(f'queue_name: {queue_name}')
 
     success = parse_arguments()
@@ -116,18 +124,29 @@ def main():
         return
 
     print('Args:')
-    print(f'task_tool = {task_tool}')
-    print(f'task_source = {task_source}')
+    print(f'task_config_file_name: {task_config_file_name}')
 
-    success = upload_source(bucket_name, task_source)
-    if not success:
-        print('upload_source failed.  Exit.')
+    task_config = get_json_data(task_config_file_name)
+    if task_config == None:
+        print('get_json_data failed.  Exit.')
         return
 
-    success = send_message(queue_name, task_tool, task_source)
-    if not success:
-        print('send_message failed.  Exit.')
-        return
+    print('Task config:')
+    print(task_config)
+
+    task_id = str(uuid.uuid4())
+
+    print(f'task_id: {task_id}')
+
+    #success = upload_source(bucket_name, task_source)
+    #if not success:
+    #    print('upload_source failed.  Exit.')
+    #    return
+
+    #success = send_message(queue_name, task_tool, task_source)
+    #if not success:
+    #    print('send_message failed.  Exit.')
+    #    return
 
 
 if __name__ == '__main__':
