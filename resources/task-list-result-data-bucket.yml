@@ -1,0 +1,34 @@
+Resources:
+  ResultDataBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: ${self:custom.resultDataBucket}
+      CorsConfiguration:
+        CorsRules:
+          -
+            AllowedOrigins:
+              - '*'
+            AllowedHeaders:
+              - '*'
+            AllowedMethods:
+              - GET
+              - PUT
+              - POST
+              - DELETE
+              - HEAD
+            MaxAge: 3000
+      AccessControl: PublicRead
+  LogDataBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket:
+        Ref: ResultDataBucket
+      PolicyDocument:
+        Statement:
+          - Sid: PublicReadGetObject
+            Effect: Allow
+            Principal: "*"
+            Action:
+              - s3:GetObject
+            Resource: arn:aws:s3:::${self:custom.resultDataBucket}/*
+

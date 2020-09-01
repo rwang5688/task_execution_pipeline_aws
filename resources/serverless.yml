@@ -8,6 +8,7 @@ custom:
   appsBucket: ${env:TASK_LIST_APPS_BUCKET}
   sourceDataBucket: ${env:TASK_LIST_SOURCE_DATA_BUCKET}
   logDataBucket: ${env:TASK_LIST_LOG_DATA_BUCKET}
+  resultDataBucket: ${env:TASK_LIST_RESULT_DATA_BUCKET}
   submitTaskQueue: ${env:TASK_LIST_SUBMIT_TASK_QUEUE}
   processTaskQueue: ${env:TASK_LIST_PROCESS_TASK_QUEUE}
   updateTaskQueue: ${env:TASK_LIST_UPDATE_TASK_QUEUE}
@@ -26,6 +27,7 @@ resources:
   - ${file(./task-list-apps-bucket.yml)}
   - ${file(./task-list-source-data-bucket.yml)}
   - ${file(./task-list-log-data-bucket.yml)}
+  - ${file(./task-list-result-data-bucket.yml)}
   - ${file(./task-list-queues.yml)}
   - ${file(./task-list-task-table.yml)}
 
