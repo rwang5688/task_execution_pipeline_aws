@@ -6,7 +6,7 @@ custom:
   accountid: ${env:AWS_ACCOUNT_ID}
   region: ${env:TARGET_REGION}
   appsBucket: ${env:TASK_LIST_APPS_BUCKET}
-  sourceDataBucket: ${env:TASK_LIST_SOURCE_DATA_BUCKET}
+  preprocessDataBucket: ${env:TASK_LIST_PREPROCESS_DATA_BUCKET}
   logDataBucket: ${env:TASK_LIST_LOG_DATA_BUCKET}
   resultDataBucket: ${env:TASK_LIST_RESULT_DATA_BUCKET}
   submitTaskQueue: ${env:TASK_LIST_SUBMIT_TASK_QUEUE}
@@ -25,7 +25,7 @@ provider:
 
 resources:
   - ${file(./task-list-apps-bucket.yml)}
-  - ${file(./task-list-source-data-bucket.yml)}
+  - ${file(./task-list-preprocess-data-bucket.yml)}
   - ${file(./task-list-log-data-bucket.yml)}
   - ${file(./task-list-result-data-bucket.yml)}
   - ${file(./task-list-queues.yml)}

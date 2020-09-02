@@ -8,13 +8,13 @@ import sqsutil
 
 
 def get_env_vars():
-    global source_bucket_name
+    global preprocess_bucket_name
     global result_bucket_name
     global queue_name
 
-    source_bucket_name = ''
-    if 'TASK_LIST_SOURCE_DATA_BUCKET' in os.environ:
-        source_bucket_name = os.environ['TASK_LIST_SOURCE_DATA_BUCKET']
+    preprocess_bucket_name = ''
+    if 'TASK_LIST_PREPROCESS_DATA_BUCKET' in os.environ:
+        source_bucket_name = os.environ['TASK_LIST_PREPROCESS_DATA_BUCKET']
 
     result_bucket_name = ''
     if 'TASK_LIST_RESULT_DATA_BUCKET' in os.environ:
@@ -53,12 +53,12 @@ def get_json_data(file_name):
     return None
 
 
-def upload_source(bucket_name, task_source):
+def upload_preprocess_files(preprocess_bucket_name, task_id, task_config):
     # get bucket
     s3util.list_buckets()
-    bucket = s3util.get_bucket(bucket_name)
+    bucket = s3util.get_bucket(preprocess_bucket_name)
     if bucket is None:
-        print(f'upload_source: Bucket {bucket_name} does not exist.')
+        print(f'upload_source: Bucket {preprocess_bucket_name} does not exist.')
         return False
 
     # upload file
@@ -73,7 +73,7 @@ def upload_source(bucket_name, task_source):
     return True
 
 
-def send_message(queue_name, task_tool, task_source):
+def send_message(queue_name, task_id, task_config):
     # get queue url
     sqsutil.list_queues()
     queue_url = sqsutil.get_queue_url(queue_name)
@@ -114,7 +114,7 @@ def main():
         return
 
     print('Env vars:')
-    print(f'source_bucket_name: {source_bucket_name}')
+    print(f'preprocess_bucket_name: {preprocess_bucket_name}')
     print(f'result_bucket_name: {result_bucket_name}')
     print(f'queue_name: {queue_name}')
 
@@ -138,12 +138,12 @@ def main():
 
     print(f'task_id: {task_id}')
 
-    #success = upload_source(bucket_name, task_source)
+    #success = upload_preprocess_files(preprocess_bucket_name, task_id, task_config)
     #if not success:
-    #    print('upload_source failed.  Exit.')
+    #    print('upload_preprocess_files failed.  Exit.')
     #    return
 
-    #success = send_message(queue_name, task_tool, task_source)
+    #success = send_message(queue_name, task_id, task_config)
     #if not success:
     #    print('send_message failed.  Exit.')
     #    return

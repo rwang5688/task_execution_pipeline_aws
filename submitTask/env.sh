@@ -4,7 +4,7 @@ export AWS_ACCOUNT_ID=700702834148
 export TARGET_REGION=us-west-2
 
 # task-list workflow and database specific environment variables
-export TASK_LIST_SOURCE_DATA_BUCKET=task-list-source-data-bucket-rwang5688
+export TASK_LIST_PREPROCESS_DATA_BUCKET=task-list-preprocess-data-bucket-rwang5688
 export TASK_LIST_LOG_DATA_BUCKET=task-list-log-data-bucket-rwang5688
 export TASK_LIST_RESULT_DATA_BUCKET=task-list-result-data-bucket-rwang5688
 export TASK_LIST_SUBMIT_TASK_QUEUE=task-list-submit-task-queue-rwang5688
