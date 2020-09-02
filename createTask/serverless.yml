@@ -6,7 +6,7 @@ plugins:
 custom:
   accountid: ${env:AWS_ACCOUNT_ID}
   region: ${env:TARGET_REGION}
-  sourceDataBucket: ${env:TASK_LIST_SOURCE_DATA_BUCKET}
+  preprocessDataBucket: ${env:TASK_LIST_PREPROCESS_DATA_BUCKET}
   submitTaskQueue: ${env:TASK_LIST_SUBMIT_TASK_QUEUE}
   processTaskQueue: ${env:TASK_LIST_PROCESS_TASK_QUEUE}
   taskTable: ${env:TASK_LIST_TASK_TABLE}
@@ -24,7 +24,7 @@ provider:
     - Effect: Allow
       Action:
         - s3:GetObject
-      Resource: "arn:aws:s3:::${self:custom.sourceDataBucket}/*"
+      Resource: "arn:aws:s3:::${self:custom.preprocessDataBucket}/*"
     - Effect: Allow
       Action:
         - sqs:ListQueues
@@ -59,7 +59,7 @@ functions:
     environment:
       ACCOUNT_ID: ${env:AWS_ACCOUNT_ID}
       REGION: ${env:TARGET_REGION}
-      SOURCE_DATA_BUCKET: ${env:TASK_LIST_SOURCE_DATA_BUCKET}
+      SOURCE_DATA_BUCKET: ${env:TASK_LIST_PREPROCESS_DATA_BUCKET}
       SUBMIT_TASK_QUEUE: ${env:TASK_LIST_SUBMIT_TASK_QUEUE}
       PROCESS_TASK_QUEUE: ${env:TASK_LIST_PROCESS_TASK_QUEUE}
       TASK_TABLE: ${env:TASK_LIST_TASK_TABLE}
