@@ -1,0 +1,36 @@
+# change open file number limit to 1048576
+===========================================================================
+### handle preprocess files for basic.a.dir ......
+# command: xvsa -sp -json -msgid  -xfa -VSA:certc=1 -VSA:zero_global=0  -o /share/scan/106b0470-f9f4-46b6-b483-9f828b99fd63/106b0470-f9f4-46b6-b483-9f828b99fd63.preprocess/basic.a.dir/preprocess/aob.c.o -c /share/scan/106b0470-f9f4-46b6-b483-9f828b99fd63/106b0470-f9f4-46b6-b483-9f828b99fd63.preprocess/basic.a.dir/preprocess/aob.c.i
+# NOTE: compile exited with 0
+# command: xvsa -sp -json -msgid  -xfa -VSA:certc=1 -VSA:zero_global=0  -o /share/scan/106b0470-f9f4-46b6-b483-9f828b99fd63/106b0470-f9f4-46b6-b483-9f828b99fd63.preprocess/basic.a.dir/preprocess/dbf.c.o -c /share/scan/106b0470-f9f4-46b6-b483-9f828b99fd63/106b0470-f9f4-46b6-b483-9f828b99fd63.preprocess/basic.a.dir/preprocess/dbf.c.i
+# NOTE: compile exited with 0
+# command: xvsa -sp -json -msgid  -xfa -VSA:certc=1 -VSA:zero_global=0  -o /share/scan/106b0470-f9f4-46b6-b483-9f828b99fd63/106b0470-f9f4-46b6-b483-9f828b99fd63.preprocess/basic.a.dir/preprocess/msf.c.o -c /share/scan/106b0470-f9f4-46b6-b483-9f828b99fd63/106b0470-f9f4-46b6-b483-9f828b99fd63.preprocess/basic.a.dir/preprocess/msf.c.i
+# NOTE: compile exited with 0
+# command: xvsa -sp -json -msgid  -xfa -VSA:certc=1 -VSA:zero_global=0  -o /share/scan/106b0470-f9f4-46b6-b483-9f828b99fd63/106b0470-f9f4-46b6-b483-9f828b99fd63.preprocess/basic.a.dir/preprocess/npd.c.o -c /share/scan/106b0470-f9f4-46b6-b483-9f828b99fd63/106b0470-f9f4-46b6-b483-9f828b99fd63.preprocess/basic.a.dir/preprocess/npd.c.i
+# NOTE: compile exited with 0
+# command: xvsa -sp -json -msgid  -xfa -VSA:certc=1 -VSA:zero_global=0  -o /share/scan/106b0470-f9f4-46b6-b483-9f828b99fd63/106b0470-f9f4-46b6-b483-9f828b99fd63.preprocess/basic.a.dir/preprocess/uaf.c.o -c /share/scan/106b0470-f9f4-46b6-b483-9f828b99fd63/106b0470-f9f4-46b6-b483-9f828b99fd63.preprocess/basic.a.dir/preprocess/uaf.c.i
+# NOTE: compile exited with 0
+# command: xvsa -sp -json -msgid  -xfa -VSA:certc=1 -VSA:zero_global=0  -o /share/scan/106b0470-f9f4-46b6-b483-9f828b99fd63/106b0470-f9f4-46b6-b483-9f828b99fd63.preprocess/basic.a.dir/preprocess/uiv.c.o -c /share/scan/106b0470-f9f4-46b6-b483-9f828b99fd63/106b0470-f9f4-46b6-b483-9f828b99fd63.preprocess/basic.a.dir/preprocess/uiv.c.i
+# NOTE: compile exited with 0
+### cross scan /share/scan/106b0470-f9f4-46b6-b483-9f828b99fd63/106b0470-f9f4-46b6-b483-9f828b99fd63.preprocess/basic.a.dir/preprocess/uiv.c.o
+/share/scan/106b0470-f9f4-46b6-b483-9f828b99fd63/106b0470-f9f4-46b6-b483-9f828b99fd63.preprocess/basic.a.dir/preprocess/npd.c.o
+/share/scan/106b0470-f9f4-46b6-b483-9f828b99fd63/106b0470-f9f4-46b6-b483-9f828b99fd63.preprocess/basic.a.dir/preprocess/aob.c.o
+/share/scan/106b0470-f9f4-46b6-b483-9f828b99fd63/106b0470-f9f4-46b6-b483-9f828b99fd63.preprocess/basic.a.dir/preprocess/dbf.c.o
+/share/scan/106b0470-f9f4-46b6-b483-9f828b99fd63/106b0470-f9f4-46b6-b483-9f828b99fd63.preprocess/basic.a.dir/preprocess/msf.c.o
+/share/scan/106b0470-f9f4-46b6-b483-9f828b99fd63/106b0470-f9f4-46b6-b483-9f828b99fd63.preprocess/basic.a.dir/preprocess/uaf.c.o ......
+# command: xvsa -sp -json -msgid  -xfa -VSA:certc=1 -VSA:zero_global=0  /share/scan/106b0470-f9f4-46b6-b483-9f828b99fd63/106b0470-f9f4-46b6-b483-9f828b99fd63.preprocess/basic.a.dir/preprocess/uiv.c.o
+/share/scan/106b0470-f9f4-46b6-b483-9f828b99fd63/106b0470-f9f4-46b6-b483-9f828b99fd63.preprocess/basic.a.dir/preprocess/npd.c.o
+/share/scan/106b0470-f9f4-46b6-b483-9f828b99fd63/106b0470-f9f4-46b6-b483-9f828b99fd63.preprocess/basic.a.dir/preprocess/aob.c.o
+/share/scan/106b0470-f9f4-46b6-b483-9f828b99fd63/106b0470-f9f4-46b6-b483-9f828b99fd63.preprocess/basic.a.dir/preprocess/dbf.c.o
+/share/scan/106b0470-f9f4-46b6-b483-9f828b99fd63/106b0470-f9f4-46b6-b483-9f828b99fd63.preprocess/basic.a.dir/preprocess/msf.c.o
+/share/scan/106b0470-f9f4-46b6-b483-9f828b99fd63/106b0470-f9f4-46b6-b483-9f828b99fd63.preprocess/basic.a.dir/preprocess/uaf.c.o 
+info:0x81440318: scan progress 1%
+[uiv.c],[2:11],[Vul],[M],[UIV],[1,0,0],[b],[main()],[2:9:4,2:10:2,2:5:1,2:10:18,2:11:3]
+[dbf.c],[12:7],[Vul],[M],[UDR],[1,0,0],[p],[func_1()],[12:7:3]
+[dbf.c],[12:9],[Vul],[D],[RBC],[1,0,0],[CERT],[MSC37-C],[],[func_1()],[12:9:3]
+[dbf.c],[12:13],[Vul],[M],[UDR],[1,0,0],[p],[func_2()],[12:13:3]
+[dbf.c],[12:15],[Vul],[D],[RBC],[1,0,0],[CERT],[MSC37-C],[],[func_2()],[12:15:3]
+[uaf.c],[17:8],[Vul],[M],[UDR],[1,0,0],[p],[my_free()],[17:8:3]
+info:0x81440318: scan progress 100%
+# NOTE: scan exited with 0
