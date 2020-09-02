@@ -1,4 +1,5 @@
 {
+    "task_id": "uuid",
     "task_tool": "xvsa_start.sh",
     "task_extra_options": {
         "SCAN_EXTRA_OPTIONS": "",
