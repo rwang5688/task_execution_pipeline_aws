@@ -7,12 +7,17 @@ import sqsutil
 
 
 def get_env_vars():
-    global bucket_name
+    global log_bucket_name
+    global result_bucket_name
     global queue_name
 
-    bucket_name = ''
+    log_bucket_name = ''
     if 'TASK_LIST_LOG_DATA_BUCKET' in os.environ:
-        bucket_name = os.environ['TASK_LIST_LOG_DATA_BUCKET']
+        log_bucket_name = os.environ['TASK_LIST_LOG_DATA_BUCKET']
+
+    result_bucket_name = ''
+    if 'TASK_LIST_RESULT_DATA_BUCKET' in os.environ:
+        result_bucket_name = os.environ['TASK_LIST_RESULT_DATA_BUCKET']
 
     queue_name = ''
     if 'TASK_LIST_UPDATE_TASK_QUEUE' in os.environ:
@@ -26,17 +31,14 @@ def parse_arguments():
     import argparse
     global task_id
     global task_status
-    global task_logfile
 
     parser = argparse.ArgumentParser()
     parser.add_argument('task_id', help='The id of the task to update.')
     parser.add_argument('task_status', help='The status of the task to update.')
-    parser.add_argument('task_logfile', help='The logfile of the task to update.')
 
     args = parser.parse_args()
     task_id = args.task_id
     task_status = args.task_status
-    task_logfile = args.task_logfile
 
     if task_id is None:
         print('parse_arguments: task_id is missing.')
@@ -46,35 +48,36 @@ def parse_arguments():
         print('parse_arguments: task_status is missing.')
         return False
 
-    if task_logfile is None:
-        print('parse_arguments: task_logfile is missing.')
-        return False
-
     # success
     return True
 
 
-def upload_logfile(bucket_name, task_logfile):
+def upload_file(bucket_name, task_id, file_name):
     # get bucket
     s3util.list_buckets()
     bucket = s3util.get_bucket(bucket_name)
     if bucket is None:
-        print(f'upload_logfile: Bucket {bucket_name} does not exist.')
+        print(f'upload_file: Bucket {bucket_name} does not exist.')
         return False
 
-    # upload file
+    # debug: list files before
     s3util.list_files(bucket["Name"])
-    success = s3util.upload_file(task_logfile, bucket["Name"])
+
+    # upload file
+    object_key = task_id + "/" + file_name
+    success = s3util.upload_file(file_name, bucket["Name"], object_key)
     if not success:
-        print(f'upload_logfile: Failed to upload log file {task_logfile}.')
+        print(f'upload_file: Failed to upload object {object_key}.')
         return False
+
+    # debug: list files after
     s3util.list_files(bucket["Name"])
 
     # success
     return True
 
 
-def send_message(queue_name, task_id, task_status, task_logfile):
+def send_message(queue_name, task_id, task_status):
     # get queue url
     sqsutil.list_queues()
     queue_url = sqsutil.get_queue_url(queue_name)
@@ -87,8 +90,7 @@ def send_message(queue_name, task_id, task_status, task_logfile):
         "action": "update",
         "task": {
             "task_id": task_id,
-            "task_status": task_status,
-            "task_logfile": task_logfile
+            "task_status": task_status
         }
     }
     message_id = sqsutil.send_message(queue_url, str(message_body))
@@ -108,7 +110,7 @@ def send_message(queue_name, task_id, task_status, task_logfile):
 
 
 def main():
-    print('\nStarting taskLog.py ...')
+    print('\nStarting taskResult.py ...')
 
     success = get_env_vars()
     if not success:
@@ -116,7 +118,8 @@ def main():
         return
 
     print('Env vars:')
-    print(f'bucket_name: {bucket_name}')
+    print(f'log_bucket_name: {log_bucket_name}')
+    print(f'result_bucket_name: {result_bucket_name}')
     print(f'queue_name: {queue_name}')
 
     success = parse_arguments()
@@ -127,14 +130,18 @@ def main():
     print('args:')
     print(f'task_id = {task_id}')
     print(f'task_status = {task_status}')
-    print(f'task_logfile = {task_logfile}')
 
-    success = upload_logfile(bucket_name, task_logfile)
+    success = upload_file(log_bucket_name, task_id, ".scan_log.tar.gz")
     if not success:
-        print('upload_logfile failed.  Exit.')
+        print('upload_file failed: .scan_log.tar.gz.  Exit.')
         return
 
-    success = send_message(queue_name, task_id, task_status, task_logfile)
+    success = upload_file(result_bucket_name, task_id, "scan_result.tar.gz")
+    if not success:
+        print('upload_file failed: scan_result.tar.gz.  Exit.')
+        return
+
+    success = send_message(queue_name, task_id, task_status)
     if not success:
         print('send_message failed.  Exit.')
         return
