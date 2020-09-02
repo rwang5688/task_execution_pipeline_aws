@@ -23,22 +23,20 @@ def get_task_table():
     return task_table
 
 
-def create_task_record(task_table, task_tool, task_source, submitter_id, submit_timestamp):
-    # populate job record
-    task_record = {}
-    task_id = str(uuid.uuid4())
-    task_record['task_id'] = task_id
-    task_record['task_tool'] = task_tool
-    task_record['task_source'] = task_source
+def create_task_record(task_table, task, submitter_id, submit_timestamp):
+    # populate task record
+    # side-effect: this is actually a copy by reference, which causes changes to task :(
+    task_record = task
     task_record['task_status'] = 'created'
-    task_record['task_logfile'] = ''
     task_record['submitter_id'] = submitter_id
     task_record['submit_timestamp'] = submit_timestamp
     task_record['update_timestamp'] = time.time_ns() // 1000000
 
-    # add to task table and return job id
-    print(f'Job Record: {task_record}')
+    # add to task table and return task id
+    print(f'Task Record: {task_record}')
     task_table.put_item(Item=task_record)
+
+    task_id = task_record['task_id']
     return task_id
 
 
@@ -52,16 +50,15 @@ def get_task_record(task_table, task_id):
     return item
 
 
-def update_task_status(task_table, task_id, task_status, task_logfile):
+def update_task_status(task_table, task_id, task_status):
     task_table.update_item(
         Key={
             'task_id': task_id
         },
-        UpdateExpression='SET task_status = :val1, task_logfile = :val2, update_timestamp = :val3',
+        UpdateExpression='SET task_status = :val1, update_timestamp = :val2',
         ExpressionAttributeValues={
             ':val1': task_status,
-            ':val2': task_logfile,
-            ':val3': time.time_ns() // 1000000
+            ':val2': time.time_ns() // 1000000
         }
     )
     return True
