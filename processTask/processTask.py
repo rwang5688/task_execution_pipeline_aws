@@ -11,8 +11,8 @@ def get_env_vars():
     global queue_name
 
     bucket_name = ''
-    if 'TASK_LIST_SOURCE_DATA_BUCKET' in os.environ:
-        bucket_name = os.environ['TASK_LIST_SOURCE_DATA_BUCKET']
+    if 'TASK_LIST_PREPROCESS_DATA_BUCKET' in os.environ:
+        bucket_name = os.environ['TASK_LIST_PREPROCESS_DATA_BUCKET']
 
     queue_name = ''
     if 'TASK_LIST_PROCESS_TASK_QUEUE' in os.environ:
@@ -43,9 +43,7 @@ def receive_message(queue_name):
 
 
 def parse_message(message):
-    global task_id
-    global task_tool
-    global task_source
+    global task
 
     message_body = eval(message['Body'])
     if message_body is None:
@@ -57,42 +55,49 @@ def parse_message(message):
         print('parse_message: task is missing.')
         return False
 
-    task_id = task['task_id']
-    if task_id is None:
-        print('parse_message: task id is missing.')
-        return False
+    # success
+    return True
 
-    task_tool = task['task_tool']
-    if task_tool is None:
-        print('parse_message: task tool is missing.')
-        return False
 
-    task_source = task['task_source']
-    if task_source is None:
-        print('parse_message: task source is missing.')
-        return False
+def set_env_vars(task):
+    os.environ['SCAN_TASK_ID'] = task['task_id']
+    os.environ['SCAN_EXTRA_OPTIONS'] = task['task_extra_options']['SCAN_EXTRA_OPTIONS']
+    os.environ['SCAN_EXTRA_JFE_OPTIONS'] = task['task_extra_options']['SCAN_EXTRA_JFE_OPTIONS']
+    os.environ['SCAN_EXTRA_VARIABLE_OPTION'] = task['task_extra_options']['SCAN_EXTRA_VARIABLE_OPTION']
+    os.environ['SCAN_EXTRA_SKIP_VTABLE_OPTION'] = task['task_extra_options']['SCAN_EXTRA_SKIP_VTABLE_OPTION']
 
     # success
     return True
 
 
-def download_source_blob(bucket_name, task_source):
+def download_preprocessed_files(bucket_name, task):
     # get bucket
     s3util.list_buckets()
     bucket = s3util.get_bucket(bucket_name)
     if bucket is None:
-        print(f'download_source_file: Bucket {bucket_name} does not exist.')
+        print(f'download_preprocssed_files: Bucket {bucket_name} does not exist.')
         return None
 
-    # download file
-    source_blob = task_source
-    success = s3util.download_file(bucket_name, task_source, source_blob)
+    # get folder (task_id)
+    task_id = task['task_id']
+
+    # download source fileinfo
+    task_source_fileinfo = task['task_source_fileinfo']
+    object_key = task_id + "/" + task_source_fileinfo
+    success = s3util.download_file(bucket_name, object_key, task_source_fileinfo)
     if not success:
-        print(f'download_source_file: Failed to download task source {task_source}.')
+        print(f'download_preprocessed_files: Failed to download task source fileinfo {task_source_fileinfo}.')
+
+    # download preprocessed files
+    task_preprocessed_files = task['task_preprocessed_files']
+    object_key = task_id + "/" + task_preprocessed_files
+    success = s3util.download_file(bucket_name, object_key, task_preprocessed_files)
+    if not success:
+        print(f'download_preprocessed_file: Failed to download task preprocssed files {task_preprocessed_files}.')
         return None
 
     # success
-    return source_blob
+    return task_preprocessed_files
 
 
 def read_process_stdout(process):
@@ -109,23 +114,23 @@ def read_process_stdout(process):
             break
 
 
-def extract_source_files(source_blob):
-    # command: "$ tar -xvf $(task_source)"
-    process = subprocess.Popen(['tar', '-xvf', source_blob],
-                            stdout=subprocess.PIPE,
-                            universal_newlines=True)
+def execute_tool(task_tool):
+    # command: "./$(task_tool)"
+    prog = './' + task_tool
+    print(f'prog: {prog}')
+    process = subprocess.Popen([prog],
+        stdout=subprocess.PIPE, universal_newlines=True)
     read_process_stdout(process)
 
     # success
     return True
 
 
-def execute_tool(task_tool, task_id):
-    # command: "$ $(task_tool) source/preprocess/*.i taskLog.py $(task_id)"
-    prog = './' + task_tool
-    process = subprocess.Popen([prog, 'source/preprocess/*.i', 'taskLog.py', task_id],
-                            stdout=subprocess.PIPE,
-                            universal_newlines=True)
+def execute_callback(callback, task_id, task_status):
+    # command: "./$(task_tool)"
+    prog = './' + callback
+    process = subprocess.Popen(["python3", prog, task_id, task_status],
+        stdout=subprocess.PIPE, universal_newlines=True)
     read_process_stdout(process)
 
     # success
@@ -171,25 +176,31 @@ def main():
         return
 
     print('Body.task:')
-    print(f'task_id: {task_id}')
-    print(f'task_tool: {task_tool}')
-    print(f'task_source: {task_source}')
+    print(f'task: {task}')
 
-    source_blob = download_source_blob(bucket_name, task_source)
-    if source_blob is None:
-        print('download_source_blob failed.  Exit.')
-        return
-
-    print(f'source_blob: {source_blob}')
-
-    success = extract_source_files(source_blob)
+    success = set_env_vars(task)
     if not success:
-        print('extract_source_files failed.  Exit.')
+        print('set_env_vars failed.  Exit.')
         return
 
-    success = execute_tool(task_tool, task_id)
+    preprocessed_files = download_preprocessed_files(bucket_name, task)
+    if preprocessed_files is None:
+        print('download_preprocessed_files failed.  Exit.')
+        return
+
+    print(f'preprocessed_files: {preprocessed_files}')
+
+    task_tool = task['task_tool']
+    success = execute_tool(task_tool)
     if not success:
         print('execute_tool failed.  Exit.')
+        return
+
+    callback = 'taskResult.py'
+    task_id = task['task_id']
+    success = execute_callback(callback, task_id, "Completed")
+    if not success:
+        print('execute_callback failed.  Exit.')
         return
 
     success = delete_message(queue_name, message)
