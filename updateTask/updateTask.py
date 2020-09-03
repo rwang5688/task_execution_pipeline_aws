@@ -26,8 +26,7 @@ def preamble(event, context):
 
 
 def parse_event_record(event_record):
-    global task_id
-    global task_status
+    global task
 
     event_body = eval(event_record['body'])
     if event_body is None:

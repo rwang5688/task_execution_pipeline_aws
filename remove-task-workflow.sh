@@ -15,8 +15,9 @@ function remove () {
 
 
 # remove data
-aws s3 rm s3://${TASK_LIST_SOURCE_DATA_BUCKET} --recursive
+aws s3 rm s3://${TASK_LIST_PREPROCESS_DATA_BUCKET} --recursive
 aws s3 rm s3://${TASK_LIST_LOG_DATA_BUCKET} --recursive
+aws s3 rm s3://${TASK_LIST_RESULT_DATA_BUCKET} --recursive
 
 # remove resources and functions
 SERVICES=(updateTask createTask resources)
