@@ -138,10 +138,12 @@ dmypy.json
 # Cython debug symbols
 cython_debug/
 
-# processJob: credentials, executables, outputs
+# processTask: credentials, executables, outputs
 aws-admin_credentials.csv
-xvsa
-xvsa.exe
+xvsa_scan
+xvsa_scan.exe
+*.tar
 *.tar.gz
-preprocess
+*.preprocess
+fileinfo.json
 

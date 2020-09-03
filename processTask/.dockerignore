@@ -138,9 +138,11 @@ dmypy.json
 # Cython debug symbols
 cython_debug/
 
-# processJob: executables, outputs
-xvsa
-xvsa.exe
+# processTask: executables, outputs
+xvsa_scan
+xvsa_scan.exe
+*.tar
 *.tar.gz
-preprocess
+*.preprocess
+fileinfo.json
 

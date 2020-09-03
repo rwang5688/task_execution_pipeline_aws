@@ -30,7 +30,7 @@ def create_task_record(task_table, task, submitter_id, submit_timestamp):
     task_record['task_status'] = 'created'
     task_record['submitter_id'] = submitter_id
     task_record['submit_timestamp'] = submit_timestamp
-    task_record['update_timestamp'] = time.time_ns() // 1000000
+    task_record['update_timestamp'] = str(time.time_ns() // 1000000)
 
     # add to task table and return task id
     print(f'Task Record: {task_record}')
@@ -58,7 +58,7 @@ def update_task_status(task_table, task_id, task_status):
         UpdateExpression='SET task_status = :val1, update_timestamp = :val2',
         ExpressionAttributeValues={
             ':val1': task_status,
-            ':val2': time.time_ns() // 1000000
+            ':val2': str(time.time_ns() // 1000000)
         }
     )
     return True
