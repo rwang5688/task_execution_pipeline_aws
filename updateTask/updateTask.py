@@ -28,7 +28,6 @@ def preamble(event, context):
 def parse_event_record(event_record):
     global task_id
     global task_status
-    global task_logfile
 
     event_body = eval(event_record['body'])
     if event_body is None:
@@ -40,26 +39,11 @@ def parse_event_record(event_record):
         print('parse_event: task is missing.')
         return False
 
-    task_id = task['task_id']
-    if task_id is None:
-        print('parse_message: task id is missing.')
-        return False
-
-    task_status = task['task_status']
-    if task_status is None:
-        print('parse_message: task status is missing.')
-        return False
-
-    task_logfile = task['task_logfile']
-    if task_logfile is None:
-        print('parse_message: task logfile is missing.')
-        return False
-
     # success
     return True
 
 
-def send_message(queue_name, item):
+def send_message(queue_name, task):
     # get queue url
     sqsutil.list_queues()
     queue_url = sqsutil.get_queue_url(queue_name)
@@ -70,11 +54,7 @@ def send_message(queue_name, item):
     # send message
     message_body = {
         "action": "update_log_stream",
-        "task": {
-            "task_id": item['task_id'],
-            "task_status": item['task_status'],
-            "task_logfile": item['task_logfile']
-        }
+        "task": task
     }
     message_id = sqsutil.send_message(queue_url, str(message_body))
     print(f'MessageId: {message_id}')
@@ -118,25 +98,25 @@ def updateTask(event, context):
             print('parse_event_record failed.  Exit.')
             continue
 
-        # debug: print task record attributes
-        print('Task record attributes:')
-        print(f'task_id: {task_id}')
-        print(f'task_status: {task_status}')
-        print(f'task_logfile: {task_logfile}')
+        # debug: print event record attributes
+        print('Event record attributes:')
+        print(f'task: {task}')
 
         # update task status
-        success = tasktable.update_task_status(task_table, task_id, task_status, task_logfile)
+        task_id = task['task_id']
+        task_status = task['task_status']
+        success = tasktable.update_task_status(task_table, task_id, task_status)
         if not success:
             print('update_task_status failed.  Next.')
             continue
 
-        # debug: get and print task record
-        item = tasktable.get_task_record(task_table, task_id)
-        if item is None:
+        # get and print task record
+        task_record = tasktable.get_task_record(task_table, task_id)
+        if task_record is None:
             print('get_task_record failed.  Next.')
             continue
         print('Task record:')
-        print(item)
+        print(task_record)
 
         # set update task log stream queue name
         queue_name = ''
@@ -144,7 +124,7 @@ def updateTask(event, context):
             queue_name = os.environ['UPDATE_TASK_LOG_STREAM_QUEUE']
 
         # send task context to update task log stream queue
-        success = send_message(queue_name, item)
+        success = send_message(queue_name, task_record)
         if not success:
             print('send_message failed.  Next.')
             continue
