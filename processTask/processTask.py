@@ -125,10 +125,8 @@ def set_env_vars(task):
 
 
 def execute_tool(task_tool):
-    # command: "./$(task_tool)"
-    prog = './' + task_tool
-    print(f'prog: {prog}')
-    process = subprocess.Popen(['D:\\MinGW\\msys\\1.0\\bin\\bash.exe', prog],
+    # command: "$(task_tool)"
+    process = subprocess.Popen([task_tool],
         shell=True,
         stdout=subprocess.PIPE, universal_newlines=True,
         env=os.environ)

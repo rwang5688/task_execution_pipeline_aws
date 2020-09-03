@@ -15,8 +15,8 @@ if [ -f preprocess.tar.gz ]; then
     tar -zxf preprocess.tar.gz -C ${SCAN_TASK_ID}.preprocess
 fi
 
-echo "[CMD] ./xvsa_scan ${SCAN_TASK_ID}.preprocess"
-./xvsa_scan ${SCAN_TASK_ID}.preprocess
+echo "[CMD] xvsa_scan ${SCAN_TASK_ID}.preprocess"
+xvsa_scan ${SCAN_TASK_ID}.preprocess
 
 echo "[CMD] tar -zcf .scan_log.tar.gz .scan_log"
 tar -zcf .scan_log.tar.gz .scan_log
