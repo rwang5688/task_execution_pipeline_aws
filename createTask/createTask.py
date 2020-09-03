@@ -114,8 +114,8 @@ def createTask(event, context):
             print('parse_event_record failed.  Next.')
             continue
 
-        # debug: print task record attributes
-        print('Task record attributes:')
+        # debug: print event record attributes
+        print('Event record attributes:')
         print(f'task: {task}')
         print(f'submitter_id: {submitter_id}')
         print(f'submit_timestamp: {submit_timestamp}')
@@ -126,7 +126,7 @@ def createTask(event, context):
             print('create_task_record failed.  Next.')
             continue
 
-        # debug: get and print task record
+        # get and print task record
         task_record = tasktable.get_task_record(task_table, task_id)
         if task_record is None:
             print('get_task_record failed.  Next.')
@@ -139,8 +139,8 @@ def createTask(event, context):
         if 'PROCESS_TASK_QUEUE' in os.environ:
             queue_name = os.environ['PROCESS_TASK_QUEUE']
 
-        # send task context to process task queue
-        success = send_message(queue_name, task)
+        # send task record to process task queue
+        success = send_message(queue_name, task_record)
         if not success:
             print('send_message failed.  Next.')
             continue
@@ -148,7 +148,7 @@ def createTask(event, context):
         # TO DO: Start ECS Fargate task to process task!!!
         # It appears that ECS Fargate task will start as soon as process queue has message.
 
-        # update task status
+        # if send_message succeeds, update task status to "started"
         task_status = "started"
         success = tasktable.update_task_status(task_table, task_id, task_status)
         if not success:

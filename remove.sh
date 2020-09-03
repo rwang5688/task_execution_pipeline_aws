@@ -2,5 +2,5 @@
 . ./.env
 . checkenv.sh
 . remove-task-list.sh
-. remove-workflow.sh
+. remove-task-workflow.sh
 
