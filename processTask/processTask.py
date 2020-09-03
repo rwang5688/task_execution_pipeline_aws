@@ -59,17 +59,6 @@ def parse_message(message):
     return True
 
 
-def set_env_vars(task):
-    os.environ['SCAN_TASK_ID'] = task['task_id']
-    os.environ['SCAN_EXTRA_OPTIONS'] = task['task_extra_options']['SCAN_EXTRA_OPTIONS']
-    os.environ['SCAN_EXTRA_JFE_OPTIONS'] = task['task_extra_options']['SCAN_EXTRA_JFE_OPTIONS']
-    os.environ['SCAN_EXTRA_VARIABLE_OPTION'] = task['task_extra_options']['SCAN_EXTRA_VARIABLE_OPTION']
-    os.environ['SCAN_EXTRA_SKIP_VTABLE_OPTION'] = task['task_extra_options']['SCAN_EXTRA_SKIP_VTABLE_OPTION']
-
-    # success
-    return True
-
-
 def download_preprocessed_files(bucket_name, task):
     # get bucket
     s3util.list_buckets()
@@ -114,12 +103,35 @@ def read_process_stdout(process):
             break
 
 
+def set_env_vars(task):
+    task_id = ''
+    if 'task_id' in task:
+        task_id = task['task_id']
+    else:
+        print('set_env_vars: Missing task_id.')
+        return False
+    os.environ['SCAN_TASK_ID'] = task_id
+
+    if 'task_extra_options' in task:
+        task_extra_options = task['task_extra_options']
+        for task_extra_option in task_extra_options:
+            os.environ[task_extra_option] = task_extra_options[task_extra_option]
+
+    #env = dict(os.environ)   # Make a copy of the current environment
+    #subprocess.Popen(['python3', '-m', 'Pyro4.naming'], env=env)
+
+    # success
+    return True
+
+
 def execute_tool(task_tool):
     # command: "./$(task_tool)"
     prog = './' + task_tool
     print(f'prog: {prog}')
-    process = subprocess.Popen([prog],
-        stdout=subprocess.PIPE, universal_newlines=True)
+    process = subprocess.Popen(['D:\\MinGW\\msys\\1.0\\bin\\bash.exe', prog],
+        shell=True,
+        stdout=subprocess.PIPE, universal_newlines=True,
+        env=os.environ)
     read_process_stdout(process)
 
     # success
@@ -127,9 +139,8 @@ def execute_tool(task_tool):
 
 
 def execute_callback(callback, task_id, task_status):
-    # command: "./$(task_tool)"
-    prog = './' + callback
-    process = subprocess.Popen(["python3", prog, task_id, task_status],
+    # command: "python3 $(callback) task_id task_status"
+    process = subprocess.Popen(["python3", callback, task_id, task_status],
         stdout=subprocess.PIPE, universal_newlines=True)
     read_process_stdout(process)
 
@@ -178,11 +189,6 @@ def main():
     print('Body.task:')
     print(f'task: {task}')
 
-    success = set_env_vars(task)
-    if not success:
-        print('set_env_vars failed.  Exit.')
-        return
-
     preprocessed_files = download_preprocessed_files(bucket_name, task)
     if preprocessed_files is None:
         print('download_preprocessed_files failed.  Exit.')
@@ -190,6 +196,20 @@ def main():
 
     print(f'preprocessed_files: {preprocessed_files}')
 
+    success = set_env_vars(task)
+    if not success:
+        print('set_env_vars failed.  Exit.')
+        return
+
+    # debug: print os.environ
+    print(f'set_env_vars: {os.environ}')
+
+    task_tool = ''
+    if 'task_tool' in task:
+        task_tool = task['task_tool']
+    else:
+        print('main: Missing task_tool.  Exit.')
+        return
     task_tool = task['task_tool']
     success = execute_tool(task_tool)
     if not success:
@@ -198,7 +218,7 @@ def main():
 
     callback = 'taskResult.py'
     task_id = task['task_id']
-    success = execute_callback(callback, task_id, "Completed")
+    success = execute_callback(callback, task_id, "completed")
     if not success:
         print('execute_callback failed.  Exit.')
         return
