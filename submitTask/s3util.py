@@ -16,6 +16,18 @@ def get_s3_client():
     return s3
 
 
+def list_buckets():
+    # Retrieve the list of existing buckets
+    s3 = get_s3_client()
+    response = s3.list_buckets()
+
+    # Output the bucket names
+    print('\nBuckets:')
+    if 'Buckets' in response:
+        for bucket in response['Buckets']:
+            print(f'Name: {bucket["Name"]}')
+
+
 def get_bucket(bucket_name):
     # Retrieve the list of existing buckets
     s3 = get_s3_client()
@@ -29,18 +41,6 @@ def get_bucket(bucket_name):
             break
 
     return result
-
-
-def list_buckets():
-    # Retrieve the list of existing buckets
-    s3 = get_s3_client()
-    response = s3.list_buckets()
-
-    # Output the bucket names
-    print('\nBuckets:')
-    if 'Buckets' in response:
-        for bucket in response['Buckets']:
-            print(f'Name: {bucket["Name"]}')
 
 
 def list_files(bucket_name):

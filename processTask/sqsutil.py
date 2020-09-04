@@ -16,6 +16,19 @@ def get_sqs_client():
     return sqs
 
 
+def list_queues():
+    sqs = get_sqs_client()
+
+    # List SQS queues
+    response = sqs.list_queues()
+
+    # Output the bucket names
+    print('\nQueueUrls:')
+    if 'QueueUrls' in response:
+        for queue_url in response['QueueUrls']:
+            print(f'URL: {queue_url}')
+
+
 def get_queue_url(queue_name):
     sqs = get_sqs_client()
 
@@ -30,19 +43,6 @@ def get_queue_url(queue_name):
         return None
 
     return response['QueueUrl']
-
-
-def list_queues():
-    sqs = get_sqs_client()
-
-    # List SQS queues
-    response = sqs.list_queues()
-
-    # Output the bucket names
-    print('\nQueueUrls:')
-    if 'QueueUrls' in response:
-        for queue_url in response['QueueUrls']:
-            print(f'URL: {queue_url}')
 
 
 def send_message(queue_url, message_body):
