@@ -16,9 +16,11 @@ function gather () {
   return {
     task_id: $('#task-id').val(),
     task_tool: $('#task-tool').val(),
-    task_source: $('#task-source').val(),
+    task_extra_options: $('#task-extra-options').val(),
+    task_source_code: $('#task-source-code').val(),
+    task_source_fileinfo: $('#task-source-fileinfo').val(),
+    task_preprocessed_files: $('#task-preprocessed-files').val(),
     task_status: $('#task-status').val(),
-    task_logfile: $('#task-logfile').val(),
     submitter_id: $('#submitter-id').val(),
     submit_timestamp: $('#submit-timestamp').val(),
     update_timestamp: $('#update-timestamp').val()

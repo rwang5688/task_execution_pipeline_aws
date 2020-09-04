@@ -44,12 +44,12 @@ function create (event, context, cb) {
   console.log('event: ' + JSON.stringify(event));
   const data = JSON.parse(event.body);
 
-  data.job_id = uuid.v1();
+  data.task_id = uuid.v1();
   data.submit_timestamp = new Date().getTime();
   data.update_timestamp = data.submit_timestamp;
 
   // debug
-  console.log('create job_id: ' + data.job_id);
+  console.log('create task_id: ' + data.task_id);
   const params = { ...TABLE_NAME, Item: data };
   dynamoDb.put(params, (err, data) => {
     respond(err, {data: data}, cb);
@@ -62,8 +62,8 @@ function read (event, context, cb) {
   // debug
   console.log('event: ' + JSON.stringify(event));
   // debug
-  console.log('read job_id: ' + event.pathParameters.id);
-  const params = { ...TABLE_NAME, Key: { job_id: event.pathParameters.id } };
+  console.log('read task_id: ' + event.pathParameters.id);
+  const params = { ...TABLE_NAME, Key: { task_id: event.pathParameters.id } };
   dynamoDb.get(params, (err, data) => {
     respond(err, data, cb);
   });
@@ -77,8 +77,8 @@ function update (event, context, cb) {
   const data = JSON.parse(event.body);
 
   // debug
-  console.log('update job_id: ' + event.pathParameters.id);
-  data.job_id = event.pathParameters.id;
+  console.log('update task_id: ' + event.pathParameters.id);
+  data.task_id = event.pathParameters.id;
   data.update_timestamp = new Date().getTime();
   const params = { ...TABLE_NAME, Item: data };
 
@@ -95,8 +95,8 @@ function del (event, context, cb) {
   // debug
   console.log('event: ' + JSON.stringify(event));
   // debug
-  console.log('del job_id: ' + event.pathParameters.id);
-  const params = { ...TABLE_NAME, Key: { job_id: event.pathParameters.id } };
+  console.log('del task_id: ' + event.pathParameters.id);
+  const params = { ...TABLE_NAME, Key: { task_id: event.pathParameters.id } };
   dynamoDb.delete(params, (err, data) => {
     respond(err, data, cb);
   });
