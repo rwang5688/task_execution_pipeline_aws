@@ -5,8 +5,9 @@ plugins:
   - serverless-domain-manager
   - serverless-dotenv-plugin
 custom:
-  region: ${env:TARGET_REGION}
   accountid: ${env:AWS_ACCOUNT_ID}
+  cloud: ${env:TARGET_CLOUD}
+  region: ${env:TARGET_REGION}
   domain: ${env:TASK_LIST_DOMAIN}
   userPoolArn: ${env:TASK_LIST_USER_POOL_ARN}
   dotenv:
@@ -38,12 +39,12 @@ provider:
         - dynamodb:PutItem
         - dynamodb:UpdateItem
         - dynamodb:DeleteItem
-      Resource: "arn:aws:dynamodb:${self:custom.region}:${self:custom.accountid}:*"
+      Resource: "arn:${self:custom.cloud}:dynamodb:${self:custom.region}:${self:custom.accountid}:*"
 
 functions:
   create:
     handler: handler.create
-    role: arn:aws:iam::${self:custom.accountid}:role/task-list
+    role: arn:${self:custom.cloud}:iam::${self:custom.accountid}:role/task-list
     events:
       - http:
           method: POST
@@ -53,7 +54,7 @@ functions:
             arn: '${self:custom.userPoolArn}'
   read:
     handler: handler.read
-    role: arn:aws:iam::${self:custom.accountid}:role/task-list
+    role: arn:${self:custom.cloud}:iam::${self:custom.accountid}:role/task-list
     events:
       - http:
           method: GET
@@ -63,7 +64,7 @@ functions:
             arn: '${self:custom.userPoolArn}'
   update:
     handler: handler.update
-    role: arn:aws:iam::${self:custom.accountid}:role/task-list
+    role: arn:${self:custom.cloud}:iam::${self:custom.accountid}:role/task-list
     events:
       - http:
           method: PUT
@@ -73,7 +74,7 @@ functions:
             arn: '${self:custom.userPoolArn}'
   delete:
     handler: handler.del
-    role: arn:aws:iam::${self:custom.accountid}:role/task-list
+    role: arn:${self:custom.cloud}:iam::${self:custom.accountid}:role/task-list
     events:
       - http:
           method: DELETE
@@ -83,7 +84,7 @@ functions:
             arn: '${self:custom.userPoolArn}'
   list:
     handler: handler.list
-    role: arn:aws:iam::${self:custom.accountid}:role/task-list
+    role: arn:${self:custom.cloud}:iam::${self:custom.accountid}:role/task-list
     events:
       - http:
           method: GET

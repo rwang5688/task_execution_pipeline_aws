@@ -1,6 +1,7 @@
 #!/bin/bash
 # AWS specific environment variables
 export AWS_ACCOUNT_ID=700702834148
+export TARGET_CLOUD=aws
 export TARGET_REGION=us-west-2
 
 # task-list workflow and database specific environment variables

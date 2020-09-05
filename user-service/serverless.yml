@@ -4,6 +4,7 @@ plugins:
   - serverless-dotenv-plugin
 custom:
   accountid: ${env:AWS_ACCOUNT_ID}
+  cloud: ${env:TARGET_CLOUD}
   region: ${env:TARGET_REGION}
   stage: ${self:provider.stage}
   dotenv:
@@ -18,3 +19,4 @@ provider:
 resources:
   - ${file(./user-pool.yml)}
   - ${file(./identity-pool.yml)}
+
