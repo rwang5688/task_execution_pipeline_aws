@@ -6,6 +6,7 @@
 aws configure import --csv "file://aws-admin_credentials.csv"
 cat ~/.aws/credentials
 
-# execute script
+# read task config json, create task id, upload files, submit task
+echo "[CMD] python3 submitTask.py $(task config json)"
 python3 ./submitTask.py $1
 
