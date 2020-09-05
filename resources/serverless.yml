@@ -4,6 +4,7 @@ plugins:
   - serverless-dotenv-plugin
 custom:
   accountid: ${env:AWS_ACCOUNT_ID}
+  cloud: ${env:TARGET_CLOUD}
   region: ${env:TARGET_REGION}
   appsBucket: ${env:TASK_LIST_APPS_BUCKET}
   preprocessDataBucket: ${env:TASK_LIST_PREPROCESS_DATA_BUCKET}

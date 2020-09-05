@@ -9,7 +9,7 @@ Resources:
             Ref: CognitoUserPoolClient
           ProviderName:
             Fn::GetAtt: [ "CognitoUserPool", "ProviderName" ]
-            
+
   CognitoIdentityPoolRoles:
     Type: AWS::Cognito::IdentityPoolRoleAttachment
     Properties:
@@ -18,7 +18,7 @@ Resources:
       Roles:
         authenticated:
           Fn::GetAtt: [CognitoAuthRole, Arn]
-          
+
   CognitoAuthRole:
     Type: AWS::IAM::Role
     Properties:
@@ -58,7 +58,7 @@ Resources:
                   Fn::Join:
                     - ''
                     -
-                      - 'arn:aws:execute-api:'
+                      - 'arn:${self:custom.cloud}:execute-api:'
                       - Ref: AWS::Region
                       - ':'
                       - Ref: AWS::AccountId
