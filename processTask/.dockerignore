@@ -139,10 +139,12 @@ dmypy.json
 cython_debug/
 
 # processTask: executables, outputs
+task_config.json
 xvsa_scan
 xvsa_scan.exe
+fileinfo.json
 *.tar
 *.tar.gz
 *.preprocess
-fileinfo.json
+*.zip
 
