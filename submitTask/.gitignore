@@ -137,7 +137,11 @@ dmypy.json
 # Cython debug symbols
 cython_debug/
 
-# submitJob: credentials
+# IDE artifact
+.vscode
+.idea
+
+# submitTask: credentials
 aws-admin_credentials.csv
 preprocess
 
