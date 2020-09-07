@@ -138,6 +138,10 @@ dmypy.json
 # Cython debug symbols
 cython_debug/
 
+# IDE artifact
+.vscode
+.idea
+
 # processTask: executables, outputs
 task_config.json
 xvsa_scan
