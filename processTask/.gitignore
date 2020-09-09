@@ -144,6 +144,8 @@ cython_debug/
 
 # processTask: credentials, executables, outputs
 aws-admin_credentials.csv
+env-cn*.sh
+evn-us*.sh
 xvsa_scan
 xvsa_scan.exe
 *.tar
