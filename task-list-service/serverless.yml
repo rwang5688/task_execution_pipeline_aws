@@ -27,6 +27,7 @@ provider:
   runtime: nodejs12.x
   stage: ${opt:stage, 'dev'}
   region: ${env:TARGET_REGION}
+  endpointType: regional
   environment:
     TASK_TABLE: '${env:TASK_LIST_TASK_TABLE}-${self:provider.stage}'
   iamRoleStatements:
