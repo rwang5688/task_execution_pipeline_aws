@@ -23,6 +23,6 @@ aws s3 rm s3://${TASK_LIST_RESULT_DATA_BUCKET} --recursive
 SERVICES=(updateTask createTask resources)
 remove
 
-# delete jobs database table
+# delete tasks database table
 aws dynamodb delete-table --table-name ${TASK_LIST_TASK_TABLE}-dev
 

@@ -143,7 +143,7 @@ def send_message(queue_name, task_id, task_config):
 
 
 def main():
-    print('\nStarting submitJob.py ...')
+    print('\nStarting submitTask.py ...')
 
     success = get_env_vars()
     if not success:
