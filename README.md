@@ -1,3 +1,3 @@
-# task-list-aws
-Task list application for processing various static analysis tasks running on AWS.
+# task-execution-pipeline-aws
+Task Execution Pipeline for processing various static analysis tasks running on AWS.
 
