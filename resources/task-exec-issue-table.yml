@@ -1,0 +1,18 @@
+Resources:
+  IssueTable:
+    Type: 'AWS::DynamoDB::Table'
+    DeletionPolicy: Retain
+    Properties:
+      AttributeDefinitions:
+        -
+          AttributeName: issue_id
+          AttributeType: S
+      KeySchema:
+        -
+          AttributeName: issue_id
+          KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+      TableName: '${self:custom.issueTable}-${self:provider.stage}'
+

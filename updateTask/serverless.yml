@@ -7,10 +7,10 @@ custom:
   accountid: ${env:AWS_ACCOUNT_ID}
   cloud: ${env:TARGET_CLOUD}
   region: ${env:TARGET_REGION}
-  logDataBucket: ${env:TASK_LIST_LOG_DATA_BUCKET}
-  updateTaskQueue: ${env:TASK_LIST_UPDATE_TASK_QUEUE}
-  updateTaskLogStreamQueue: ${env:TASK_LIST_UPDATE_TASK_LOG_STREAM_QUEUE}
-  taskTable: ${env:TASK_LIST_TASK_TABLE}
+  logDataBucket: ${env:TASK_EXEC_LOG_DATA_BUCKET}
+  updateTaskQueue: ${env:TASK_EXEC_UPDATE_TASK_QUEUE}
+  updateTaskLogStreamQueue: ${env:TASK_EXEC_UPLOAD_TASK_ISSUES_QUEUE}
+  taskTable: ${env:TASK_EXEC_TASK_TABLE}
   dotenv:
     path: ../.env
   pythonRequirements:
@@ -60,10 +60,10 @@ functions:
     environment:
       ACCOUNT_ID: ${env:AWS_ACCOUNT_ID}
       REGION: ${env:TARGET_REGION}
-      LOG_DATA_BUCKET: ${env:TASK_LIST_LOG_DATA_BUCKET}
-      UPDATE_TASK_QUEUE: ${env:TASK_LIST_UPDATE_TASK_QUEUE}
-      UPDATE_TASK_LOG_STREAM_QUEUE: ${env:TASK_LIST_UPDATE_TASK_LOG_STREAM_QUEUE}
-      TASK_TABLE: ${env:TASK_LIST_TASK_TABLE}
+      LOG_DATA_BUCKET: ${env:TASK_EXEC_LOG_DATA_BUCKET}
+      UPDATE_TASK_QUEUE: ${env:TASK_EXEC_UPDATE_TASK_QUEUE}
+      UPDATE_TASK_LOG_STREAM_QUEUE: ${env:TASK_EXEC_UPLOAD_TASK_ISSUES_QUEUE}
+      TASK_TABLE: ${env:TASK_EXEC_TASK_TABLE}
       STAGE: ${self:provider.stage}
     events:
       - sqs:

@@ -12,16 +12,16 @@ def get_env_vars():
     global queue_name
 
     log_bucket_name = ''
-    if 'TASK_LIST_LOG_DATA_BUCKET' in os.environ:
-        log_bucket_name = os.environ['TASK_LIST_LOG_DATA_BUCKET']
+    if 'TASK_EXEC_LOG_DATA_BUCKET' in os.environ:
+        log_bucket_name = os.environ['TASK_EXEC_LOG_DATA_BUCKET']
 
     result_bucket_name = ''
-    if 'TASK_LIST_RESULT_DATA_BUCKET' in os.environ:
-        result_bucket_name = os.environ['TASK_LIST_RESULT_DATA_BUCKET']
+    if 'TASK_EXEC_RESULT_DATA_BUCKET' in os.environ:
+        result_bucket_name = os.environ['TASK_EXEC_RESULT_DATA_BUCKET']
 
     queue_name = ''
-    if 'TASK_LIST_UPDATE_TASK_QUEUE' in os.environ:
-        queue_name = os.environ['TASK_LIST_UPDATE_TASK_QUEUE']
+    if 'TASK_EXEC_UPDATE_TASK_QUEUE' in os.environ:
+        queue_name = os.environ['TASK_EXEC_UPDATE_TASK_QUEUE']
 
     # success
     return True

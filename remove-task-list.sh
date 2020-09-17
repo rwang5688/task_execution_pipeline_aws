@@ -24,8 +24,8 @@ function domain () {
 # remove frontend apps
 aws s3 rm s3://${TASK_LIST_APPS_BUCKET} --recursive
 
-# remove task-list-service API functions
-SERVICES=(task-list-service)
+# remove task-list-frontend resources and task-list-service API functions
+SERVICES=(task-list-frontend task-list-service)
 remove
 
 # delete task-list-service API domain
