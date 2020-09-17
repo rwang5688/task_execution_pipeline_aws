@@ -7,10 +7,10 @@ custom:
   accountid: ${env:AWS_ACCOUNT_ID}
   cloud: ${env:TARGET_CLOUD}
   region: ${env:TARGET_REGION}
-  preprocessDataBucket: ${env:TASK_LIST_PREPROCESS_DATA_BUCKET}
-  submitTaskQueue: ${env:TASK_LIST_SUBMIT_TASK_QUEUE}
-  processTaskQueue: ${env:TASK_LIST_PROCESS_TASK_QUEUE}
-  taskTable: ${env:TASK_LIST_TASK_TABLE}
+  preprocessDataBucket: ${env:TASK_EXEC_PREPROCESS_DATA_BUCKET}
+  submitTaskQueue: ${env:TASK_EXEC_SUBMIT_TASK_QUEUE}
+  processTaskQueue: ${env:TASK_EXEC_PROCESS_TASK_QUEUE}
+  taskTable: ${env:TASK_EXEC_TASK_TABLE}
   dotenv:
     path: ../.env
   pythonRequirements:
@@ -60,10 +60,10 @@ functions:
     environment:
       ACCOUNT_ID: ${env:AWS_ACCOUNT_ID}
       REGION: ${env:TARGET_REGION}
-      PREPROCESS_DATA_BUCKET: ${env:TASK_LIST_PREPROCESS_DATA_BUCKET}
-      SUBMIT_TASK_QUEUE: ${env:TASK_LIST_SUBMIT_TASK_QUEUE}
-      PROCESS_TASK_QUEUE: ${env:TASK_LIST_PROCESS_TASK_QUEUE}
-      TASK_TABLE: ${env:TASK_LIST_TASK_TABLE}
+      PREPROCESS_DATA_BUCKET: ${env:TASK_EXEC_PREPROCESS_DATA_BUCKET}
+      SUBMIT_TASK_QUEUE: ${env:TASK_EXEC_SUBMIT_TASK_QUEUE}
+      PROCESS_TASK_QUEUE: ${env:TASK_EXEC_PROCESS_TASK_QUEUE}
+      TASK_TABLE: ${env:TASK_EXEC_TASK_TABLE}
       STAGE: ${self:provider.stage}
     events:
       - sqs:

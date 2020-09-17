@@ -15,14 +15,15 @@ function remove () {
 
 
 # remove data
-aws s3 rm s3://${TASK_LIST_PREPROCESS_DATA_BUCKET} --recursive
-aws s3 rm s3://${TASK_LIST_LOG_DATA_BUCKET} --recursive
-aws s3 rm s3://${TASK_LIST_RESULT_DATA_BUCKET} --recursive
+aws s3 rm s3://${TASK_EXEC_PREPROCESS_DATA_BUCKET} --recursive
+aws s3 rm s3://${TASK_EXEC_LOG_DATA_BUCKET} --recursive
+aws s3 rm s3://${TASK_EXEC_RESULT_DATA_BUCKET} --recursive
 
 # remove resources and functions
 SERVICES=(updateTask createTask resources)
 remove
 
-# delete tasks database table
-aws dynamodb delete-table --table-name ${TASK_LIST_TASK_TABLE}-dev
+# delete task and issue database tables
+aws dynamodb delete-table --table-name ${TASK_EXEC_TASK_TABLE}-dev
+aws dynamodb delete-table --table-name ${TASK_EXEC_ISSUE_TABLE}-dev
 

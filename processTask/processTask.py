@@ -11,12 +11,12 @@ def get_env_vars():
     global queue_name
 
     bucket_name = ''
-    if 'TASK_LIST_PREPROCESS_DATA_BUCKET' in os.environ:
-        bucket_name = os.environ['TASK_LIST_PREPROCESS_DATA_BUCKET']
+    if 'TASK_EXEC_PREPROCESS_DATA_BUCKET' in os.environ:
+        bucket_name = os.environ['TASK_EXEC_PREPROCESS_DATA_BUCKET']
 
     queue_name = ''
-    if 'TASK_LIST_PROCESS_TASK_QUEUE' in os.environ:
-        queue_name = os.environ['TASK_LIST_PROCESS_TASK_QUEUE']
+    if 'TASK_EXEC_PROCESS_TASK_QUEUE' in os.environ:
+        queue_name = os.environ['TASK_EXEC_PROCESS_TASK_QUEUE']
 
     # success
     return True

@@ -29,7 +29,7 @@ provider:
   region: ${env:TARGET_REGION}
   endpointType: regional
   environment:
-    TASK_TABLE: '${env:TASK_LIST_TASK_TABLE}-${self:provider.stage}'
+    TASK_TABLE: '${env:TASK_EXEC_TASK_TABLE}-${self:provider.stage}'
   iamRoleStatements:
     - Effect: Allow
       Action:

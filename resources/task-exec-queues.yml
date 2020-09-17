@@ -11,8 +11,8 @@ Resources:
     Type: "AWS::SQS::Queue"
     Properties:
       QueueName: "${self:custom.updateTaskQueue}"
-  UpdateTaskLogStreamQueue:
+  UpdateTaskIssuesQueue:
     Type: "AWS::SQS::Queue"
     Properties:
-      QueueName: "${self:custom.updateTaskLogStreamQueue}"
+      QueueName: "${self:custom.updateTaskIssuesQueue}"
 

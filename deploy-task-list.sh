@@ -60,12 +60,12 @@ function domain () {
 # create task-list-service API domain
 domain
 
-# deploy task-list-service API functions
-SERVICES=(task-list-service)
+# deploy task-list-service API functions and task-list-frontend resources
+SERVICES=(task-list-service task-list-frontend)
 deploy
 
 # pack frontend js into one file
-cd frontend
+cd task-list-frontend
 npm install
 npm run build
 

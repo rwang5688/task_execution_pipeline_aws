@@ -1,4 +1,4 @@
-service: task-list-resources
+service: resources
 frameworkVersion: ">=1.30.0"
 plugins:
   - serverless-dotenv-plugin
@@ -6,15 +6,15 @@ custom:
   accountid: ${env:AWS_ACCOUNT_ID}
   cloud: ${env:TARGET_CLOUD}
   region: ${env:TARGET_REGION}
-  appsBucket: ${env:TASK_LIST_APPS_BUCKET}
-  preprocessDataBucket: ${env:TASK_LIST_PREPROCESS_DATA_BUCKET}
-  logDataBucket: ${env:TASK_LIST_LOG_DATA_BUCKET}
-  resultDataBucket: ${env:TASK_LIST_RESULT_DATA_BUCKET}
-  submitTaskQueue: ${env:TASK_LIST_SUBMIT_TASK_QUEUE}
-  processTaskQueue: ${env:TASK_LIST_PROCESS_TASK_QUEUE}
-  updateTaskQueue: ${env:TASK_LIST_UPDATE_TASK_QUEUE}
-  updateTaskLogStreamQueue: ${env:TASK_LIST_UPDATE_TASK_LOG_STREAM_QUEUE}
-  taskTable: ${env:TASK_LIST_TASK_TABLE}
+  preprocessDataBucket: ${env:TASK_EXEC_PREPROCESS_DATA_BUCKET}
+  logDataBucket: ${env:TASK_EXEC_LOG_DATA_BUCKET}
+  resultDataBucket: ${env:TASK_EXEC_RESULT_DATA_BUCKET}
+  submitTaskQueue: ${env:TASK_EXEC_SUBMIT_TASK_QUEUE}
+  processTaskQueue: ${env:TASK_EXEC_PROCESS_TASK_QUEUE}
+  updateTaskQueue: ${env:TASK_EXEC_UPDATE_TASK_QUEUE}
+  updateTaskIssuesQueue: ${env:TASK_EXEC_UPLOAD_TASK_ISSUES_QUEUE}
+  taskTable: ${env:TASK_EXEC_TASK_TABLE}
+  issueTable: ${env:TASK_EXEC_ISSUE_TABLE}
   dotenv:
     path: ../.env
 
@@ -25,10 +25,10 @@ provider:
   region: ${env:TARGET_REGION}
 
 resources:
-  - ${file(./task-list-apps-bucket.yml)}
-  - ${file(./task-list-preprocess-data-bucket.yml)}
-  - ${file(./task-list-log-data-bucket.yml)}
-  - ${file(./task-list-result-data-bucket.yml)}
-  - ${file(./task-list-queues.yml)}
-  - ${file(./task-list-task-table.yml)}
+  - ${file(./task-exec-preprocess-data-bucket.yml)}
+  - ${file(./task-exec-log-data-bucket.yml)}
+  - ${file(./task-exec-result-data-bucket.yml)}
+  - ${file(./task-exec-queues.yml)}
+  - ${file(./task-exec-task-table.yml)}
+  - ${file(./task-exec-issue-table.yml)}
 
