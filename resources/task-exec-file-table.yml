@@ -1,0 +1,18 @@
+Resources:
+  FileTable:
+    Type: 'AWS::DynamoDB::Table'
+    DeletionPolicy: Retain
+    Properties:
+      AttributeDefinitions:
+        -
+          AttributeName: file_id
+          AttributeType: S
+      KeySchema:
+        -
+          AttributeName: file_id
+          KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+      TableName: '${self:custom.fileTable}-${self:provider.stage}'
+

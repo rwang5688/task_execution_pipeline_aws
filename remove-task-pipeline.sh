@@ -25,5 +25,6 @@ remove
 
 # delete task and issue database tables
 aws dynamodb delete-table --table-name ${TASK_EXEC_TASK_TABLE}-dev
+aws dynamodb delete-table --table-name ${TASK_EXEC_FILE_TABLE}-dev
 aws dynamodb delete-table --table-name ${TASK_EXEC_ISSUE_TABLE}-dev
 

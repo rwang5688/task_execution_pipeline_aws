@@ -59,7 +59,7 @@ def parse_event_record(event_record):
     return True
 
 
-def send_message(queue_name, task):
+def send_message(queue_name, action, task):
     # get queue url
     sqsutil.list_queues()
     queue_url = sqsutil.get_queue_url(queue_name)
@@ -69,7 +69,7 @@ def send_message(queue_name, task):
 
     # send message
     message_body = {
-        "action": "process",
+        "action": action,
         "task": task
     }
     message_id = sqsutil.send_message(queue_url, str(message_body))
@@ -134,15 +134,26 @@ def createTask(event, context):
         print('Task record:')
         print(task_record)
 
+        # set write task files queue name
+        write_task_files_queue_name = ''
+        if 'WRITE_TASK_FILES_QUEUE' in os.environ:
+            write_task_files_queue_name = os.environ['WRITE_TASK_FILES_QUEUE']
+
+        # send task record to write task files queue
+        success = send_message(write_task_files_queue_name, 'write_task_files', task_record)
+        if not success:
+            print('send_message failed for write task files queue.  Next.')
+            continue
+
         # set process task queue name
-        queue_name = ''
+        process_task_queue_name = ''
         if 'PROCESS_TASK_QUEUE' in os.environ:
-            queue_name = os.environ['PROCESS_TASK_QUEUE']
+            process_task_queue_name = os.environ['PROCESS_TASK_QUEUE']
 
         # send task record to process task queue
-        success = send_message(queue_name, task_record)
+        success = send_message(process_task_queue_name, "process", task_record)
         if not success:
-            print('send_message failed.  Next.')
+            print('send_message failed for process task queue.  Next.')
             continue
 
         # TO DO: Start ECS Fargate task to process task!!!
