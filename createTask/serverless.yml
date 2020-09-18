@@ -8,7 +8,8 @@ custom:
   cloud: ${env:TARGET_CLOUD}
   region: ${env:TARGET_REGION}
   preprocessDataBucket: ${env:TASK_EXEC_PREPROCESS_DATA_BUCKET}
-  submitTaskQueue: ${env:TASK_EXEC_SUBMIT_TASK_QUEUE}
+  createTaskQueue: ${env:TASK_EXEC_CREATE_TASK_QUEUE}
+  writeTaskFilesQueue: ${env:TASK_EXEC_WRITE_TASK_FILES_QUEUE}
   processTaskQueue: ${env:TASK_EXEC_PROCESS_TASK_QUEUE}
   taskTable: ${env:TASK_EXEC_TASK_TABLE}
   dotenv:
@@ -35,7 +36,13 @@ provider:
         - sqs:ReceiveMessage
         - sqs:DeleteMessage
         - sqs:GetQueueUrl
-      Resource: "arn:${self:custom.cloud}:sqs:*:*:${self:custom.submitTaskQueue}"
+      Resource: "arn:${self:custom.cloud}:sqs:*:*:${self:custom.createTaskQueue}"
+    - Effect: Allow
+      Action:
+        - sqs:SendMessage
+        - sqs:DeleteMessage
+        - sqs:GetQueueUrl
+      Resource: "arn:${self:custom.cloud}:sqs:*:*:${self:custom.writeTaskFilesQueue}"
     - Effect: Allow
       Action:
         - sqs:SendMessage
@@ -61,11 +68,12 @@ functions:
       ACCOUNT_ID: ${env:AWS_ACCOUNT_ID}
       REGION: ${env:TARGET_REGION}
       PREPROCESS_DATA_BUCKET: ${env:TASK_EXEC_PREPROCESS_DATA_BUCKET}
-      SUBMIT_TASK_QUEUE: ${env:TASK_EXEC_SUBMIT_TASK_QUEUE}
+      CREATE_TASK_QUEUE: ${env:TASK_EXEC_CREATE_TASK_QUEUE}
+      WRITE_TASK_FILES_QUEUE: ${env:TASK_EXEC_WRITE_TASK_FILES_QUEUE}
       PROCESS_TASK_QUEUE: ${env:TASK_EXEC_PROCESS_TASK_QUEUE}
       TASK_TABLE: ${env:TASK_EXEC_TASK_TABLE}
       STAGE: ${self:provider.stage}
     events:
       - sqs:
-          arn: "arn:${self:custom.cloud}:sqs:${self:provider.region}:${self:custom.accountid}:${self:custom.submitTaskQueue}"
+          arn: "arn:${self:custom.cloud}:sqs:${self:provider.region}:${self:custom.accountid}:${self:custom.createTaskQueue}"
 

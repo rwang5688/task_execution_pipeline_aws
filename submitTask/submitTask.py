@@ -21,8 +21,8 @@ def get_env_vars():
         result_bucket_name = os.environ['TASK_EXEC_RESULT_DATA_BUCKET']
 
     queue_name = ''
-    if 'TASK_EXEC_SUBMIT_TASK_QUEUE' in os.environ:
-        queue_name = os.environ['TASK_EXEC_SUBMIT_TASK_QUEUE']
+    if 'TASK_EXEC_CREATE_TASK_QUEUE' in os.environ:
+        queue_name = os.environ['TASK_EXEC_CREATE_TASK_QUEUE']
 
     # success
     return True
@@ -110,7 +110,7 @@ def upload_source_code(result_bucket_name, task_id, task_config):
     return True
 
 
-def send_message(queue_name, task_id, task_config):
+def send_message(queue_name, action, task_id, task_config):
     # get queue url
     sqsutil.list_queues()
     queue_url = sqsutil.get_queue_url(queue_name)
@@ -120,7 +120,7 @@ def send_message(queue_name, task_id, task_config):
 
     # assemble message
     message_body = {
-        "action": "submit",
+        "action": action,
         "task": task_config
     }
     message_body["task"]["task_id"] = task_id
@@ -185,7 +185,7 @@ def main():
         print('upload_source_code failed.  Exit.')
         return
 
-    success = send_message(queue_name, task_id, task_config)
+    success = send_message(queue_name, 'create', task_id, task_config)
     if not success:
         print('send_message failed.  Exit.')
         return
