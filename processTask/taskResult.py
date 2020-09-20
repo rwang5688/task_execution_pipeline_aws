@@ -59,7 +59,7 @@ def parse_arguments():
     return True
 
 
-def upload_file(bucket_name, task_id, file_name):
+def upload_file(bucket_name, user_id, task_id, file_name):
     # get bucket
     s3util.list_buckets()
     bucket = s3util.get_bucket(bucket_name)
@@ -71,7 +71,7 @@ def upload_file(bucket_name, task_id, file_name):
     s3util.list_files(bucket["Name"])
 
     # upload file
-    object_key = task_id + "/" + file_name
+    object_key = user_id + "/" + task_id + "/" + file_name
     success = s3util.upload_file(file_name, bucket["Name"], object_key)
     if not success:
         print(f'upload_file: Failed to upload object {object_key}.')
@@ -140,12 +140,12 @@ def main():
     print(f'task_id = {task_id}')
     print(f'task_status = {task_status}')
 
-    success = upload_file(log_bucket_name, task_id, ".scan_log.tar.gz")
+    success = upload_file(log_bucket_name, user_id, task_id, ".scan_log.tar.gz")
     if not success:
         print('upload_file failed: .scan_log.tar.gz.  Exit.')
         return
 
-    success = upload_file(result_bucket_name, task_id, "scan_result.tar.gz")
+    success = upload_file(result_bucket_name, user_id, task_id, "scan_result.tar.gz")
     if not success:
         print('upload_file failed: scan_result.tar.gz.  Exit.')
         return
