@@ -8,8 +8,9 @@ custom:
   cloud: ${env:TARGET_CLOUD}
   region: ${env:TARGET_REGION}
   logDataBucket: ${env:TASK_EXEC_LOG_DATA_BUCKET}
+  resultDataBucket: ${env:TASK_EXEC_RESULT_DATA_BUCKET}
   updateTaskQueue: ${env:TASK_EXEC_UPDATE_TASK_QUEUE}
-  updateTaskIssuesQueue: ${env:TASK_EXEC_UPLOAD_TASK_ISSUES_QUEUE}
+  uploadTaskIssuesQueue: ${env:TASK_EXEC_UPLOAD_TASK_ISSUES_QUEUE}
   taskTable: ${env:TASK_EXEC_TASK_TABLE}
   dotenv:
     path: ../.env
@@ -28,6 +29,10 @@ provider:
       Resource: "arn:${self:custom.cloud}:s3:::${self:custom.logDataBucket}/*"
     - Effect: Allow
       Action:
+        - s3:GetObject
+      Resource: "arn:${self:custom.cloud}:s3:::${self:custom.resultDataBucket}/*"
+    - Effect: Allow
+      Action:
         - sqs:ListQueues
       Resource: "arn:${self:custom.cloud}:sqs:${self:provider.region}:*:*"
     - Effect: Allow
@@ -41,7 +46,7 @@ provider:
         - sqs:SendMessage
         - sqs:DeleteMessage
         - sqs:GetQueueUrl
-      Resource: "arn:${self:custom.cloud}:sqs:*:*:${self:custom.updateTaskIssuesQueue}"
+      Resource: "arn:${self:custom.cloud}:sqs:*:*:${self:custom.uploadTaskIssuesQueue}"
     - Effect: Allow
       Action:
         - dynamodb:DescribeTable
@@ -61,8 +66,9 @@ functions:
       ACCOUNT_ID: ${env:AWS_ACCOUNT_ID}
       REGION: ${env:TARGET_REGION}
       LOG_DATA_BUCKET: ${env:TASK_EXEC_LOG_DATA_BUCKET}
+      RESULT_DATA_BUCKET: ${env:TASK_EXEC_RESULT_DATA_BUCKET}
       UPDATE_TASK_QUEUE: ${env:TASK_EXEC_UPDATE_TASK_QUEUE}
-      UPDATE_TASK_ISSUES_QUEUE: ${env:TASK_EXEC_UPLOAD_TASK_ISSUES_QUEUE}
+      UPLOAD_TASK_ISSUES_QUEUE: ${env:TASK_EXEC_UPLOAD_TASK_ISSUES_QUEUE}
       TASK_TABLE: ${env:TASK_EXEC_TASK_TABLE}
       STAGE: ${self:provider.stage}
     events:

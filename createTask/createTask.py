@@ -27,7 +27,6 @@ def preamble(event, context):
 
 def parse_event_record(event_record):
     global task
-    global submitter_id
     global submit_timestamp
 
     event_body = eval(event_record['body'])
@@ -43,11 +42,6 @@ def parse_event_record(event_record):
     event_attributes = event_record['attributes']
     if event_attributes is None:
         print('parse_event: event attributes are missing.')
-        return False
-
-    submitter_id = event_attributes['SenderId']
-    if submitter_id is None:
-        print('parse_event: sender id is missing.')
         return False
 
     submit_timestamp = event_attributes['SentTimestamp']
@@ -117,41 +111,31 @@ def createTask(event, context):
         # debug: print event record attributes
         print('Event record attributes:')
         print(f'task: {task}')
-        print(f'submitter_id: {submitter_id}')
         print(f'submit_timestamp: {submit_timestamp}')
 
         # create task record
-        task_id = tasktable.create_task_record(task_table, task, submitter_id, submit_timestamp)
-        if task_id is None:
+        task_record = tasktable.create_task_record(task_table, task, submit_timestamp)
+        if task_record is None:
             print('create_task_record failed.  Next.')
             continue
 
-        # get and print task record
-        task_record = tasktable.get_task_record(task_table, task_id)
+        # debug: get and print task record
+        user_id = task_record['user_id']
+        task_id = task_record['task_id']
+        task_record = tasktable.get_task_record(task_table, user_id, task_id)
         if task_record is None:
             print('get_task_record failed.  Next.')
             continue
         print('Task record:')
         print(task_record)
 
-        # set write task files queue name
-        write_task_files_queue_name = ''
-        if 'WRITE_TASK_FILES_QUEUE' in os.environ:
-            write_task_files_queue_name = os.environ['WRITE_TASK_FILES_QUEUE']
-
-        # send task record to write task files queue
-        success = send_message(write_task_files_queue_name, 'write_task_files', task_record)
-        if not success:
-            print('send_message failed for write task files queue.  Next.')
-            continue
-
         # set process task queue name
-        process_task_queue_name = ''
+        queue_name = ''
         if 'PROCESS_TASK_QUEUE' in os.environ:
-            process_task_queue_name = os.environ['PROCESS_TASK_QUEUE']
+            queue_name = os.environ['PROCESS_TASK_QUEUE']
 
         # send task record to process task queue
-        success = send_message(process_task_queue_name, "process", task_record)
+        success = send_message(queue_name, "process", task_record)
         if not success:
             print('send_message failed for process task queue.  Next.')
             continue
@@ -161,7 +145,7 @@ def createTask(event, context):
 
         # if send_message succeeds, update task status to "started"
         task_status = "started"
-        success = tasktable.update_task_status(task_table, task_id, task_status)
+        success = tasktable.update_task_status(task_table, user_id, task_id, task_status)
         if not success:
             print('update_task_status failed.  Next.')
             continue

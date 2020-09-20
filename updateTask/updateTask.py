@@ -102,25 +102,26 @@ def updateTask(event, context):
         print(f'task: {task}')
 
         # update task status
+        user_id = task['user_id']
         task_id = task['task_id']
         task_status = task['task_status']
-        success = tasktable.update_task_status(task_table, task_id, task_status)
+        success = tasktable.update_task_status(task_table, user_id, task_id, task_status)
         if not success:
             print('update_task_status failed.  Next.')
             continue
 
-        # get and print task record
-        task_record = tasktable.get_task_record(task_table, task_id)
+        # debug: get and print task record
+        task_record = tasktable.get_task_record(task_table, user_id, task_id)
         if task_record is None:
             print('get_task_record failed.  Next.')
             continue
         print('Task record:')
         print(task_record)
 
-        # set update task log stream queue name
+        # set upload task issues queue name
         queue_name = ''
-        if 'UPDATE_TASK_ISSUES_QUEUE' in os.environ:
-            queue_name = os.environ['UPDATE_TASK_ISSUES_QUEUE']
+        if 'UPLOAD_TASK_ISSUES_QUEUE' in os.environ:
+            queue_name = os.environ['UPLOAD_TASK_ISSUES_QUEUE']
 
         # send task context to update task log stream queue
         success = send_message(queue_name, 'upload_task_issues', task_record)
