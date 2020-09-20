@@ -67,19 +67,20 @@ def download_preprocessed_files(bucket_name, task):
         print(f'download_preprocssed_files: Bucket {bucket_name} does not exist.')
         return None
 
-    # get folder (task_id)
+    # get folder $(user_id)/$(task_id)
+    user_id = task['user_id']
     task_id = task['task_id']
 
     # download source fileinfo
     task_source_fileinfo = task['task_source_fileinfo']
-    object_key = task_id + "/" + task_source_fileinfo
+    object_key = user_id + "/" + task_id + "/" + task_source_fileinfo
     success = s3util.download_file(bucket_name, object_key, task_source_fileinfo)
     if not success:
         print(f'download_preprocessed_files: Failed to download task source fileinfo {task_source_fileinfo}.')
 
     # download preprocessed files
     task_preprocessed_files = task['task_preprocessed_files']
-    object_key = task_id + "/" + task_preprocessed_files
+    object_key = user_id + "/" + task_id + "/" + task_preprocessed_files
     success = s3util.download_file(bucket_name, object_key, task_preprocessed_files)
     if not success:
         print(f'download_preprocessed_file: Failed to download task preprocssed files {task_preprocessed_files}.')
@@ -136,9 +137,9 @@ def execute_tool(task_tool):
     return True
 
 
-def execute_callback(callback, task_id, task_status):
-    # command: "python3 $(callback) task_id task_status"
-    process = subprocess.Popen(["python3", callback, task_id, task_status],
+def execute_callback(callback, user_id, task_id, task_status):
+    # command: "python3 $(callback) user_id task_id task_status"
+    process = subprocess.Popen(["python3", callback, user_id, task_id, task_status],
         stdout=subprocess.PIPE, universal_newlines=True)
     read_process_stdout(process)
 
@@ -215,8 +216,9 @@ def main():
         return
 
     callback = 'taskResult.py'
+    user_id = task['user_id']
     task_id = task['task_id']
-    success = execute_callback(callback, task_id, "completed")
+    success = execute_callback(callback, user_id, task_id, "completed")
     if not success:
         print('execute_callback failed.  Exit.')
         return

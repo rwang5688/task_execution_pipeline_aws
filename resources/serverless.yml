@@ -10,12 +10,10 @@ custom:
   logDataBucket: ${env:TASK_EXEC_LOG_DATA_BUCKET}
   resultDataBucket: ${env:TASK_EXEC_RESULT_DATA_BUCKET}
   createTaskQueue: ${env:TASK_EXEC_CREATE_TASK_QUEUE}
-  writeTaskFilesQueue: ${env:TASK_EXEC_WRITE_TASK_FILES_QUEUE}
   processTaskQueue: ${env:TASK_EXEC_PROCESS_TASK_QUEUE}
   updateTaskQueue: ${env:TASK_EXEC_UPDATE_TASK_QUEUE}
   uploadTaskIssuesQueue: ${env:TASK_EXEC_UPLOAD_TASK_ISSUES_QUEUE}
   taskTable: ${env:TASK_EXEC_TASK_TABLE}
-  fileTable: ${env:TASK_EXEC_FILE_TABLE}
   issueTable: ${env:TASK_EXEC_ISSUE_TABLE}
   dotenv:
     path: ../.env
@@ -32,6 +30,5 @@ resources:
   - ${file(./task-exec-result-data-bucket.yml)}
   - ${file(./task-exec-queues.yml)}
   - ${file(./task-exec-task-table.yml)}
-  - ${file(./task-exec-file-table.yml)}
   - ${file(./task-exec-issue-table.yml)}
 

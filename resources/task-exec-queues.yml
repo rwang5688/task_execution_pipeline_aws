@@ -3,10 +3,6 @@ Resources:
     Type: "AWS::SQS::Queue"
     Properties:
       QueueName: "${self:custom.createTaskQueue}"
-  WriteTaskFilesQueue:
-    Type: "AWS::SQS::Queue"
-    Properties:
-      QueueName: "${self:custom.writeTaskFilesQueue}"
   ProcessTaskQueue:
     Type: "AWS::SQS::Queue"
     Properties:

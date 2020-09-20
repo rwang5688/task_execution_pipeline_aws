@@ -14,6 +14,7 @@ let auth;
 
 function gather () {
   return {
+    user_id: $('#user-id').val(),
     task_id: $('#task-id').val(),
     task_tool: $('#task-tool').val(),
     task_extra_options: $('#task-extra-options').val(),
@@ -21,7 +22,6 @@ function gather () {
     task_source_fileinfo: $('#task-source-fileinfo').val(),
     task_preprocessed_files: $('#task-preprocessed-files').val(),
     task_status: $('#task-status').val(),
-    submitter_id: $('#submitter-id').val(),
     submit_timestamp: $('#submit-timestamp').val(),
     update_timestamp: $('#update-timestamp').val()
   };

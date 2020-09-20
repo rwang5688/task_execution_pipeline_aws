@@ -23,12 +23,11 @@ def get_task_table():
     return task_table
 
 
-def create_task_record(task_table, task, submitter_id, submit_timestamp):
+def create_task_record(task_table, task, submit_timestamp):
     # populate task record
     # side-effect: this is actually a copy by reference, which causes changes to task :(
     task_record = task
     task_record['task_status'] = 'created'
-    task_record['submitter_id'] = submitter_id
     task_record['submit_timestamp'] = submit_timestamp
     task_record['update_timestamp'] = str(time.time_ns() // 1000000)
 
@@ -36,13 +35,13 @@ def create_task_record(task_table, task, submitter_id, submit_timestamp):
     print(f'Task Record: {task_record}')
     task_table.put_item(Item=task_record)
 
-    task_id = task_record['task_id']
-    return task_id
+    return task_record
 
 
-def get_task_record(task_table, task_id):
+def get_task_record(task_table, user_id, task_id):
     response = task_table.get_item(
         Key={
+            'user_id': user_id,
             'task_id': task_id
         }
     )
@@ -50,9 +49,10 @@ def get_task_record(task_table, task_id):
     return item
 
 
-def update_task_status(task_table, task_id, task_status):
+def update_task_status(task_table, user_id, task_id, task_status):
     task_table.update_item(
         Key={
+            'user_id': user_id,
             'task_id': task_id
         },
         UpdateExpression='SET task_status = :val1, update_timestamp = :val2',

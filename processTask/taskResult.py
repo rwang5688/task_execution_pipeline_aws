@@ -29,16 +29,23 @@ def get_env_vars():
 
 def parse_arguments():
     import argparse
+    global user_id
     global task_id
     global task_status
 
     parser = argparse.ArgumentParser()
+    parser.add_argument('user_id', help='The user id of the task to update.')
     parser.add_argument('task_id', help='The id of the task to update.')
     parser.add_argument('task_status', help='The status of the task to update.')
 
     args = parser.parse_args()
+    user_id = args.user_id
     task_id = args.task_id
     task_status = args.task_status
+
+    if user_id is None:
+        print('parse_arguments: user_id is missing.')
+        return False
 
     if task_id is None:
         print('parse_arguments: task_id is missing.')
@@ -77,7 +84,7 @@ def upload_file(bucket_name, task_id, file_name):
     return True
 
 
-def send_message(queue_name, task_id, task_status):
+def send_message(queue_name, user_id, task_id, task_status):
     # get queue url
     sqsutil.list_queues()
     queue_url = sqsutil.get_queue_url(queue_name)
@@ -89,6 +96,7 @@ def send_message(queue_name, task_id, task_status):
     message_body = {
         "action": "update",
         "task": {
+            "user_id": user_id,
             "task_id": task_id,
             "task_status": task_status
         }
@@ -128,6 +136,7 @@ def main():
         return
 
     print('args:')
+    print(f'user_id = {user_id}')
     print(f'task_id = {task_id}')
     print(f'task_status = {task_status}')
 
@@ -141,7 +150,7 @@ def main():
         print('upload_file failed: scan_result.tar.gz.  Exit.')
         return
 
-    success = send_message(queue_name, task_id, task_status)
+    success = send_message(queue_name, user_id, task_id, task_status)
     if not success:
         print('send_message failed.  Exit.')
         return

@@ -9,7 +9,6 @@ custom:
   region: ${env:TARGET_REGION}
   preprocessDataBucket: ${env:TASK_EXEC_PREPROCESS_DATA_BUCKET}
   createTaskQueue: ${env:TASK_EXEC_CREATE_TASK_QUEUE}
-  writeTaskFilesQueue: ${env:TASK_EXEC_WRITE_TASK_FILES_QUEUE}
   processTaskQueue: ${env:TASK_EXEC_PROCESS_TASK_QUEUE}
   taskTable: ${env:TASK_EXEC_TASK_TABLE}
   dotenv:
@@ -42,12 +41,6 @@ provider:
         - sqs:SendMessage
         - sqs:DeleteMessage
         - sqs:GetQueueUrl
-      Resource: "arn:${self:custom.cloud}:sqs:*:*:${self:custom.writeTaskFilesQueue}"
-    - Effect: Allow
-      Action:
-        - sqs:SendMessage
-        - sqs:DeleteMessage
-        - sqs:GetQueueUrl
       Resource: "arn:${self:custom.cloud}:sqs:*:*:${self:custom.processTaskQueue}"
     - Effect: Allow
       Action:
@@ -69,7 +62,6 @@ functions:
       REGION: ${env:TARGET_REGION}
       PREPROCESS_DATA_BUCKET: ${env:TASK_EXEC_PREPROCESS_DATA_BUCKET}
       CREATE_TASK_QUEUE: ${env:TASK_EXEC_CREATE_TASK_QUEUE}
-      WRITE_TASK_FILES_QUEUE: ${env:TASK_EXEC_WRITE_TASK_FILES_QUEUE}
       PROCESS_TASK_QUEUE: ${env:TASK_EXEC_PROCESS_TASK_QUEUE}
       TASK_TABLE: ${env:TASK_EXEC_TASK_TABLE}
       STAGE: ${self:provider.stage}
