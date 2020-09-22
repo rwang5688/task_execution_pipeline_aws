@@ -21,8 +21,8 @@ xvsa_scan ${SCAN_TASK_ID}.preprocess
 echo "[CMD] tar -zcf .scan_log.tar.gz .scan_log"
 tar -zcf .scan_log.tar.gz .scan_log
 
-echo "[CMD] cp scan_result.v ${SCAN_TASK_ID}.v"
-cp scan_result/xvsa-xfa-dummy.v scan_result/${SCAN_TASK_ID}.v
+echo "[CMD] mv scan_result.v ${SCAN_TASK_ID}.v"
+mv scan_result/xvsa-xfa-dummy.v scan_result/${SCAN_TASK_ID}.v
 
 echo "[CMD] tar -zcf scan_result.tar.gz scan_result"
 tar -zcf scan_result.tar.gz scan_result
