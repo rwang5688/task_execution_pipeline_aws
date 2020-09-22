@@ -40,6 +40,6 @@ def get_issue_record(issue_table, task_id, task_issue_number):
             'task_issue_number': task_issue_number
         }
     )
-    item = response['Item']
-    return item
+    issue_record = response['Item']
+    return issue_record
 

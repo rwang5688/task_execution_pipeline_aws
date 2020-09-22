@@ -1,7 +1,7 @@
 import os
 import boto3
 from botocore.exceptions import ClientError
-import uuid
+import copy
 import time
 
 
@@ -24,9 +24,8 @@ def get_task_table():
 
 
 def create_task_record(task_table, task, submit_timestamp):
-    # populate task record
-    # side-effect: this is actually a copy by reference, which causes changes to task :(
-    task_record = task
+    # create a deep copy of task and append status and timestamp
+    task_record = copy.deepcopy(task)
     task_record['task_status'] = 'created'
     task_record['submit_timestamp'] = submit_timestamp
     task_record['update_timestamp'] = str(time.time_ns() // 1000000)
@@ -45,8 +44,8 @@ def get_task_record(task_table, user_id, task_id):
             'task_id': task_id
         }
     )
-    item = response['Item']
-    return item
+    task_record = response['Item']
+    return task_record
 
 
 def update_task_status(task_table, user_id, task_id, task_status):
