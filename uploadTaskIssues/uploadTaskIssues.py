@@ -12,8 +12,9 @@ import json
 import s3util
 import sqsutil
 import dotvfile
-import issuetable
 import csvfile
+import issuetable
+
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
