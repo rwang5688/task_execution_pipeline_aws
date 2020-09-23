@@ -20,7 +20,7 @@ aws s3 rm s3://${TASK_EXEC_LOG_DATA_BUCKET} --recursive
 aws s3 rm s3://${TASK_EXEC_RESULT_DATA_BUCKET} --recursive
 
 # remove resources and functions
-SERVICES=(updateTask createTask resources)
+SERVICES=(uploadTaskIssues updateTask createTask resources)
 remove
 
 # delete task and issue database tables
