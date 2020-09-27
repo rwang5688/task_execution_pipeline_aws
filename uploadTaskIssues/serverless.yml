@@ -10,6 +10,7 @@ custom:
   logDataBucket: ${env:TASK_EXEC_LOG_DATA_BUCKET}
   resultDataBucket: ${env:TASK_EXEC_RESULT_DATA_BUCKET}
   uploadTaskIssuesQueue: ${env:TASK_EXEC_UPLOAD_TASK_ISSUES_QUEUE}
+  generateTaskSummaryQueue: ${env:TASK_EXEC_GENERATE_TASK_SUMMARY_QUEUE}
   issueTable: ${env:TASK_EXEC_ISSUE_TABLE}
   dotenv:
     path: ../.env
@@ -42,6 +43,12 @@ provider:
       Resource: "arn:${self:custom.cloud}:sqs:*:*:${self:custom.uploadTaskIssuesQueue}"
     - Effect: Allow
       Action:
+        - sqs:SendMessage
+        - sqs:DeleteMessage
+        - sqs:GetQueueUrl
+      Resource: "arn:${self:custom.cloud}:sqs:*:*:${self:custom.generateTaskSummaryQueue}"
+    - Effect: Allow
+      Action:
         - dynamodb:DescribeTable
         - dynamodb:Query
         - dynamodb:Scan
@@ -54,13 +61,14 @@ provider:
 functions:
   uploadTaskIssues:
     handler: uploadTaskIssues.uploadTaskIssues
-    role: arn:${self:custom.cloud}:iam::${self:custom.accountid}:role/task-list
+    role: arn:${self:custom.cloud}:iam::${self:custom.accountid}:role/task-execution-pipeline
     environment:
       ACCOUNT_ID: ${env:AWS_ACCOUNT_ID}
       REGION: ${env:TARGET_REGION}
       LOG_DATA_BUCKET: ${env:TASK_EXEC_LOG_DATA_BUCKET}
       RESULT_DATA_BUCKET: ${env:TASK_EXEC_RESULT_DATA_BUCKET}
       UPLOAD_TASK_ISSUES_QUEUE: ${env:TASK_EXEC_UPLOAD_TASK_ISSUES_QUEUE}
+      GENERATE_TASK_SUMMARY_QUEUE: ${env:TASK_EXEC_GENERATE_TASK_SUMMARY_QUEUE}
       ISSUE_TABLE: ${env:TASK_EXEC_ISSUE_TABLE}
       STAGE: ${self:provider.stage}
     events:

@@ -2,5 +2,5 @@
 . ./.env
 . checkenv.sh
 . remove-task-list.sh
-. remove-task-pipeline.sh
+. remove-task-execution-pipeline.sh
 

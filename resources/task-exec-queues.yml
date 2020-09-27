@@ -15,4 +15,8 @@ Resources:
     Type: "AWS::SQS::Queue"
     Properties:
       QueueName: "${self:custom.uploadTaskIssuesQueue}"
+  GenerateTaskSummaryQueue:
+    Type: "AWS::SQS::Queue"
+    Properties:
+      QueueName: "${self:custom.generateTaskSummaryQueue}"
 
