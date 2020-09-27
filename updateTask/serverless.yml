@@ -61,7 +61,7 @@ provider:
 functions:
   updateTask:
     handler: updateTask.updateTask
-    role: arn:${self:custom.cloud}:iam::${self:custom.accountid}:role/task-list
+    role: arn:${self:custom.cloud}:iam::${self:custom.accountid}:role/task-execution-pipeline
     environment:
       ACCOUNT_ID: ${env:AWS_ACCOUNT_ID}
       REGION: ${env:TARGET_REGION}

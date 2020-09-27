@@ -182,6 +182,35 @@ def upload_file_from_slash_tmp(bucket_name, user_id, task_id, file_name):
     return True
 
 
+def send_message(queue_name, action, task):
+    # get queue url
+    sqsutil.list_queues()
+    queue_url = sqsutil.get_queue_url(queue_name)
+    if queue_url is None:
+        print(f'send_message: Queue {queue_name} does not exist.')
+        return False
+
+    # send message
+    message_body = {
+        "action": action,
+        "task": task
+    }
+    message_id = sqsutil.send_message(queue_url, str(message_body))
+    print(f'MessageId: {message_id}')
+    print(f'MessageBody: {message_body}')
+
+    # debug: receive message
+    message = sqsutil.receive_message(queue_url)
+    if message is None:
+        print(f'send_message: cannot retrieve sent messge.')
+        return False
+    print('Received message:')
+    print(message)
+
+    # success
+    return True
+
+
 # uploadTaskIssues handler
 def uploadTaskIssues(event, context):
     success = preamble(event, context)
@@ -247,6 +276,17 @@ def uploadTaskIssues(event, context):
         success = upload_file_from_slash_tmp(result_data_bucket_name, user_id, task_id, csv_file_name)
         if not success:
             print(f'upload_file failed: {csv_file_name}.  Next.')
+            continue
+
+        # set upload task issues queue name
+        queue_name = ''
+        if 'GENERATE_TASK_SUMMARY_QUEUE' in os.environ:
+            queue_name = os.environ['GENERATE_TASK_SUMMARY_QUEUE']
+
+        # send task context to update task log stream queue
+        success = send_message(queue_name, 'generate_task_summary', task)
+        if not success:
+            print('send_message failed.  Next.')
             continue
 
     # success
