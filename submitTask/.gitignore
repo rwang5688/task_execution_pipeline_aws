@@ -143,5 +143,7 @@ cython_debug/
 
 # submitTask: credentials
 aws-admin_credentials.csv
+env-cn*.sh
+evn-us*.sh
 preprocess
 

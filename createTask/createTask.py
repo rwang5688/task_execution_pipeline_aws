@@ -5,9 +5,8 @@ import boto3
 from botocore.exceptions import ClientError
 from aws_xray_sdk.core import xray_recorder
 from aws_xray_sdk.core import patch_all
-import s3util
-import sqsutil
 import tasktable
+import taskmessage
 
 
 logger = logging.getLogger()
@@ -22,6 +21,26 @@ def preamble(event, context):
     client = boto3.client('lambda')
     account_settings = client.get_account_settings()
     print(account_settings['AccountUsage'])
+    return True
+
+
+def get_env_var(env_var_name):
+    env_var = ''
+    if env_var_name in os.environ:
+        env_var = os.environ[env_var_name]
+    else:
+        print(f'get_env_var: Failed to get {env_var_name}.')
+    return env_var
+
+
+def get_env_vars():
+    global process_task_queue_name
+
+    process_task_queue_name = get_env_var('PROCESS_TASK_QUEUE')
+    if process_task_queue_name == '':
+        return False
+
+    # success
     return True
 
 
@@ -53,35 +72,6 @@ def parse_event_record(event_record):
     return True
 
 
-def send_message(queue_name, action, task):
-    # get queue url
-    sqsutil.list_queues()
-    queue_url = sqsutil.get_queue_url(queue_name)
-    if queue_url is None:
-        print(f'send_message: Queue {queue_name} does not exist.')
-        return False
-
-    # send message
-    message_body = {
-        "action": action,
-        "task": task
-    }
-    message_id = sqsutil.send_message(queue_url, str(message_body))
-    print(f'MessageId: {message_id}')
-    print(f'MessageBody: {message_body}')
-
-    # debug: receive message
-    message = sqsutil.receive_message(queue_url)
-    if message is None:
-        print(f'send_message: cannot retrieve sent messge.')
-        return False
-    print('Received message:')
-    print(message)
-
-    # success
-    return True
-
-
 # createTask handler
 def createTask(event, context):
     success = preamble(event, context)
@@ -89,13 +79,22 @@ def createTask(event, context):
         print('preamble failed. Exit.')
         return False
 
+    # get env vars
+    success = get_env_vars()
+    if not success:
+        print('get_env_vars failed.  Exit.')
+        return False
+
+    print('Env vars:')
+    print(f'process_task_queue_name: {process_task_queue_name}')
+
     # get task table
     task_table = tasktable.get_task_table()
     if task_table is None:
         print('get_task_table failed.  Exit.')
         return False
 
-    # create task record
+    # create task records
     event_records = event['Records']
     for event_record in event_records:
         # debug: print event record
@@ -129,22 +128,18 @@ def createTask(event, context):
         print('Task record:')
         print(task_record)
 
-        # set process task queue name
-        queue_name = ''
-        if 'PROCESS_TASK_QUEUE' in os.environ:
-            queue_name = os.environ['PROCESS_TASK_QUEUE']
-
         # send task record to process task queue
-        success = send_message(queue_name, "process", task_record)
+        action = 'process'
+        success = taskmessage.send_task_message(process_task_queue_name, action, task_record)
         if not success:
             print('send_message failed for process task queue.  Next.')
             continue
 
-        # TO DO: Start ECS Fargate task to process task!!!
-        # It appears that ECS Fargate task will start as soon as process queue has message.
+        # Note: Start ECS Fargate cluster to process task.
+        # ECS Fargate cluster appear to start a task as soon as process queue has message.
 
-        # if send_message succeeds, update task status to "started"
-        task_status = "started"
+        # if send_task_message succeeds, update task status to "started"
+        task_status = 'started'
         success = tasktable.update_task_status(task_table, user_id, task_id, task_status)
         if not success:
             print('update_task_status failed.  Next.')

@@ -5,7 +5,7 @@
             "SenderId": "AIDA2GJJEXXSDZRNQYAAD",
             "SentTimestamp": "1596432407513"
         },
-        "body": "{'action': 'create', 'task': {'user_id': 'rwang5688@outlook.com', 'task_id': '6abc0930-87fd-4b5b-91b5-156ae8588b62', 'task_tool': 'xvsa_start.sh', 'task_extra_options': {'SCAN_EXTRA_OPTIONS': '', 'SCAN_EXTRA_JFE_OPTIONS': '', 'SCAN_EXTRA_VARIABLE_OPTION': '', 'SCAN_EXTRA_SKIP_VTABLE_OPTION': 'YES'}, 'task_source_code': 'source_code.zip', 'task_source_fileinfo': 'fileinfo.json', 'task_preprocessed_files': 'preprocess.tar.gz'}}",
+        "body": "{'action': 'create', 'task': {'user_id': 'rwang5688@outlook.com', 'task_id': '6abc0930-87fd-4b5b-91b5-156ae8588b62', 'task_tool': 'xvsa_start.sh', 'task_extra_options': {'SCAN_EXTRA_OPTIONS': '', 'SCAN_EXTRA_JFE_OPTIONS': '', 'SCAN_EXTRA_VARIABLE_OPTION': '', 'SCAN_EXTRA_SKIP_VTABLE_OPTION': 'YES'}, 'task_source_code': 'source_code.zip', 'task_source_fileinfo': 'fileinfo.json', 'task_preprocessed_tar': 'preprocess.tar.gz'}}",
         "MD5OfBody": "8a793c04ba9f248a74d66cd8ed274e99",
         "MessageId": "6455347b-412d-4f85-b3a0-c3fd75c560e4",
         "ReceiptHandle": "AQEBOFtISlcTmD/itsbhy5D/zdVPRZ0B17taEzRRfUTDuyxtS/aMPDDuzbBfCoZ/xM65RZoPLagGUkJ0EMJvuasqy7qI1sHethq2TP2m1nN/fhLTPpvxs7AFj/9bFw9HawVYq9ajU47qxelGyVuLMwnXB2bYrB2judvXS73jf1uG4EXzD54ctQb22zGpwJrRRD1SRJ5FZKKS5P29R/Kb5M2WfAt0YLTHlfFPY5DsQUAiQrUUn6n/HWgXkYjCcTv1CRSMXI1TO5yA/qT/uzBLRPKUKUCu81ZaScaS42s5h6vbjjgZrlFMJVLBCUY9ErN+2TxhWC4Ovq7oAe9MbMrm4NuZmx8anXszOZv7WtFF/kZ3GGHHNnpkueTyyiitQYVf584O44YqjBjLf/6B0w/Dfiu9f8PtCEcTa35+aDiiIfBnDdo="

@@ -20,7 +20,7 @@ function gather () {
     task_extra_options: $('#task-extra-options').val(),
     task_source_code: $('#task-source-code').val(),
     task_source_fileinfo: $('#task-source-fileinfo').val(),
-    task_preprocessed_files: $('#task-preprocessed-files').val(),
+    task_preprocess_tar: $('#task-preprocess-tar').val(),
     task_status: $('#task-status').val(),
     submit_timestamp: $('#submit-timestamp').val(),
     update_timestamp: $('#update-timestamp').val()
