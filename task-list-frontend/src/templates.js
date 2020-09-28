@@ -12,7 +12,7 @@ function taskItemTpl (item) {
       <div id="task_extra_options" class="col-sm-2">${item.task_extra_options}</div>
       <div id="task_source_code" class="col-sm-2">${item.task_source_code}</div>
       <div id="task_source_fileinfo" class="col-sm-2">${item.task_source_fileinfo}</div>
-      <div id="task_preprocessed_files" class="col-sm-2">${item.task_preprocessed_files}</div>
+      <div id="task_preprocess_tar" class="col-sm-2">${item.task_preprocess_tar}</div>
       <div id="task_status" class="col-sm-2">${item.task_status}</div>
       <div id="submit_timestamp" class="col-sm-2">${item.submit_timestamp}</div>
       <div id="update_timestamp" class="col-sm-2">${item.update_timestamp}</div>
@@ -40,7 +40,7 @@ function taskListTpl (items) {
       <div class="col-sm-2">Extra Options</div>
       <div class="col-sm-2">Source Code</div>
       <div class="col-sm-2">Source File Info</div>
-      <div class="col-sm-2">Preprocessed Files</div>
+      <div class="col-sm-2">Preprocess Tar</div>
       <div class="col-sm-2">Status</div>
       <div class="col-sm-2">Submit Timestamp</div>
       <div class="col-sm-2">Update Timestamp</div>
@@ -85,7 +85,7 @@ function editTpl () {
         </div>
         <div class="row">&nbsp;</div>
         <div class="row">
-          <div class="col-sm-1"></div><div class="col-sm-1">Preprocessed Files: </div><div class="col-sm-6"><input class="w-100" type="text" id="task-preprocessed-files"></div>
+          <div class="col-sm-1"></div><div class="col-sm-1">Preprocess Tar: </div><div class="col-sm-6"><input class="w-100" type="text" id="task-preprocess-tar"></div>
         </div>
         <div class="row">&nbsp;</div>
         <div class="row">

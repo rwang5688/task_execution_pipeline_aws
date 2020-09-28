@@ -1,93 +1,32 @@
 import os
 import subprocess
-import boto3
-from botocore.exceptions import ClientError
-import s3util
-import sqsutil
+import taskmessage
+import taskfile
+
+
+def get_env_var(env_var_name):
+    env_var = ''
+    if env_var_name in os.environ:
+        env_var = os.environ[env_var_name]
+    else:
+        print(f'get_env_var: Failed to get {env_var_name}.')
+    return env_var
 
 
 def get_env_vars():
-    global bucket_name
-    global queue_name
+    global preprocess_bucket_name
+    global process_task_queue_name
 
-    bucket_name = ''
-    if 'TASK_EXEC_PREPROCESS_DATA_BUCKET' in os.environ:
-        bucket_name = os.environ['TASK_EXEC_PREPROCESS_DATA_BUCKET']
-
-    queue_name = ''
-    if 'TASK_EXEC_PROCESS_TASK_QUEUE' in os.environ:
-        queue_name = os.environ['TASK_EXEC_PROCESS_TASK_QUEUE']
-
-    # success
-    return True
-
-
-def receive_message(queue_name):
-    # get queue url
-    sqsutil.list_queues()
-    queue_url = sqsutil.get_queue_url(queue_name)
-    if queue_url is None:
-        print(f'receive_message: {queue_name} does not exist.')
-        return None
-
-    # receive message
-    message = sqsutil.receive_message(queue_url)
-    if message is None:
-        print('receive_message: cannot retrieve message.')
-        return None
-    print('\nReceived message:')
-    print(message)
-
-    # successfully received message
-    return message
-
-
-def parse_message(message):
-    global task
-
-    message_body = eval(message['Body'])
-    if message_body is None:
-        print('parse_message: message body is missing.')
+    preprocess_bucket_name = get_env_var('TASK_EXEC_PREPROCESS_DATA_BUCKET')
+    if preprocess_bucket_name == '':
         return False
 
-    task = message_body['task']
-    if task is None:
-        print('parse_message: task is missing.')
+    process_task_queue_name = get_env_var('TASK_EXEC_PROCESS_TASK_QUEUE')
+    if process_task_queue_name == '':
         return False
 
     # success
     return True
-
-
-def download_preprocessed_files(bucket_name, task):
-    # get bucket
-    s3util.list_buckets()
-    bucket = s3util.get_bucket(bucket_name)
-    if bucket is None:
-        print(f'download_preprocssed_files: Bucket {bucket_name} does not exist.')
-        return None
-
-    # get folder $(user_id)/$(task_id)
-    user_id = task['user_id']
-    task_id = task['task_id']
-
-    # download source fileinfo
-    task_source_fileinfo = task['task_source_fileinfo']
-    object_key = user_id + "/" + task_id + "/" + task_source_fileinfo
-    success = s3util.download_file(bucket_name, object_key, task_source_fileinfo)
-    if not success:
-        print(f'download_preprocessed_files: Failed to download task source fileinfo {task_source_fileinfo}.')
-
-    # download preprocessed files
-    task_preprocessed_files = task['task_preprocessed_files']
-    object_key = user_id + "/" + task_id + "/" + task_preprocessed_files
-    success = s3util.download_file(bucket_name, object_key, task_preprocessed_files)
-    if not success:
-        print(f'download_preprocessed_file: Failed to download task preprocssed files {task_preprocessed_files}.')
-        return None
-
-    # success
-    return task_preprocessed_files
 
 
 def read_process_stdout(process):
@@ -125,7 +64,15 @@ def set_env_vars(task):
     return True
 
 
-def execute_tool(task_tool):
+def execute_task_tool(task):
+    # get task_tool
+    task_tool = ''
+    if 'task_tool' in task:
+        task_tool = task['task_tool']
+    else:
+        print('execute_task_tool: Missing task_tool.')
+        return False
+
     # command: "$(task_tool)"
     process = subprocess.Popen([task_tool],
         shell=True,
@@ -137,26 +84,13 @@ def execute_tool(task_tool):
     return True
 
 
-def execute_callback(callback, user_id, task_id, task_status):
-    # command: "python3 $(callback) user_id task_id task_status"
-    process = subprocess.Popen(["python3", callback, user_id, task_id, task_status],
+def execute_task_callback(task_callback, user_id, task_id, task_status):
+    # command: "python3 $(task_callback) $(user_id) $(task_id) $(task_status)"
+    process = subprocess.Popen(["python3", task_callback, user_id, task_id, task_status],
         stdout=subprocess.PIPE, universal_newlines=True)
     read_process_stdout(process)
 
     # success
-    return True
-
-
-def delete_message(queue_name, message):
-    # get queue url
-    sqsutil.list_queues()
-    queue_url = sqsutil.get_queue_url(queue_name)
-    if queue_url is None:
-        print(f'delete_message: {queue_name} does not exist.')
-        return False
-
-    # delete message
-    sqsutil.delete_message(queue_url, message)
     return True
 
 
@@ -169,63 +103,70 @@ def main():
         return
 
     print('Env vars:')
-    print(f'bucket_name: {bucket_name}')
-    print(f'queue_name: {queue_name}')
+    print(f'preprocess_bucket_name: {preprocess_bucket_name}')
+    print(f'process_task_queue_name: {process_task_queue_name}')
 
-    message = receive_message(queue_name)
+    message = taskmessage.receive_task_message(process_task_queue_name)
     if message is None:
-        print('receive_message failed.  Exit.')
+        print('receive_task_message failed.  Exit.')
         return
 
     print('Message:')
     print(message)
 
-    success = parse_message(message)
-    if not success:
-        print('parse_message failed.  Exit.')
+    task = taskmessage.get_task_from_message(message)
+    if task is None:
+        print('get_task_from_message failed.  Exit.')
         return
 
-    print('Body.task:')
-    print(f'task: {task}')
+    print('Task:')
+    print(task)
 
-    preprocessed_files = download_preprocessed_files(bucket_name, task)
-    if preprocessed_files is None:
-        print('download_preprocessed_files failed.  Exit.')
+    task_file_attribute_name = 'task_source_fileinfo'
+    task_file_name = taskfile.download_task_file(preprocess_bucket_name, task, task_file_attribute_name)
+    if task_file_name == '':
+        print(f'download_task_file failed: {task_file_attribute_name}.  Exit.')
         return
 
-    print(f'preprocessed_files: {preprocessed_files}')
+    print(f'{task_file_attribute_name}: {task_file_name}')
+
+    task_file_attribute_name = 'task_preprocess_tar'
+    task_file_name = taskfile.download_task_file(preprocess_bucket_name, task, task_file_attribute_name)
+    if task_file_name == '':
+        print(f'download_task_file failed: {task_file_attribute_name}.  Exit.')
+        return
+
+    print(f'{task_file_attribute_name}: {task_file_name}')
 
     success = set_env_vars(task)
     if not success:
         print('set_env_vars failed.  Exit.')
         return
 
-    # debug: print os.environ
     print(f'set_env_vars: {os.environ}')
 
-    task_tool = ''
-    if 'task_tool' in task:
-        task_tool = task['task_tool']
-    else:
-        print('main: Missing task_tool.  Exit.')
-        return
-    task_tool = task['task_tool']
-    success = execute_tool(task_tool)
+    success = execute_task_tool(task)
     if not success:
-        print('execute_tool failed.  Exit.')
+        print('execute_task_tool failed.  Exit.')
         return
 
-    callback = 'taskResult.py'
+    task_tool = task['task_tool']
+    print(f'execute_task_tool completed for {task_tool}.')
+
+    task_callback = 'taskResult.py'
     user_id = task['user_id']
     task_id = task['task_id']
-    success = execute_callback(callback, user_id, task_id, "completed")
+    task_status = 'completed'
+    success = execute_task_callback(task_callback, user_id, task_id, task_status)
     if not success:
-        print('execute_callback failed.  Exit.')
+        print('execute_task_callback failed.  Exit.')
         return
 
-    success = delete_message(queue_name, message)
+    print(f'execute_task_callback completed for {task_callback}.')
+
+    success = taskmessage.delete_task_message(process_task_queue_name, message)
     if not success:
-        print('delete_message failed.  Exit.')
+        print('delete_task_message failed.  Exit.')
         return
 
     # success

@@ -10,6 +10,6 @@
     },
     "task_source_code": "source_code.zip",
     "task_source_fileinfo": "fileinfo.json",
-    "task_preprocessed_files": "preprocess.tar.gz"
+    "task_preprocess_tar": "preprocess.tar.gz"
 }
 

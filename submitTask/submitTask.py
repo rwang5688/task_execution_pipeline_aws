@@ -1,28 +1,36 @@
 import os
 import json
+import copy
 import uuid
-import boto3
-from botocore.exceptions import ClientError
-import s3util
-import sqsutil
+import taskfile
+import taskmessage
+
+
+def get_env_var(env_var_name):
+    env_var = ''
+    if env_var_name in os.environ:
+        env_var = os.environ[env_var_name]
+    else:
+        print(f'get_env_var: Failed to get {env_var_name}.')
+    return env_var
 
 
 def get_env_vars():
     global preprocess_bucket_name
     global result_bucket_name
-    global queue_name
+    global create_task_queue_name
 
-    preprocess_bucket_name = ''
-    if 'TASK_EXEC_PREPROCESS_DATA_BUCKET' in os.environ:
-        preprocess_bucket_name = os.environ['TASK_EXEC_PREPROCESS_DATA_BUCKET']
+    preprocess_bucket_name = get_env_var('TASK_EXEC_PREPROCESS_DATA_BUCKET')
+    if preprocess_bucket_name == '':
+        return False
 
-    result_bucket_name = ''
-    if 'TASK_EXEC_RESULT_DATA_BUCKET' in os.environ:
-        result_bucket_name = os.environ['TASK_EXEC_RESULT_DATA_BUCKET']
+    result_bucket_name = get_env_var('TASK_EXEC_RESULT_DATA_BUCKET')
+    if result_bucket_name == '':
+        return False
 
-    queue_name = ''
-    if 'TASK_EXEC_CREATE_TASK_QUEUE' in os.environ:
-        queue_name = os.environ['TASK_EXEC_CREATE_TASK_QUEUE']
+    create_task_queue_name = get_env_var('TASK_EXEC_CREATE_TASK_QUEUE')
+    if create_task_queue_name == '':
+        return False
 
     # success
     return True
@@ -53,102 +61,6 @@ def get_json_data(file_name):
     return None
 
 
-def upload_preprocessed_files(preprocess_bucket_name, task_config):
-    # get bucket
-    s3util.list_buckets()
-    bucket = s3util.get_bucket(preprocess_bucket_name)
-    if bucket is None:
-        print(f'upload_processed_files: Bucket {preprocess_bucket_name} does not exist.')
-        return False
-
-    # debug: list files before
-    s3util.list_files(bucket["Name"])
-
-    # assume user_id and task_id are set
-    user_id = task_config['user_id']
-    task_id = task_config['task_id']
-
-    # upload source fileinfo
-    task_source_fileinfo = task_config["task_source_fileinfo"]
-    success = s3util.upload_file(task_source_fileinfo, bucket["Name"], user_id + "/" + task_id + "/" + task_source_fileinfo)
-    if not success:
-        print(f'upload_preprocessed_files: Failed to upload task source fileinfo {task_source_fileinfo}.')
-        return False
-
-    # upload preprocessed files
-    task_preprocessed_files = task_config["task_preprocessed_files"]
-    success = s3util.upload_file(task_preprocessed_files, bucket["Name"], user_id + "/" + task_id + "/" + task_preprocessed_files)
-    if not success:
-        print(f'upload_preprocssed_files: Failed to upload task preprocessed files {task_preprocessed_files}.')
-        return False
-
-    # debug: list files after
-    s3util.list_files(bucket["Name"])
-
-    # success
-    return True
-
-
-def upload_source_code(result_bucket_name, task_config):
-    # get bucket
-    s3util.list_buckets()
-    bucket = s3util.get_bucket(result_bucket_name)
-    if bucket is None:
-        print(f'upload_source_code: Bucket {result_bucket_name} does not exist.')
-        return False
-
-    # debug: list files before
-    s3util.list_files(bucket["Name"])
-
-    # assume user_id and task_id are set
-    user_id = task_config['user_id']
-    task_id = task_config['task_id']
-
-    # upload source code
-    task_source_code = task_config["task_source_code"]
-    success = s3util.upload_file(task_source_code, bucket["Name"], user_id + "/" + task_id + "/" + task_source_code)
-    if not success:
-        print(f'upload_source_code: Failed to upload task source code {task_source_code}.')
-        return False
-
-    # debug: list files after
-    s3util.list_files(bucket["Name"])
-
-    # success
-    return True
-
-
-def send_message(queue_name, action, task_config):
-    # get queue url
-    sqsutil.list_queues()
-    queue_url = sqsutil.get_queue_url(queue_name)
-    if queue_url is None:
-        print(f'send_message: Queue {queue_name} does not exist.')
-        return False
-
-    # assume user_id and task_id are set
-    message_body = {
-        "action": action,
-        "task": task_config
-    }
-
-    # send message
-    message_id = sqsutil.send_message(queue_url, str(message_body))
-    print(f'MessageId: {message_id}')
-    print(f'MessageBody: {message_body}')
-
-    # debug: receive message
-    message = sqsutil.receive_message(queue_url)
-    if message is None:
-        print(f'send_message: cannot retrieve sent messge.')
-        print(f'(When downstream Lambda function is running, missing message is expected.)')
-    print('Received message:')
-    print(message)
-
-    # success
-    return True
-
-
 def main():
     print('\nStarting submitTask.py ...')
 
@@ -160,7 +72,7 @@ def main():
     print('Env vars:')
     print(f'preprocess_bucket_name: {preprocess_bucket_name}')
     print(f'result_bucket_name: {result_bucket_name}')
-    print(f'queue_name: {queue_name}')
+    print(f'create_task_queue_name: {create_task_queue_name}')
 
     success = parse_arguments()
     if not success:
@@ -174,25 +86,36 @@ def main():
     if task_config == None:
         print('get_json_data failed.  Exit.')
         return
+
+    task = copy.deepcopy(task_config)
     task_id = str(uuid.uuid4())
-    task_config['task_id'] = task_id
+    task['task_id'] = task_id
 
-    print('Task config:')
-    print(task_config)
+    print('Task:')
+    print(task)
 
-    success = upload_preprocessed_files(preprocess_bucket_name, task_config)
+    task_file_attribute_name = 'task_source_fileinfo'
+    success = taskfile.upload_task_file(preprocess_bucket_name, task, task_file_attribute_name)
     if not success:
-        print('upload_preprocessed_files failed.  Exit.')
+        print(f'upload_task_file failed: {task_file_attribute_name}.  Exit.')
         return
 
-    success = upload_source_code(result_bucket_name, task_config)
+    task_file_attribute_name = 'task_preprocess_tar'
+    success = taskfile.upload_task_file(preprocess_bucket_name, task, task_file_attribute_name)
     if not success:
-        print('upload_source_code failed.  Exit.')
+        print(f'upload_task_file failed: {task_file_attribute_name}.  Exit.')
         return
 
-    success = send_message(queue_name, 'create', task_config)
+    task_file_attribute_name = 'task_source_code'
+    success = taskfile.upload_task_file(result_bucket_name, task, task_file_attribute_name)
     if not success:
-        print('send_message failed.  Exit.')
+        print(f'upload_task_file failed: {task_file_attribute_name}.  Exit.')
+        return
+
+    action = 'create'
+    success = taskmessage.send_task_message(create_task_queue_name, action, task)
+    if not success:
+        print('send_task_message failed.  Exit.')
         return
 
 

@@ -1,27 +1,34 @@
 import os
 import subprocess
-import boto3
-from botocore.exceptions import ClientError
-import s3util
-import sqsutil
+import taskfile
+import taskmessage
+
+
+def get_env_var(env_var_name):
+    env_var = ''
+    if env_var_name in os.environ:
+        env_var = os.environ[env_var_name]
+    else:
+        print(f'get_env_var: Failed to get {env_var_name}.')
+    return env_var
 
 
 def get_env_vars():
     global log_bucket_name
     global result_bucket_name
-    global queue_name
+    global update_task_queue_name
 
-    log_bucket_name = ''
-    if 'TASK_EXEC_LOG_DATA_BUCKET' in os.environ:
-        log_bucket_name = os.environ['TASK_EXEC_LOG_DATA_BUCKET']
+    log_bucket_name = get_env_var('TASK_EXEC_LOG_DATA_BUCKET')
+    if log_bucket_name == '':
+        return False
 
-    result_bucket_name = ''
-    if 'TASK_EXEC_RESULT_DATA_BUCKET' in os.environ:
-        result_bucket_name = os.environ['TASK_EXEC_RESULT_DATA_BUCKET']
+    result_bucket_name = get_env_var('TASK_EXEC_RESULT_DATA_BUCKET')
+    if result_bucket_name == '':
+        return False
 
-    queue_name = ''
-    if 'TASK_EXEC_UPDATE_TASK_QUEUE' in os.environ:
-        queue_name = os.environ['TASK_EXEC_UPDATE_TASK_QUEUE']
+    update_task_queue_name = get_env_var('TASK_EXEC_UPDATE_TASK_QUEUE')
+    if update_task_queue_name == '':
+        return False
 
     # success
     return True
@@ -59,62 +66,14 @@ def parse_arguments():
     return True
 
 
-def upload_file(bucket_name, user_id, task_id, file_name):
-    # get bucket
-    s3util.list_buckets()
-    bucket = s3util.get_bucket(bucket_name)
-    if bucket is None:
-        print(f'upload_file: Bucket {bucket_name} does not exist.')
-        return False
-
-    # debug: list files before
-    s3util.list_files(bucket["Name"])
-
-    # upload file
-    object_key = user_id + "/" + task_id + "/" + file_name
-    success = s3util.upload_file(file_name, bucket["Name"], object_key)
-    if not success:
-        print(f'upload_file: Failed to upload object {object_key}.')
-        return False
-
-    # debug: list files after
-    s3util.list_files(bucket["Name"])
-
-    # success
-    return True
-
-
-def send_message(queue_name, user_id, task_id, task_status):
-    # get queue url
-    sqsutil.list_queues()
-    queue_url = sqsutil.get_queue_url(queue_name)
-    if queue_url is None:
-        print(f'send_message: Queue {queue_name} does not exist.')
-        return False
-
-    # send message
-    message_body = {
-        "action": "update",
-        "task": {
-            "user_id": user_id,
-            "task_id": task_id,
-            "task_status": task_status
-        }
-    }
-    message_id = sqsutil.send_message(queue_url, str(message_body))
-    print(f'MessageId: {message_id}')
-    print(f'MessageBody: {message_body}')
-
-    # receive message
-    message = sqsutil.receive_message(queue_url)
-    if message is None:
-        print(f'send_message: cannot retrieve sent messge.')
-        print(f'(When downstream Lambda function is running, missing message is expected.)')
-    print('Received message:')
-    print(message)
-
-    # success
-    return True
+def init_task(user_id, task_id, task_status):
+    task = {}
+    task['user_id'] = user_id
+    task['task_id'] = task_id
+    task['task_status'] = task_status
+    task['task_dot_scan_log_tar'] = '.scan_log.tar.gz'
+    task['task_scan_result_tar'] = 'scan_result.tar.gz'
+    return task
 
 
 def main():
@@ -128,31 +87,36 @@ def main():
     print('Env vars:')
     print(f'log_bucket_name: {log_bucket_name}')
     print(f'result_bucket_name: {result_bucket_name}')
-    print(f'queue_name: {queue_name}')
+    print(f'update_task_queue_name: {update_task_queue_name}')
 
     success = parse_arguments()
     if not success:
         print('parse_arguments failed.  Exit.')
         return
 
-    print('args:')
-    print(f'user_id = {user_id}')
-    print(f'task_id = {task_id}')
-    print(f'task_status = {task_status}')
+    print('Args:')
+    print(f'user_id: {user_id}')
+    print(f'task_id: {task_id}')
+    print(f'task_status: {task_status}')
 
-    success = upload_file(log_bucket_name, user_id, task_id, ".scan_log.tar.gz")
+    task = init_task(user_id, task_id, task_status)
+
+    task_file_attribute_name = 'task_dot_scan_log_tar'
+    success = taskfile.upload_task_file(log_bucket_name, task, task_file_attribute_name)
     if not success:
-        print('upload_file failed: .scan_log.tar.gz.  Exit.')
+        print(f'upload_task_file failed: {task_file_attribute_name}.  Exit.')
         return
 
-    success = upload_file(result_bucket_name, user_id, task_id, "scan_result.tar.gz")
+    task_file_attribute_name = 'task_scan_result_tar'
+    success = taskfile.upload_task_file(result_bucket_name, task, task_file_attribute_name)
     if not success:
-        print('upload_file failed: scan_result.tar.gz.  Exit.')
+        print(f'upload_task_file failed: {task_file_attribute_name}.  Exit.')
         return
 
-    success = send_message(queue_name, user_id, task_id, task_status)
+    action = 'update'
+    success = taskmessage.send_task_message(update_task_queue_name, action, task)
     if not success:
-        print('send_message failed.  Exit.')
+        print('send_task_message failed.  Exit.')
         return
 
 
