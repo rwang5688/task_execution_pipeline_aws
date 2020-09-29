@@ -12,9 +12,9 @@ custom:
 
 provider:
   name: aws
+  region: ${env:TARGET_REGION}
   runtime: nodejs12.x
   stage: ${opt:stage, 'dev'}
-  region: ${env:TARGET_REGION}
 
 resources:
   - ${file(./task-list-apps-bucket.yml)}

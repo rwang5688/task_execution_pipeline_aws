@@ -10,7 +10,8 @@ def get_s3_client():
         region_name = os.environ['TARGET_REGION']
     print(f'get_s3_client: region_name={region_name}')
 
-    s3 = boto3.client('s3',
+    session = boto3.Session(profile_name=None)
+    s3 = session.client('s3',
         region_name=region_name)
     return s3
 

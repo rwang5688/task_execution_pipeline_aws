@@ -142,8 +142,8 @@ cython_debug/
 .idea
 
 # submitTask: credentials
-aws-admin_credentials.csv
+*credentials.csv
 env-cn*.sh
-evn-us*.sh
+env-us*.sh
 preprocess
 

@@ -10,7 +10,7 @@ def get_s3_client():
         region_name = os.environ['TARGET_REGION']
     print(f'get_s3_client: region_name={region_name}')
 
-    session = boto3.Session(profile_name='aws-admin')
+    session = boto3.Session(profile_name=None)
     s3 = session.client('s3',
         region_name=region_name)
     return s3
@@ -80,4 +80,15 @@ def download_file(bucket_name, object_name, file_name=None):
         logging.error(e)
         return False
     return True
+
+
+def get_file_object(bucket_name, object_name):
+    s3 = get_s3_client()
+    file_object = None
+    try:
+        file_object = s3.get_object(Bucket=bucket_name, Key=object_name)
+    except ClientError as e:
+        logging.error(e)
+        return None
+    return file_object
 

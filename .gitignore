@@ -3,5 +3,9 @@
 .idea
 
 # AWS CLI V2 credentials
-aws-admin_credentials.csv
+*credentials*
+
+# backup env files
+.env-cn*
+.env-us*
 
