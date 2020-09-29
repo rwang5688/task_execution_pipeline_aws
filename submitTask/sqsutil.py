@@ -10,7 +10,7 @@ def get_sqs_client():
         region_name = os.environ['TARGET_REGION']
     print(f'get_sqs_client: region_name={region_name}')
 
-    session = boto3.Session(profile_name='aws-admin')
+    session = boto3.Session(profile_name=None)
     sqs = session.client('sqs',
         region_name=region_name)
     return sqs

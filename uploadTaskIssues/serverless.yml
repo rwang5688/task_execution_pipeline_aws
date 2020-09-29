@@ -19,9 +19,9 @@ custom:
 
 provider:
   name: aws
-  stage: dev
-  runtime: python3.8
   region: ${env:TARGET_REGION}
+  runtime: python3.8
+  stage: dev
   iamRoleStatements:
     - Effect: Allow
       Action:

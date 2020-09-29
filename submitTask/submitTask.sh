@@ -3,7 +3,7 @@
 . ./env.sh
 
 # import AWS credentials
-aws configure import --csv "file://aws-admin_credentials.csv"
+aws configure import --csv "file://default_credentials.csv"
 cat ~/.aws/credentials
 
 # read task config json, create task id, upload files, submit task

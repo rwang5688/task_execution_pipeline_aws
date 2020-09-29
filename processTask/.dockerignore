@@ -144,7 +144,7 @@ cython_debug/
 
 # processTask: executables, outputs
 env-cn*.sh
-evn-us*.sh
+env-us*.sh
 task_config.json
 xvsa_scan
 xvsa_scan.exe

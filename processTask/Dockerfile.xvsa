@@ -27,7 +27,7 @@ ENV PATH=$PATH:/processTask/bin
 WORKDIR /processTask
 
 # import AWS credentials
-RUN aws configure import --csv "file://aws-admin_credentials.csv"
+RUN aws configure import --csv "file://default_credentials.csv"
 RUN cat ~/.aws/credentials
 
 CMD ["/bin/sh", "processTask.sh"]
