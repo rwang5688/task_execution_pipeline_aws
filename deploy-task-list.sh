@@ -17,7 +17,22 @@ function deploy () {
 }
 
 
-function domain () {
+function domain-v1 () {
+  cd task-list-service
+  npm install
+  serverless create_domain
+  cd ..
+}
+
+
+function compile-v2 () {
+  cd task-list-service-v2
+  mvn clean install
+  cd ..
+}
+
+
+function domain-v2 () {
   cd task-list-service
   npm install
   serverless create_domain
@@ -58,7 +73,7 @@ function domain () {
 . ./cognito.sh setup
 
 # create task-list-service API domain
-domain
+domain-v1
 
 # deploy task-list-service API functions and task-list-frontend resources
 SERVICES=(task-list-service task-list-frontend)
@@ -72,4 +87,14 @@ npm run build
 # deploy frontend app
 aws s3 sync dist/ s3://$TASK_LIST_APPS_BUCKET
 cd ..
+
+# compile task-list-service-v2 API functions
+compile-v2
+
+# create task-list-service-v2 API domain
+domain-v2
+
+# deploy task-list-service-v2 API functions
+SERVICES=(task-list-service-v2)
+deploy
 
