@@ -6,7 +6,7 @@ const task = {activate};
 export {task};
 
 /*jshint -W101 */
-const API_ROOT = `https://tasklistapi.${process.env.TASK_LIST_DOMAIN}/api/task/`;
+const API_ROOT = `https://tasklistapi.${process.env.TASK_LIST_DOMAIN}/v1/tasks/`;
 /*jshint +W101 */
 
 let auth;

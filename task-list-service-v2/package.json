@@ -1,0 +1,19 @@
+{
+  "name": "task-list-service-v2",
+  "version": "1.0.0",
+  "description": "task-list-service-v2",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "task-list-service-v2"
+  ],
+  "author": "rwang5688@outlook.com",
+  "license": "ISC",
+  "devDependencies": {
+    "serverless-domain-manager": "^5.0.0",
+    "serverless-dotenv-plugin": "^3.0.0",
+    "serverless-offline": "^6.8.0"
+  }
+}

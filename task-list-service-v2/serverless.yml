@@ -1,4 +1,4 @@
-service: task-list-service
+service: task-list-service-v2
 frameworkVersion: ">=1.30.0"
 plugins:
   - serverless-offline
@@ -9,13 +9,13 @@ custom:
   cloud: ${env:TARGET_CLOUD}
   region: ${env:TARGET_REGION}
   domain: ${env:TASK_LIST_DOMAIN}
-  userPoolArn: ${env:TASK_LIST_USER_POOL_ARN}
+#  userPoolArn: ${env:TASK_LIST_USER_POOL_ARN}
   dotenv:
     path: ../.env
   customDomain:
     domainName: 'tasklistapi.${self:custom.domain}'
     stage: ${self:provider.stage}
-    basePath: v1
+    basePath: v2
     certificateName: '*.${self:custom.domain}'
     createRoute53Record: true
     endpointType: regional
@@ -25,7 +25,7 @@ custom:
 provider:
   name: aws
   region: ${env:TARGET_REGION}
-  runtime: nodejs12.x
+  runtime: java8
   stage: ${opt:stage, 'dev'}
   endpointType: regional
   environment:
@@ -42,55 +42,58 @@ provider:
         - dynamodb:DeleteItem
       Resource: "arn:${self:custom.cloud}:dynamodb:${self:custom.region}:${self:custom.accountid}:*"
 
+package:
+  artifact: 'target/${self:service}-${self:provider.stage}.jar'
+
 functions:
   create:
-    handler: handler.create
+    handler: com.rwang5688.CreateTaskHandler
     role: arn:${self:custom.cloud}:iam::${self:custom.accountid}:role/task-list
     events:
       - http:
           method: POST
           path: tasks
           cors: true
-          authorizer:
-            arn: '${self:custom.userPoolArn}'
+#          authorizer:
+#            arn: '${self:custom.userPoolArn}'
   read:
-    handler: handler.read
+    handler: com.rwang5688.GetTaskHandler
     role: arn:${self:custom.cloud}:iam::${self:custom.accountid}:role/task-list
     events:
       - http:
           method: GET
           path: tasks/{id}
           cors: true
-          authorizer:
-            arn: '${self:custom.userPoolArn}'
+#          authorizer:
+#            arn: '${self:custom.userPoolArn}'
   update:
-    handler: handler.update
+    handler: com.rwang5688.UpdateTaskHandler
     role: arn:${self:custom.cloud}:iam::${self:custom.accountid}:role/task-list
     events:
       - http:
           method: PUT
           path: tasks/{id}
           cors: true
-          authorizer:
-            arn: '${self:custom.userPoolArn}'
+#          authorizer:
+#            arn: '${self:custom.userPoolArn}'
   delete:
-    handler: handler.del
+    handler: com.rwang5688.DeleteTaskHandler
     role: arn:${self:custom.cloud}:iam::${self:custom.accountid}:role/task-list
     events:
       - http:
           method: DELETE
           path: tasks/{id}
           cors: true
-          authorizer:
-            arn: '${self:custom.userPoolArn}'
+#          authorizer:
+#            arn: '${self:custom.userPoolArn}'
   list:
-    handler: handler.list
+    handler: com.rwang5688.ListTasksHandler
     role: arn:${self:custom.cloud}:iam::${self:custom.accountid}:role/task-list
     events:
       - http:
           method: GET
           path: tasks
           cors: true
-          authorizer:
-            arn: '${self:custom.userPoolArn}'
+#          authorizer:
+#            arn: '${self:custom.userPoolArn}'
 
