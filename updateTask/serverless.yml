@@ -11,7 +11,6 @@ custom:
   resultDataBucket: ${env:TASK_EXEC_RESULT_DATA_BUCKET}
   updateTaskQueue: ${env:TASK_EXEC_UPDATE_TASK_QUEUE}
   uploadTaskIssuesQueue: ${env:TASK_EXEC_UPLOAD_TASK_ISSUES_QUEUE}
-  taskTable: ${env:TASK_EXEC_TASK_TABLE}
   dotenv:
     path: ../.env
   pythonRequirements:
@@ -69,8 +68,7 @@ functions:
       RESULT_DATA_BUCKET: ${env:TASK_EXEC_RESULT_DATA_BUCKET}
       UPDATE_TASK_QUEUE: ${env:TASK_EXEC_UPDATE_TASK_QUEUE}
       UPLOAD_TASK_ISSUES_QUEUE: ${env:TASK_EXEC_UPLOAD_TASK_ISSUES_QUEUE}
-      TASK_TABLE: ${env:TASK_EXEC_TASK_TABLE}
-      STAGE: ${self:provider.stage}
+      TASK_TABLE: '${env:TASK_EXEC_TASK_TABLE}-${self:provider.stage}'
     events:
       - sqs:
           arn: "arn:${self:custom.cloud}:sqs:${self:provider.region}:${self:custom.accountid}:${self:custom.updateTaskQueue}"

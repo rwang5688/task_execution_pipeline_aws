@@ -10,8 +10,7 @@ def get_issue_table():
     # set issue table name
     issue_table_name = ''
     if 'ISSUE_TABLE' in os.environ:
-        if 'STAGE' in os.environ:
-            issue_table_name = os.environ['ISSUE_TABLE'] + '-' + os.environ['STAGE']
+        issue_table_name = os.environ['ISSUE_TABLE']
     print(f'get_issue_table: table name is {issue_table_name}.')
 
     # get and return issue table
