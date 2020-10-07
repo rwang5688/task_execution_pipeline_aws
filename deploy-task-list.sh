@@ -3,6 +3,17 @@
 . checkenv.sh
 
 
+function compile () {
+  for SERVICE in "${SERVICES[@]}"
+  do
+    echo ----------[ compiling $SERVICE ]----------
+    cd $SERVICE
+    mvn clean install
+    cd ..
+  done
+}
+
+
 function deploy () {
   for SERVICE in "${SERVICES[@]}"
   do
@@ -21,13 +32,6 @@ function domain-v1 () {
   cd task-list-service
   npm install
   serverless create_domain
-  cd ..
-}
-
-
-function compile-v2 () {
-  cd task-list-service-v2
-  mvn clean install
   cd ..
 }
 
@@ -89,7 +93,8 @@ aws s3 sync dist/ s3://$TASK_LIST_APPS_BUCKET
 cd ..
 
 # compile task-list-service-v2 API functions
-compile-v2
+SERVICES=(task-list-service-v2)
+compile
 
 # create task-list-service-v2 API domain
 domain-v2

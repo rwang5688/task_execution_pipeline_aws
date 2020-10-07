@@ -1,30 +1,31 @@
-service: createTask
+service: generateTaskSummary
 frameworkVersion: ">=1.30.0"
 plugins:
   - serverless-dotenv-plugin
-  - serverless-python-requirements
 custom:
   accountid: ${env:AWS_ACCOUNT_ID}
   cloud: ${env:TARGET_CLOUD}
   region: ${env:TARGET_REGION}
-  preprocessDataBucket: ${env:TASK_EXEC_PREPROCESS_DATA_BUCKET}
-  createTaskQueue: ${env:TASK_EXEC_CREATE_TASK_QUEUE}
-  processTaskQueue: ${env:TASK_EXEC_PROCESS_TASK_QUEUE}
+  logDataBucket: ${env:TASK_EXEC_LOG_DATA_BUCKET}
+  resultDataBucket: ${env:TASK_EXEC_RESULT_DATA_BUCKET}
+  generateTaskSummaryQueue: ${env:TASK_EXEC_GENERATE_TASK_SUMMARY_QUEUE}
   dotenv:
     path: ../.env
-  pythonRequirements:
-    dockerizePip: non-linux
 
 provider:
   name: aws
   region: ${env:TARGET_REGION}
-  runtime: python3.8
-  stage: dev
+  runtime: java8
+  stage: ${opt:stage, 'dev'}
   iamRoleStatements:
     - Effect: Allow
       Action:
         - s3:GetObject
-      Resource: "arn:${self:custom.cloud}:s3:::${self:custom.preprocessDataBucket}/*"
+      Resource: "arn:${self:custom.cloud}:s3:::${self:custom.logDataBucket}/*"
+    - Effect: Allow
+      Action:
+        - s3:GetObject
+      Resource: "arn:${self:custom.cloud}:s3:::${self:custom.resultDataBucket}/*"
     - Effect: Allow
       Action:
         - sqs:ListQueues
@@ -34,13 +35,7 @@ provider:
         - sqs:ReceiveMessage
         - sqs:DeleteMessage
         - sqs:GetQueueUrl
-      Resource: "arn:${self:custom.cloud}:sqs:*:*:${self:custom.createTaskQueue}"
-    - Effect: Allow
-      Action:
-        - sqs:SendMessage
-        - sqs:DeleteMessage
-        - sqs:GetQueueUrl
-      Resource: "arn:${self:custom.cloud}:sqs:*:*:${self:custom.processTaskQueue}"
+      Resource: "arn:${self:custom.cloud}:sqs:*:*:${self:custom.generateTaskSummaryQueue}"
     - Effect: Allow
       Action:
         - dynamodb:DescribeTable
@@ -52,18 +47,21 @@ provider:
         - dynamodb:DeleteItem
       Resource: "arn:${self:custom.cloud}:dynamodb:${self:custom.region}:${self:custom.accountid}:*"
 
+package:
+  artifact: 'target/${self:service}-${self:provider.stage}.jar'
+
 functions:
-  createTask:
-    handler: createTask.createTask
+  generateTaskSummary:
+    handler: com.rwang5688.GenerateTaskSummaryHandler
     role: arn:${self:custom.cloud}:iam::${self:custom.accountid}:role/task-execution-pipeline
     environment:
       ACCOUNT_ID: ${env:AWS_ACCOUNT_ID}
       REGION: ${env:TARGET_REGION}
-      PREPROCESS_DATA_BUCKET: ${env:TASK_EXEC_PREPROCESS_DATA_BUCKET}
-      CREATE_TASK_QUEUE: ${env:TASK_EXEC_CREATE_TASK_QUEUE}
-      PROCESS_TASK_QUEUE: ${env:TASK_EXEC_PROCESS_TASK_QUEUE}
-      TASK_TABLE: "${env:TASK_EXEC_TASK_TABLE}-${self:provider.stage}"
+      LOG_DATA_BUCKET: ${env:TASK_EXEC_LOG_DATA_BUCKET}
+      RESULT_DATA_BUCKET: ${env:TASK_EXEC_RESULT_DATA_BUCKET}
+      GENERATE_TASK_SUMMARY_QUEUE: ${env:TASK_EXEC_GENERATE_TASK_SUMMARY_QUEUE}
+      ISSUE_TABLE: '${env:TASK_EXEC_ISSUE_TABLE}-${self:provider.stage}'
     events:
       - sqs:
-          arn: "arn:${self:custom.cloud}:sqs:${self:provider.region}:${self:custom.accountid}:${self:custom.createTaskQueue}"
+          arn: "arn:${self:custom.cloud}:sqs:${self:provider.region}:${self:custom.accountid}:${self:custom.generateTaskSummaryQueue}"
 

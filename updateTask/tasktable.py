@@ -11,8 +11,7 @@ def get_task_table():
     # set task table name
     task_table_name = ''
     if 'TASK_TABLE' in os.environ:
-        if 'STAGE' in os.environ:
-            task_table_name = os.environ['TASK_TABLE'] + '-' + os.environ['STAGE']
+        task_table_name = os.environ['TASK_TABLE']
     print(f'get_task_table: table name is {task_table_name}.')
 
     # get and return task table
