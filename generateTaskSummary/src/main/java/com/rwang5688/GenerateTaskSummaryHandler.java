@@ -1,5 +1,16 @@
 package com.rwang5688;
 
+import java.lang.StringBuilder;
+import java.util.Map;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.LambdaLogger;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
@@ -12,16 +23,12 @@ import software.amazon.awssdk.services.lambda.model.ServiceException;
 import software.amazon.awssdk.services.lambda.LambdaAsyncClient;
 import software.amazon.awssdk.services.lambda.model.AccountUsage;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.type.TypeReference;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.lang.StringBuilder;
-import java.util.Map;
-import java.util.List;
-import java.util.concurrent.CompletableFuture;
+import com.rwang5688.dal.Task;
+import com.rwang5688.dal.Issue;
 
 // Handler value: example.Handler
 public class GenerateTaskSummaryHandler implements RequestHandler<SQSEvent, String>{
@@ -56,8 +63,31 @@ public class GenerateTaskSummaryHandler implements RequestHandler<SQSEvent, Stri
 
     // process event
     for(SQSMessage msg : event.getRecords()){
-      logger.info(msg.getBody());
+      logger.info("Process msg: " + msg.getBody());
+      try {
+        // get task id
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode body = mapper.readTree((String) msg.getBody());
+        logger.info("body: " + body.toString());
+        JsonNode task = body.get("task");
+        String user_id = task.get("user_id").asText();
+        String task_id = task.get("task_id").asText();
+        logger.info("user_id: " + user_id);
+        logger.info("task_id: " + task_id);
 
+        // get task
+        Task taskRecord = new Task().get(user_id, task_id);
+        logger.info("Task: " + taskRecord.toString());
+
+        // get task issues
+        List<Issue> taskIssues = new Issue().getTaskIssues(task_id);
+        for (Issue issue : taskIssues) {
+          logger.info("Issue: " + issue.toString());
+        }
+      } catch (Exception ex) {
+        logger.error("Error in retrieving task issues: " + ex);
+      }
+      logger.info("Done with msg: " + msg.getBody());
     }
 
     // process Lambda API response

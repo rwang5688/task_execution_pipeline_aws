@@ -13,31 +13,37 @@ import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import com.rwang5688.dal.Task;
+import com.rwang5688.dal.Issue;
 
+public class GetTaskIssuesHandler implements RequestHandler<Map<String, Object>, ApiGatewayResponse> {
 
-public class ListTasksHandler implements RequestHandler<Map<String, Object>, ApiGatewayResponse> {
-
-	private static final Logger logger = LoggerFactory.getLogger(ListTasksHandler.class);
+	private static final Logger logger = LoggerFactory.getLogger(GetTaskIssuesHandler.class);
 
 	@Override
 	public ApiGatewayResponse handleRequest(Map<String, Object> input, Context context) {
         logger.info("received: {}", input);
         try {
-            // get all tasks
-            List<Task> tasks = new Task().list();
+            // get the 'pathParameters' from input
+            Map<String, String> pathParameters =  (Map<String, String>)input.get("pathParameters");
+            String taskId = pathParameters.get("id");
+
+            // get task issues
+            List<Issue> taskIssues = new Issue().getTaskIssues(taskId);
+            for (Issue issue : taskIssues) {
+                logger.info("ListTaskIssuesHandler - handleRequest(): " + issue.toString());
+            }
 
             // send the response back
             return ApiGatewayResponse.builder()
                     .setStatusCode(200)
-                    .setObjectBody(tasks)
+                    .setObjectBody(taskIssues)
                     .setHeaders(Collections.singletonMap("X-Powered-By", "AWS Lambda & Serverless"))
                     .build();
         } catch (Exception ex) {
-            logger.error("Error in listing tasks: " + ex);
+            logger.error("Error in retrieving task issues: " + ex);
 
             // send the error response back
-            Response responseBody = new Response("Error in listing tasks: ", input);
+            Response responseBody = new Response("Error in retrieving task issues: ", input);
             return ApiGatewayResponse.builder()
                     .setStatusCode(500)
                     .setObjectBody(responseBody)

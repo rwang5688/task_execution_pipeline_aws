@@ -1,3 +1,4 @@
+import json
 import sqsutil
 
 
@@ -55,15 +56,15 @@ def send_task_message(queue_name, action, task):
         return False
 
     # assume user_id and task_id are set
-    message_body = {
-        "action": action,
-        "task": task
-    }
+    message_body = {}
+    message_body['action'] = action
+    message_body['task'] = task
 
-    # send message
-    message_id = sqsutil.send_message(queue_url, str(message_body))
+    # send message as json
+    message_body_json = json.dumps(message_body)
+    message_id = sqsutil.send_message(queue_url, message_body_json)
     print(f'MessageId: {message_id}')
-    print(f'MessageBody: {message_body}')
+    print(f'MessageBodyJSON: {message_body_json}')
 
     # debug: receive message
     message = sqsutil.receive_message(queue_url)
