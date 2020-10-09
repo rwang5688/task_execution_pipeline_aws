@@ -3,8 +3,8 @@ package com.rwang5688;
 import java.util.Collections;
 import java.util.Map;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
@@ -17,7 +17,7 @@ import com.rwang5688.dal.Task;
 
 public class DeleteTaskHandler implements RequestHandler<Map<String, Object>, ApiGatewayResponse> {
 
-	private static final Logger logger = LogManager.getLogger(DeleteTaskHandler.class);
+	private static final Logger logger = LoggerFactory.getLogger(DeleteTaskHandler.class);
 
 	@Override
 	public ApiGatewayResponse handleRequest(Map<String, Object> input, Context context) {
@@ -25,10 +25,11 @@ public class DeleteTaskHandler implements RequestHandler<Map<String, Object>, Ap
         try {
             // get the 'pathParameters' from input
             Map<String, String> pathParameters =  (Map<String, String>)input.get("pathParameters");
-            String taskId = pathParameters.get("id");
+            String user_id = pathParameters.get("user_id");
+            String task_id = pathParameters.get("task_id");
 
             // get the Task by id
-            Boolean success = new Task().delete(taskId);
+            Boolean success = new Task().delete(user_id, task_id);
 
             // send the response back
             if (success) {
@@ -39,7 +40,7 @@ public class DeleteTaskHandler implements RequestHandler<Map<String, Object>, Ap
             } else {
                 return ApiGatewayResponse.builder()
                         .setStatusCode(404)
-                        .setObjectBody("Task with id: '" + taskId + "' not found.")
+                              .setObjectBody("Task with user_id=" + user_id + " task_id:=" + task_id + " not found.")
                         .setHeaders(Collections.singletonMap("X-Powered-By", "AWS Lambda & Serverless"))
                         .build();
             }

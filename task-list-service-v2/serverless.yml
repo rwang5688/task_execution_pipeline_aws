@@ -30,6 +30,7 @@ provider:
   endpointType: regional
   environment:
     TASK_TABLE: '${env:TASK_EXEC_TASK_TABLE}-${self:provider.stage}'
+    ISSUE_TABLE: '${env:TASK_EXEC_ISSUE_TABLE}-${self:provider.stage}'
   iamRoleStatements:
     - Effect: Allow
       Action:
@@ -62,7 +63,7 @@ functions:
     events:
       - http:
           method: GET
-          path: tasks/{id}
+          path: users/{user_id}/tasks/{task_id}
           cors: true
 #          authorizer:
 #            arn: '${self:custom.userPoolArn}'
@@ -72,7 +73,7 @@ functions:
     events:
       - http:
           method: PUT
-          path: tasks/{id}
+          path: users/{user_id}/tasks/{task_id}
           cors: true
 #          authorizer:
 #            arn: '${self:custom.userPoolArn}'
@@ -82,7 +83,7 @@ functions:
     events:
       - http:
           method: DELETE
-          path: tasks/{id}
+          path: users/{user_id}/tasks/{task_id}
           cors: true
 #          authorizer:
 #            arn: '${self:custom.userPoolArn}'
@@ -96,4 +97,14 @@ functions:
           cors: true
 #          authorizer:
 #            arn: '${self:custom.userPoolArn}'
+  getTaskIssues:
+    handler: com.rwang5688.GetTaskIssuesHandler
+    role: arn:${self:custom.cloud}:iam::${self:custom.accountid}:role/task-list
+    events:
+      - http:
+          method: GET
+          path: tasks/{id}/issues
+          cors: true
+#          authorizer:
+#           arn: '${self:custom.userPoolArn}'
 
