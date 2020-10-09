@@ -60,6 +60,7 @@ functions:
       LOG_DATA_BUCKET: ${env:TASK_EXEC_LOG_DATA_BUCKET}
       RESULT_DATA_BUCKET: ${env:TASK_EXEC_RESULT_DATA_BUCKET}
       GENERATE_TASK_SUMMARY_QUEUE: ${env:TASK_EXEC_GENERATE_TASK_SUMMARY_QUEUE}
+      TASK_TABLE: '${env:TASK_EXEC_TASK_TABLE}-${self:provider.stage}'
       ISSUE_TABLE: '${env:TASK_EXEC_ISSUE_TABLE}-${self:provider.stage}'
     events:
       - sqs:
