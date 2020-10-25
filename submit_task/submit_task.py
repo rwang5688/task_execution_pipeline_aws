@@ -38,16 +38,16 @@ def get_env_vars():
 
 def parse_arguments():
     import argparse
-    global task_config_file_name
+    global task_context_file_name
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('task_config_file_name', help='task config file name.')
+    parser.add_argument('task_context_file_name', help='task config file name.')
 
     args = parser.parse_args()
-    task_config_file_name = args.task_config_file_name
+    task_context_file_name = args.task_context_file_name
 
-    if task_config_file_name is None:
-        print('parse_arguments: task_config_file_name is missing.')
+    if task_context_file_name is None:
+        print('parse_arguments: task_context_file_name is missing.')
         return False
 
     # success
@@ -80,16 +80,19 @@ def main():
         return
 
     print('Args:')
-    print(f'task_config_file_name: {task_config_file_name}')
+    print(f'task_context_file_name: {task_context_file_name}')
 
-    task_config = get_json_data(task_config_file_name)
-    if task_config == None:
+    task_context = get_json_data(task_context_file_name)
+    if task_context == None:
         print('get_json_data failed.  Exit.')
         return
 
-    task = copy.deepcopy(task_config)
-    task_id = str(uuid.uuid4())
-    task['task_id'] = task_id
+    task = copy.deepcopy(task_context)
+    task_id = task['task_id']
+    if task_id == 'uuid':
+        # need to generate task_id
+        task_id = str(uuid.uuid4())
+        task['task_id'] = task_id
 
     print('Task:')
     print(task)

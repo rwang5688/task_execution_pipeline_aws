@@ -26,9 +26,9 @@ function renderEditArea (id) {
       $('#task-id').val(id);
       $('#task-tool').val($('#' + id + ' #task_tool').text());
       $('#task-extra-options').val($('#' + id + ' #task_extra_options').text());
-      $('#task-source-code').val($('#' + id + ' #task_source_code_zip').text());
-      $('#task-source-fileinfo').val($('#' + id + ' #task_fileinfo_json').text());
+      $('#task-fileinfo-json').val($('#' + id + ' #task_fileinfo_json').text());
       $('#task-preprocess-tar').val($('#' + id + ' #task_preprocess_tar').text());
+      $('#task-source-code-zip').val($('#' + id + ' #task_source_code_zip').text());
       $('#task-status').val($('#' + id + ' #task_status').text());
       $('#submit-timestamp').val($('#' + id + ' #submit_timestamp').text());
       $('#update-timestamp').val($('#' + id + ' #update_timestamp').text());
