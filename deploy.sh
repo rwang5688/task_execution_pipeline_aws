@@ -1,6 +1,6 @@
 #!/bin/bash
 . ./.env
 . checkenv.sh
-. deploy-task-execution-pipeline.sh
+. deploy_task_execution_pipeline.sh
 . deploy-task-list.sh
 
