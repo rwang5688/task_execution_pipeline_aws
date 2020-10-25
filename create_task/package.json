@@ -1,18 +1,18 @@
 {
-  "name": "resources",
+  "name": "create_task",
   "version": "1.0.0",
-  "description": "task-execution-pipeline resources",
+  "description": "create_task",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
-    "task-execution-pipeline",
-    "resources"
+    "create_task"
   ],
   "author": "rwang5688@outlook.com",
   "license": "ISC",
   "devDependencies": {
-    "serverless-dotenv-plugin": "^2.4.2"
+    "serverless-dotenv-plugin": "^3.0.0",
+    "serverless-python-requirements": "^5.1.0"
   }
 }

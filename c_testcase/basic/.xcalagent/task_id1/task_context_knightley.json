@@ -1,0 +1,15 @@
+{
+    "user_id": "knightley@qq.com",
+    "task_id": "uuid",
+    "task_tool": "xvsa_start.sh",
+    "task_extra_options": {
+        "SCAN_EXTRA_OPTIONS": "",
+        "SCAN_EXTRA_JFE_OPTIONS": "",
+        "SCAN_EXTRA_VARIABLE_OPTION": "",
+        "SCAN_EXTRA_SKIP_VTABLE_OPTION": "YES"
+    },
+    "task_fileinfo_json": "fileinfo.json",
+    "task_preprocess_tar": "preprocess.tar.gz",
+    "task_source_code_zip": "source_code.zip"
+}
+
