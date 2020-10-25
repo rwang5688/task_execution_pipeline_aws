@@ -18,9 +18,9 @@ function gather () {
     task_id: $('#task-id').val(),
     task_tool: $('#task-tool').val(),
     task_extra_options: $('#task-extra-options').val(),
-    task_source_code_zip: $('#task-source-code').val(),
-    task_fileinfo_json: $('#task-source-fileinfo').val(),
+    task_fileinfo_json: $('#task-fileinfo-json').val(),
     task_preprocess_tar: $('#task-preprocess-tar').val(),
+    task_source_code_zip: $('#task-source-code-zip').val(),
     task_status: $('#task-status').val(),
     submit_timestamp: $('#submit-timestamp').val(),
     update_timestamp: $('#update-timestamp').val()

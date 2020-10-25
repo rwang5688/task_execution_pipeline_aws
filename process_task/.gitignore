@@ -146,10 +146,12 @@ cython_debug/
 *credentials.csv
 env-cn*.sh
 env-us*.sh
+task_context*.json
 xvsa_scan
 xvsa_scan.exe
+fileinfo.json
 *.tar
 *.tar.gz
 *.preprocess
-fileinfo.json
+*.zip
 

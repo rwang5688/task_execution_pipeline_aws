@@ -1,12 +1,9 @@
 #!/bin/bash
 # set env vars
-. ./env.sh
+. $TASK_EXEC_BIN/env.sh
 
-# import AWS credentials
-aws configure import --csv "file://default_credentials.csv"
-cat ~/.aws/credentials
-
-# read task config json, create task id, upload files, submit task
-echo "[CMD] python3 submit_task.py $1"
-python3 ./submit_task.py $1
+# submit task based on task_id1_context_user_id.json
+# read ./xcalagent contents: fileinfo.json, preprocess.tar.gz, source_code.zip
+echo "[CMD] python3 $TASK_EXEC_BIN/submit_task.py $1"
+python3 $TASK_EXEC_BIN/submit_task.py $1
 

@@ -10,9 +10,9 @@ function taskItemTpl (item) {
       <div id="task_id" class="col-sm-2">${item.task_id}</div>
       <div id="task_tool" class="col-sm-2">${item.task_tool}</div>
       <div id="task_extra_options" class="col-sm-2">${item.task_extra_options}</div>
-      <div id="task_source_code_zip" class="col-sm-2">${item.task_source_code_zip}</div>
       <div id="task_fileinfo_json" class="col-sm-2">${item.task_fileinfo_json}</div>
       <div id="task_preprocess_tar" class="col-sm-2">${item.task_preprocess_tar}</div>
+      <div id="task_source_code_zip" class="col-sm-2">${item.task_source_code_zip}</div>
       <div id="task_status" class="col-sm-2">${item.task_status}</div>
       <div id="submit_timestamp" class="col-sm-2">${item.submit_timestamp}</div>
       <div id="update_timestamp" class="col-sm-2">${item.update_timestamp}</div>
@@ -38,9 +38,9 @@ function taskListTpl (items) {
       <div class="col-sm-2">Task Id</div>
       <div class="col-sm-2">Tool</div>
       <div class="col-sm-2">Extra Options</div>
-      <div class="col-sm-2">Source Code</div>
-      <div class="col-sm-2">Source File Info</div>
+      <div class="col-sm-2">File Info Json</div>
       <div class="col-sm-2">Preprocess Tar</div>
+      <div class="col-sm-2">Source Code Zip</div>
       <div class="col-sm-2">Status</div>
       <div class="col-sm-2">Submit Timestamp</div>
       <div class="col-sm-2">Update Timestamp</div>
@@ -77,15 +77,15 @@ function editTpl () {
         </div>
         <div class="row">&nbsp;</div>
         <div class="row">
-          <div class="col-sm-1"></div><div class="col-sm-1">Source Code: </div><div class="col-sm-6"><input class="w-100" type="text" id="task-source-code"></div>
-        </div>
-        <div class="row">&nbsp;</div>
-        <div class="row">
-          <div class="col-sm-1"></div><div class="col-sm-1">Source File Info: </div><div class="col-sm-6"><input class="w-100" type="text" id="task-source-fileinfo"></div>
+          <div class="col-sm-1"></div><div class="col-sm-1">File Info Json: </div><div class="col-sm-6"><input class="w-100" type="text" id="task-fileinfo-json"></div>
         </div>
         <div class="row">&nbsp;</div>
         <div class="row">
           <div class="col-sm-1"></div><div class="col-sm-1">Preprocess Tar: </div><div class="col-sm-6"><input class="w-100" type="text" id="task-preprocess-tar"></div>
+        </div>
+        <div class="row">&nbsp;</div>
+        <div class="row">
+          <div class="col-sm-1"></div><div class="col-sm-1">Source Code Zip: </div><div class="col-sm-6"><input class="w-100" type="text" id="task-source-code-zip"></div>
         </div>
         <div class="row">&nbsp;</div>
         <div class="row">

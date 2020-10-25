@@ -36,9 +36,9 @@ public class Task {
     private String task_id;
     private String task_tool;
     private Map<String, String> task_extra_options;
-    private String task_source_code_zip;
     private String task_fileinfo_json;
     private String task_preprocess_tar;
+    private String task_source_code_zip;
     private String task_status;
     private String submit_timestamp;
     private String update_timestamp;
@@ -76,19 +76,11 @@ public class Task {
         this.task_extra_options = task_extra_options;
     }
 
-    @DynamoDBAttribute(attributeName = "task_source_code_zip")
-    public String getTaskSourceCode() {
-        return this.task_source_code_zip;
-    }
-    public void setTaskSourceCode(String task_source_code_zip) {
-        this.task_source_code_zip = task_source_code_zip;
-    }
-
     @DynamoDBAttribute(attributeName = "task_fileinfo_json")
-    public String getTaskSourceFileinfo() {
+    public String getTaskFileinfoJson() {
         return this.task_fileinfo_json;
     }
-    public void setTaskSourceFileinfo(String task_fileinfo_json) {
+    public void setTaskFileinfoJson(String task_fileinfo_json) {
         this.task_fileinfo_json = task_fileinfo_json;
     }
 
@@ -98,6 +90,14 @@ public class Task {
     }
     public void setTaskPreprocessTar(String task_preprocess_tar) {
         this.task_preprocess_tar = task_preprocess_tar;
+    }
+
+    @DynamoDBAttribute(attributeName = "task_source_code_zip")
+    public String getTaskSourceCodeZip() {
+        return this.task_source_code_zip;
+    }
+    public void setTaskSourceCodeZip(String task_source_code_zip) {
+        this.task_source_code_zip = task_source_code_zip;
     }
 
     @DynamoDBAttribute(attributeName = "task_status")
@@ -140,16 +140,16 @@ public class Task {
         if (this.toStringTemplate == null) {
             this.toStringTemplate = "Task [user_id=%s, task_id=%s, ";
             this.toStringTemplate += "task_tool=%s, task_extra_options=%s, ";
-            this.toStringTemplate += "task_source_code_zip=%s, task_fileinfo_json=%s, ";
-            this.toStringTemplate += "task_preprocess_tar=%s, task_status=%s, ";
+            this.toStringTemplate += "task_fileinfo_json=%s, task_preprocess_tar=%s, ";
+            this.toStringTemplate += "task_source_code_zip=%s, task_status=%s, ";
             this.toStringTemplate += "submit_timestmp=%s, update_timestamp=%s]";
         }
 
         return String.format(toStringTemplate,
                             this.user_id, this.task_id,
                             this.task_tool, this.task_extra_options.toString(),
-                            this.task_source_code_zip, this.task_fileinfo_json,
-                            this.task_preprocess_tar, this.task_status,
+                            this.task_fileinfo_json, this.task_preprocess_tar,
+                            this.task_source_code_zip, this.task_status,
                             this.submit_timestamp, this.update_timestamp);
     }
 
