@@ -10,8 +10,8 @@ function taskItemTpl (item) {
       <div id="task_id" class="col-sm-2">${item.task_id}</div>
       <div id="task_tool" class="col-sm-2">${item.task_tool}</div>
       <div id="task_extra_options" class="col-sm-2">${item.task_extra_options}</div>
-      <div id="task_source_code" class="col-sm-2">${item.task_source_code}</div>
-      <div id="task_source_fileinfo" class="col-sm-2">${item.task_source_fileinfo}</div>
+      <div id="task_source_code_zip" class="col-sm-2">${item.task_source_code_zip}</div>
+      <div id="task_fileinfo_json" class="col-sm-2">${item.task_fileinfo_json}</div>
       <div id="task_preprocess_tar" class="col-sm-2">${item.task_preprocess_tar}</div>
       <div id="task_status" class="col-sm-2">${item.task_status}</div>
       <div id="submit_timestamp" class="col-sm-2">${item.submit_timestamp}</div>
