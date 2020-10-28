@@ -62,17 +62,24 @@ def update_task_status(task_table, user_id, task_id, task_status):
     return True
 
 
-def update_task_urls(task_table, user_id, task_id, task_dot_scan_log_tar_url, task_summary_pdf_url, task_issues_csv_url):
+def update_task_urls(task_table, user_id, task_id,
+    task_dot_scan_log_tar_url, task_scan_result_tar_url,
+    task_summary_pdf_url, task_issues_csv_url):
     task_table.update_item(
         Key={
             'user_id': user_id,
             'task_id': task_id
         },
-        UpdateExpression='SET task_dot_scan_log_tar_url = :val1, task_summary_pdf_url = :val2, task_issues_csv_url = :val3',
+        UpdateExpression='SET \
+            task_dot_scan_log_tar_url = :val1, \
+            task_scan_result_tar_url = :val2, \
+            task_summary_pdf_url = :val3, \
+            task_issues_csv_url = :val4',
         ExpressionAttributeValues={
             ':val1': task_dot_scan_log_tar_url,
-            ':val2': task_summary_pdf_url,
-            ':val3': task_issues_csv_url
+            ':val2': task_scan_result_tar_url,
+            ':val3': task_summary_pdf_url,
+            ':val4': task_issues_csv_url
         }
     )
     return True

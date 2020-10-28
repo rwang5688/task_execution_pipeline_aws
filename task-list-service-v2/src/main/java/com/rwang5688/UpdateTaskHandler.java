@@ -49,6 +49,14 @@ public class UpdateTaskHandler implements RequestHandler<Map<String, Object>, Ap
                         task.setTaskPreprocessTar(body.get("task_preprocess_tar").asText());
                         task.setTaskSourceCodeZip(body.get("task_source_code_zip").asText());
                         task.setTaskStatus(body.get("task_status").asText());
+                        task.setTaskDotScanLogTar(body.get("task_dot_scan_log_tar").asText());
+                        task.setTaskDotScanLogTarUrl(body.get("task_dot_scan_log_tar_url").asText());
+                        task.setTaskScanResultTar(body.get("task_scan_result_tar").asText());
+                        task.setTaskScanResultTarUrl(body.get("task_scan_result_tar_url").asText());
+                        task.setTaskSummaryPdf(body.get("task_summary_pdf").asText());
+                        task.setTaskSummaryPdfUrl(body.get("task_summary_pdf_url").asText());
+                        task.setTaskIssuesCsv(body.get("task_issues_csv").asText());
+                        task.setTaskIssuesCsvUrl(body.get("task_issues_csv_url").asText());
                         task.setSubmitTimestamp(body.get("submit_timestamp").asText());
                         task.setUpdateTimestamp(body.get("update_timestamp").asText());
 

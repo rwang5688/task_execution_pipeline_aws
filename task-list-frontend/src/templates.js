@@ -14,6 +14,10 @@ function taskItemTpl (item) {
       <div id="task_preprocess_tar" class="col-sm-2">${item.task_preprocess_tar}</div>
       <div id="task_source_code_zip" class="col-sm-2">${item.task_source_code_zip}</div>
       <div id="task_status" class="col-sm-2">${item.task_status}</div>
+      <div id="task_dot_scan_log_tar_url" class="col-sm-2"><a href=${item.task_dot_scan_log_tar_url}>${item.task_dot_scan_log_tar_url}</a></div>
+      <div id="task_scan_result_tar_url" class="col-sm-2"><a href=${item.task_scan_result_tar_url}>${item.task_scan_result_tar_url}</a></div>
+      <div id="task_summary_pdf_url" class="col-sm-2"><a href=${item.task_summary_pdf_url}>${item.task_summary_pdf_url}</a></div>
+      <div id="task_issues_csv_url" class="col-sm-2"><a href=${item.task_issues_csv_url}>${item.task_issues_csv_url}</a></div>
       <div id="submit_timestamp" class="col-sm-2">${item.submit_timestamp}</div>
       <div id="update_timestamp" class="col-sm-2">${item.update_timestamp}</div>
       <div id="${item.task_id}" class="col-sm-1 badge badge-danger badge-pill task-item-delete">Delete</div>
@@ -42,6 +46,10 @@ function taskListTpl (items) {
       <div class="col-sm-2">Preprocess Tar</div>
       <div class="col-sm-2">Source Code Zip</div>
       <div class="col-sm-2">Status</div>
+      <div class="col-sm-2">Dot Scan Log Tar URL</div>
+      <div class="col-sm-2">Scan Result Tar URL</div>
+      <div class="col-sm-2">Summary PDF URL</div>
+      <div class="col-sm-2">Issues CSV URL</div>
       <div class="col-sm-2">Submit Timestamp</div>
       <div class="col-sm-2">Update Timestamp</div>
       <div class="col-sm-1"></div>
@@ -90,6 +98,22 @@ function editTpl () {
         <div class="row">&nbsp;</div>
         <div class="row">
           <div class="col-sm-1"></div><div class="col-sm-1">Status: </div><div class="col-sm-6"><input class="w-100" type="text" id="task-status"></div>
+        </div>
+        <div class="row">&nbsp;</div>
+        <div class="row">
+          <div class="col-sm-1"></div><div class="col-sm-1">Dot Scan Log Tar URL: </div><div class="col-sm-6"><input class="w-100" type="text" id="task-dot-scan-log-tar-url"></div>
+        </div>
+        <div class="row">&nbsp;</div>
+        <div class="row">
+          <div class="col-sm-1"></div><div class="col-sm-1">Scan Result Tar URL: </div><div class="col-sm-6"><input class="w-100" type="text" id="task-scan-result-tar-url"></div>
+        </div>
+        <div class="row">&nbsp;</div>
+        <div class="row">
+          <div class="col-sm-1"></div><div class="col-sm-1">Summary PDF URL: </div><div class="col-sm-6"><input class="w-100" type="text" id="task-summary-pdf-url"></div>
+        </div>
+        <div class="row">&nbsp;</div>
+        <div class="row">
+          <div class="col-sm-1"></div><div class="col-sm-1">Issues CSV URL: </div><div class="col-sm-6"><input class="w-100" type="text" id="task-issues-csv-url"></div>
         </div>
         <div class="row">&nbsp;</div>
         <div class="row">
