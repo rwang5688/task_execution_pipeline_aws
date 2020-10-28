@@ -18,7 +18,7 @@ Resources:
               - HEAD
             MaxAge: 3000
       AccessControl: PublicRead
-  LogDataBucketPolicy:
+  ResultDataBucketPolicy:
     Type: AWS::S3::BucketPolicy
     Properties:
       Bucket:
