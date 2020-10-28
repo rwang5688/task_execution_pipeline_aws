@@ -40,6 +40,14 @@ public class Task {
     private String task_preprocess_tar;
     private String task_source_code_zip;
     private String task_status;
+    private String task_dot_scan_log_tar;
+    private String task_dot_scan_log_tar_url;
+    private String task_scan_result_tar;
+    private String task_scan_result_tar_url;
+    private String task_summary_pdf;
+    private String task_summary_pdf_url;
+    private String task_issues_csv;
+    private String task_issues_csv_url;
     private String submit_timestamp;
     private String update_timestamp;
 
@@ -108,6 +116,70 @@ public class Task {
         this.task_status = task_status;
     }
 
+    @DynamoDBAttribute(attributeName = "task_dot_scan_log_tar")
+    public String getTaskDotScanLogTar() {
+        return this.task_dot_scan_log_tar;
+    }
+    public void setTaskDotScanLogTar(String task_dot_scan_log_tar) {
+        this.task_dot_scan_log_tar = task_dot_scan_log_tar;
+    }
+
+    @DynamoDBAttribute(attributeName = "task_dot_scan_log_tar_url")
+    public String getTaskDotScanLogTarUrl() {
+        return this.task_dot_scan_log_tar_url;
+    }
+    public void setTaskDotScanLogTarUrl(String task_dot_scan_log_tar_url) {
+        this.task_dot_scan_log_tar_url = task_dot_scan_log_tar_url;
+    }
+
+    @DynamoDBAttribute(attributeName = "task_scan_result_tar")
+    public String getTaskScanResultTar() {
+        return this.task_scan_result_tar;
+    }
+    public void setTaskScanResultTar(String task_scan_result_tar) {
+        this.task_scan_result_tar = task_scan_result_tar;
+    }
+
+    @DynamoDBAttribute(attributeName = "task_scan_result_tar_url")
+    public String getTaskScanResultTarUrl() {
+        return this.task_scan_result_tar_url;
+    }
+    public void setTaskScanResultTarUrl(String task_scan_result_tar_url) {
+        this.task_scan_result_tar_url = task_scan_result_tar_url;
+    }
+
+    @DynamoDBAttribute(attributeName = "task_summary_pdf")
+    public String getTaskSummaryPdf() {
+        return this.task_summary_pdf;
+    }
+    public void setTaskSummaryPdf(String task_summary_pdf) {
+        this.task_summary_pdf = task_summary_pdf;
+    }
+
+    @DynamoDBAttribute(attributeName = "task_summary_pdf_url")
+    public String getTaskSummaryPdfUrl() {
+        return this.task_summary_pdf_url;
+    }
+    public void setTaskSummaryPdfUrl(String task_summary_pdf_url) {
+        this.task_summary_pdf_url = task_summary_pdf_url;
+    }
+
+    @DynamoDBAttribute(attributeName = "task_issues_csv")
+    public String getTaskIssuesCsv() {
+        return this.task_issues_csv;
+    }
+    public void setTaskIssuesCsv(String task_issues_csv) {
+        this.task_issues_csv = task_issues_csv;
+    }
+
+    @DynamoDBAttribute(attributeName = "task_issues_csv_url")
+    public String getTaskIssuesCsvUrl() {
+        return this.task_issues_csv_url;
+    }
+    public void setTaskIssuesCsvUrl(String task_issues_csv_url) {
+        this.task_issues_csv_url = task_issues_csv_url;
+    }
+
     @DynamoDBAttribute(attributeName = "submit_timestamp")
     public String getSubmitTimestamp() {
         return this.submit_timestamp;
@@ -142,6 +214,10 @@ public class Task {
             this.toStringTemplate += "task_tool=%s, task_extra_options=%s, ";
             this.toStringTemplate += "task_fileinfo_json=%s, task_preprocess_tar=%s, ";
             this.toStringTemplate += "task_source_code_zip=%s, task_status=%s, ";
+            this.toStringTemplate += "task_dot_scan_log_tar=%s, task_dot_scan_log_tar_url=%s, ";
+            this.toStringTemplate += "task_scan_result_tar=%s, task_scan_result_tar_url=%s, ";
+            this.toStringTemplate += "task_summary_pdf=%s, task_summary_pdf_url=%s, ";
+            this.toStringTemplate += "task_issues_csv=%s, task_issues_csv_url=%s, ";
             this.toStringTemplate += "submit_timestmp=%s, update_timestamp=%s]";
         }
 
@@ -150,6 +226,10 @@ public class Task {
                             this.task_tool, this.task_extra_options.toString(),
                             this.task_fileinfo_json, this.task_preprocess_tar,
                             this.task_source_code_zip, this.task_status,
+                            this.task_dot_scan_log_tar, this.task_dot_scan_log_tar_url,
+                            this.task_scan_result_tar, this.task_scan_result_tar_url,
+                            this.task_summary_pdf, this.task_summary_pdf_url,
+                            this.task_issues_csv, this.task_issues_csv_url,
                             this.submit_timestamp, this.update_timestamp);
     }
 

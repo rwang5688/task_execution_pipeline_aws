@@ -22,6 +22,10 @@ function gather () {
     task_preprocess_tar: $('#task-preprocess-tar').val(),
     task_source_code_zip: $('#task-source-code-zip').val(),
     task_status: $('#task-status').val(),
+    task_dot_scan_log_tar_url: $('#task-dot-scan-log-tar-url').val(),
+    task_scan_result_tar_url: $('#task-scan-result-tar-url').val(),
+    task_summary_pdf_url: $('#task-summary-pdf-url').val(),
+    task_issues_csv_url: $('#task-issues-csv-url').val(),
     submit_timestamp: $('#submit-timestamp').val(),
     update_timestamp: $('#update-timestamp').val()
   };
