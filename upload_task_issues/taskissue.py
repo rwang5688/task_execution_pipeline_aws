@@ -72,7 +72,7 @@ def upload_tmp_file(bucket_name, task, tmp_file_name):
 
 
 def write_task_issues(issue_table, bucket_name, task, scan_result_tar_blob):
-    # get user_id, task_id
+    # get user_id, task_id, task_issues_csv
     user_id = get_task_attribute_value(task, 'user_id')
     if user_id == '':
         return False
@@ -81,8 +81,12 @@ def write_task_issues(issue_table, bucket_name, task, scan_result_tar_blob):
     if task_id == '':
         return False
 
+    task_issues_csv = get_task_attribute_value(task, 'task_issues_csv')
+    if task_issues_csv == '':
+        return False
+
     # write csv file header
-    csv_file_name = task_id + '_issues.csv'
+    csv_file_name = task_issues_csv
     csv_file_full_path = '/tmp/' + csv_file_name
     success = csvfile.write_task_issues_csv_header(csv_file_full_path)
     if not success:
