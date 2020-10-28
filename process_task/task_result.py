@@ -39,16 +39,22 @@ def parse_arguments():
     global user_id
     global task_id
     global task_status
+    global task_dot_scan_log_tar
+    global task_scan_result_tar
 
     parser = argparse.ArgumentParser()
     parser.add_argument('user_id', help='The user id of the task to update.')
     parser.add_argument('task_id', help='The id of the task to update.')
     parser.add_argument('task_status', help='The status of the task to update.')
+    parser.add_argument('task_dot_scan_log_tar', help='The scan log tar of the task to update.')
+    parser.add_argument('task_scan_result_tar', help='The scan result tar of the task to update.')
 
     args = parser.parse_args()
     user_id = args.user_id
     task_id = args.task_id
     task_status = args.task_status
+    task_dot_scan_log_tar = args.task_dot_scan_log_tar
+    task_scan_result_tar = args.task_scan_result_tar
 
     if user_id is None:
         print('parse_arguments: user_id is missing.')
@@ -62,17 +68,25 @@ def parse_arguments():
         print('parse_arguments: task_status is missing.')
         return False
 
+    if task_dot_scan_log_tar is None:
+        print('parse_arguments: task_dot_scan_log_tar is missing.')
+        return False
+
+    if task_scan_result_tar is None:
+        print('parse_arguments: task_scan_result_tar is missing.')
+        return False
+
     # success
     return True
 
 
-def init_task(user_id, task_id, task_status):
+def init_task(user_id, task_id, task_status, task_dot_scan_log_tar, task_scan_result_tar):
     task = {}
     task['user_id'] = user_id
     task['task_id'] = task_id
     task['task_status'] = task_status
-    task['task_dot_scan_log_tar'] = '.scan_log.tar.gz'
-    task['task_scan_result_tar'] = 'scan_result.tar.gz'
+    task['task_dot_scan_log_tar'] = task_dot_scan_log_tar
+    task['task_scan_result_tar'] = task_scan_result_tar
     return task
 
 
@@ -98,8 +112,10 @@ def main():
     print(f'user_id: {user_id}')
     print(f'task_id: {task_id}')
     print(f'task_status: {task_status}')
+    print(f'task_dot_scan_log_tar: {task_dot_scan_log_tar}')
+    print(f'task_scan_result_tar: {task_scan_result_tar}')
 
-    task = init_task(user_id, task_id, task_status)
+    task = init_task(user_id, task_id, task_status, task_dot_scan_log_tar, task_scan_result_tar)
 
     task_file_attribute_name = 'task_dot_scan_log_tar'
     success = taskfile.upload_task_file(log_bucket_name, task, task_file_attribute_name)

@@ -38,16 +38,16 @@ def get_env_vars():
 
 def parse_arguments():
     import argparse
-    global task_context_file_name
+    global task_conf_file_name
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('task_context_file_name', help='task config file name.')
+    parser.add_argument('task_conf_file_name', help='task conf file name.')
 
     args = parser.parse_args()
-    task_context_file_name = args.task_context_file_name
+    task_conf_file_name = args.task_conf_file_name
 
-    if task_context_file_name is None:
-        print('parse_arguments: task_context_file_name is missing.')
+    if task_conf_file_name is None:
+        print('parse_arguments: task_conf_file_name is missing.')
         return False
 
     # success
@@ -80,14 +80,14 @@ def main():
         return
 
     print('Args:')
-    print(f'task_context_file_name: {task_context_file_name}')
+    print(f'task_conf_file_name: {task_conf_file_name}')
 
-    task_context = get_json_data(task_context_file_name)
-    if task_context == None:
+    task_conf = get_json_data(task_conf_file_name)
+    if task_conf == None:
         print('get_json_data failed.  Exit.')
         return
 
-    task = copy.deepcopy(task_context)
+    task = copy.deepcopy(task_conf)
     task_id = task['task_id']
     if task_id == 'uuid':
         # need to generate task_id
@@ -110,6 +110,12 @@ def main():
         return
 
     task_file_attribute_name = 'task_source_code_zip'
+    success = taskfile.upload_task_file(result_bucket_name, task, task_file_attribute_name)
+    if not success:
+        print(f'upload_task_file failed: {task_file_attribute_name}.  Exit.')
+        return
+
+    task_file_attribute_name = 'task_summary_pdf'
     success = taskfile.upload_task_file(result_bucket_name, task, task_file_attribute_name)
     if not success:
         print(f'upload_task_file failed: {task_file_attribute_name}.  Exit.')

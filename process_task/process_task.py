@@ -84,9 +84,9 @@ def execute_task_tool(task):
     return True
 
 
-def execute_task_callback(task_callback, user_id, task_id, task_status):
-    # command: "python3 $(task_callback) $(user_id) $(task_id) $(task_status)"
-    process = subprocess.Popen(["python3", task_callback, user_id, task_id, task_status],
+def execute_task_callback(task_callback, user_id, task_id, task_status, task_dot_scan_log_tar, task_scan_result_tar):
+    # command: "python3 $(task_callback) $(user_id) $(task_id) $(task_status) ${task_dot_scan_log_tar} ${task_scan_result_tar}"
+    process = subprocess.Popen(["python3", task_callback, user_id, task_id, task_status, task_dot_scan_log_tar, task_scan_result_tar],
         stdout=subprocess.PIPE, universal_newlines=True)
     read_process_stdout(process)
 
@@ -157,7 +157,9 @@ def main():
     user_id = task['user_id']
     task_id = task['task_id']
     task_status = 'completed'
-    success = execute_task_callback(task_callback, user_id, task_id, task_status)
+    task_dot_scan_log_tar = task['task_dot_scan_log_tar']
+    task_scan_result_tar = task['task_scan_result_tar']
+    success = execute_task_callback(task_callback, user_id, task_id, task_status, task_dot_scan_log_tar, task_scan_result_tar)
     if not success:
         print('execute_task_callback failed.  Exit.')
         return
