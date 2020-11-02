@@ -17,30 +17,37 @@ def get_region_name():
     return region_name
 
 
-def get_domain_name():
+def get_base_url(env_var_name):
+    bucket_name = get_bucket_name_from_env_var(env_var_name)
+    region_name = get_region_name()
+
     cloud_name = ''
     if 'CLOUD' in os.environ:
         cloud_name = os.environ['CLOUD']
-    print(f'get_domain_name: cloud_name={cloud_name}')
+    print(f'get_base_url: cloud_name={cloud_name}')
 
-    domain_name = ''
-    if cloud_name == 'aws':
-        domain_name = 'amazonaws.com'
-    elif cloud_name == 'aws-cn':
-        domain_name = 'amazonaws.com.cn'
+    s3_region_separator = ""
+    domain_name = ""
+    if cloud_name == "aws":
+        s3_region_separator = "-"
+        domain_name = "amazonaws.com"
+    elif cloud_name == "aws-cn":
+        s3_region_separator = "."
+        domain_name = "amazonaws.com.cn"
     else:
-        print('get_domain_name: Missing or unrecognized cloud name.')
-    print(f'get_domain_name: domain_name={domain_name}')
-    return domain_name
+        print('get_base_url: Missing or unrecognized cloud name.')
+
+    base_url = "https://" + bucket_name + ".s3" + s3_region_separator + \
+                region_name + "." + domain_name + "/"
+    print(f'get_base_url: base_url={base_url}')
+
+    return base_url
 
 
 def generate_data_bucket_object_url(env_var_name, user_id, task_id, object_name):
-    bucket_name = get_bucket_name_from_env_var(env_var_name)
-    region_name = get_region_name()
-    domain_name = get_domain_name()
-    url = "https://" + bucket_name + ".s3-" + region_name + "." + domain_name + "/"
-    url = url + user_id + "/" + task_id + "/" + object_name
-    print(f'generate_task_log_bucket_object_url: {url}')
+    base_url = get_base_url(env_var_name)
+    url = base_url + user_id + "/" + task_id + "/" + object_name
+    print(f'generate_data_bucket_object_url: {url}')
     return url
 
 
