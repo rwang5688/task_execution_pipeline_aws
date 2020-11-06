@@ -8,7 +8,7 @@ def get_s3_client():
     region_name = ''
     if 'TARGET_REGION' in os.environ:
         region_name = os.environ['TARGET_REGION']
-    print(f'get_s3_client: region_name={region_name}')
+    print('get_s3_client: region_name=%s' % region_name)
 
     session = boto3.Session(profile_name=None)
     s3 = session.client('s3',
@@ -25,7 +25,7 @@ def list_buckets():
     print('\nBuckets:')
     if 'Buckets' in response:
         for bucket in response['Buckets']:
-            print(f'Name: {bucket["Name"]}')
+            print('Name: %s' % bucket["Name"])
 
 
 def get_bucket(bucket_name):
@@ -49,11 +49,11 @@ def list_files(bucket_name):
     response = s3.list_objects_v2(Bucket=bucket_name)
 
     # Output the bucket names
-    print(f'\nBucket: {response["Name"]}')
+    print('\nBucket: %s' % response["Name"])
     print('Contents:')
     if 'Contents' in response:
         for bucketFile in response['Contents']:
-            print(f'Key: {bucketFile["Key"]}')
+            print('Key: %s' % bucketFile["Key"])
 
 
 def upload_file(file_name, bucket, object_name=None):

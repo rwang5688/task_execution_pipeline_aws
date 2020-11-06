@@ -13,7 +13,7 @@ def get_task_attribute_value(task, task_attribute_name):
     if task_attribute_name in task:
         task_attribute_value = task[task_attribute_name]
     else:
-        print(f'get_task_attribute_value: Task attribute {task_attribute_name} is not defined.')
+        print('get_task_attribute_value: Task attribute %s is not defined.' %  task_attribute_name)
 
     return task_attribute_value
 
@@ -37,8 +37,7 @@ def write_issue_record(issue_table, issue):
         print('write_issue_record: get_issue_record failed.')
         return False
 
-    print('Issue record:')
-    print(issue_record)
+    print('issue_record: %s' % issue_record)
 
     return True
 
@@ -47,7 +46,7 @@ def upload_tmp_file(bucket_name, task, tmp_file_name):
     # get bucket
     bucket = s3util.get_bucket(bucket_name)
     if bucket is None:
-        print(f'upload_tmp_file: Bucket {bucket_name} does not exist.')
+        print('upload_tmp_file: Bucket %s does not exist.' % bucket_name)
         return False
 
     # get user_id, task_id
@@ -64,7 +63,7 @@ def upload_tmp_file(bucket_name, task, tmp_file_name):
     object_name = user_id + "/" + task_id + "/" + tmp_file_name
     success = s3util.upload_file(tmp_file_full_path, bucket["Name"], object_name)
     if not success:
-        print(f'upload_tmp_file: Failed to upload object {object_name}.')
+        print('upload_tmp_file: Failed to upload object %s.' % object_name)
         return False
 
     # success
@@ -95,7 +94,7 @@ def write_task_issues(issue_table, bucket_name, task, scan_result_tar_blob):
 
     # initialize task issue number
     task_issue_number = 1
-    print(f'write_task_issues: Starting task_issue_number: {task_issue_number}.')
+    print('write_task_issues: Starting task_issue_number: %d.' % task_issue_number)
 
     # foreach dot v file, decode, and write task issues to issue table and csv file
     with tarfile.open(fileobj = BytesIO(scan_result_tar_blob)) as tar:
@@ -135,14 +134,14 @@ def write_task_issues(issue_table, bucket_name, task, scan_result_tar_blob):
                 # success: update task issue number
                 num_task_issues = len(task_issues)
                 task_issue_number += num_task_issues
-                print(f'write_task_issues: Wrote {num_task_issues} issues.')
-                print(f'write_task_issues: Next task_issue_number: {task_issue_number}.')
+                print('write_task_issues: Wrote %d issues.' % num_task_issues)
+                print('write_task_issues: Next task_issue_number: %d.' % task_issue_number)
 
 
     # upload /tmp/$(task_id)_issues.csv to result data bucket
     success = upload_tmp_file(bucket_name, task, csv_file_name)
     if not success:
-        print(f'write_task_issues: upload_tmp_file failed: {csv_file_name}.  Exit.')
+        print('write_task_issues: upload_tmp_file failed: %s.' % csv_file_name)
         return False
 
     # success

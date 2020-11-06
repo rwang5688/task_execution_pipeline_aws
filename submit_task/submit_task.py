@@ -11,7 +11,7 @@ def get_env_var(env_var_name):
     if env_var_name in os.environ:
         env_var = os.environ[env_var_name]
     else:
-        print(f'get_env_var: Failed to get {env_var_name}.')
+        print('get_env_var: Failed to get %s' % env_var_name)
     return env_var
 
 
@@ -70,9 +70,9 @@ def main():
         return
 
     print('Env vars:')
-    print(f'preprocess_bucket_name: {preprocess_bucket_name}')
-    print(f'result_bucket_name: {result_bucket_name}')
-    print(f'create_task_queue_name: {create_task_queue_name}')
+    print('preprocess_bucket_name: %s' % preprocess_bucket_name)
+    print('result_bucket_name: %s' % result_bucket_name)
+    print('create_task_queue_name: %s' % create_task_queue_name)
 
     success = parse_arguments()
     if not success:
@@ -80,7 +80,7 @@ def main():
         return
 
     print('Args:')
-    print(f'task_conf_file_name: {task_conf_file_name}')
+    print('task_conf_file_name: %s' % task_conf_file_name)
 
     task_conf = get_json_data(task_conf_file_name)
     if task_conf == None:
@@ -100,25 +100,25 @@ def main():
     task_file_attribute_name = 'task_fileinfo_json'
     success = taskfile.upload_task_file(preprocess_bucket_name, task, task_file_attribute_name)
     if not success:
-        print(f'upload_task_file failed: {task_file_attribute_name}.  Exit.')
+        print('upload_task_file failed: %s.  Exit.' % task_file_attribute_name)
         return
 
     task_file_attribute_name = 'task_preprocess_tar'
     success = taskfile.upload_task_file(preprocess_bucket_name, task, task_file_attribute_name)
     if not success:
-        print(f'upload_task_file failed: {task_file_attribute_name}.  Exit.')
+        print('upload_task_file failed: %s.  Exit.' % task_file_attribute_name)
         return
 
     task_file_attribute_name = 'task_source_code_zip'
     success = taskfile.upload_task_file(result_bucket_name, task, task_file_attribute_name)
     if not success:
-        print(f'upload_task_file failed: {task_file_attribute_name}.  Exit.')
+        print('upload_task_file failed: %s.  Exit.' % task_file_attribute_name)
         return
 
     task_file_attribute_name = 'task_summary_pdf'
     success = taskfile.upload_task_file(result_bucket_name, task, task_file_attribute_name)
     if not success:
-        print(f'upload_task_file failed: {task_file_attribute_name}.  Exit.')
+        print('upload_task_file failed: %s.  Exit.' % task_file_attribute_name)
         return
 
     action = 'create'

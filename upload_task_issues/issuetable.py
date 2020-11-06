@@ -11,12 +11,12 @@ def get_issue_table():
     issue_table_name = ''
     if 'ISSUE_TABLE' in os.environ:
         issue_table_name = os.environ['ISSUE_TABLE']
-    print(f'get_issue_table: table name is {issue_table_name}.')
+    print('get_issue_table: table name is %s.' % issue_table_name)
 
     # get and return issue table
     issue_table = dynamodb.Table(issue_table_name)
     if issue_table is None:
-        print(f'get_issue_table: {issue_table_name} is missing.')
+        print('get_issue_table: %s is missing.' % issue_table_name)
         return None
     return issue_table
 
@@ -26,7 +26,7 @@ def create_issue_record(issue_table, issue):
     issue_record = copy.deepcopy(issue)
 
     # add to issue table and return issue record
-    print(f'Issue Record: {issue_record}')
+    print('issue_record: %s' % issue_record)
     issue_table.put_item(Item=issue_record)
 
     return issue_record

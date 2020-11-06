@@ -45,7 +45,7 @@ def main():
         print('dotvfile_to_csvfile: parse_arguments failed.  Exit.')
         return
 
-    print(f'task_id: {task_id}')
+    print('task_id: %s' % task_id)
 
     # read dot v file json
     dot_v_file_json = read_dot_v_file_json(task_id)
@@ -55,7 +55,7 @@ def main():
 
     # initialize task issue number
     task_issue_number = 1
-    print(f'Starting task_issue_number: {task_issue_number}.')
+    print('Starting task_issue_number: %s.' % task_issue_number)
 
     # write csv file header
     csv_file_name = task_id + '_issues.csv'
@@ -79,8 +79,8 @@ def main():
     # update task issue number
     num_task_issues = len(task_issues)
     task_issue_number += num_task_issues
-    print(f'Wrote {num_task_issues} issues.')
-    print(f'Next task_issue_number: {task_issue_number}.')
+    print('Wrote %d issues.' % num_task_issues)
+    print('Next task_issue_number: %d.' % task_issue_number)
 
 
 if __name__ == '__main__':

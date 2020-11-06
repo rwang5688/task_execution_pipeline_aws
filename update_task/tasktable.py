@@ -12,12 +12,12 @@ def get_task_table():
     task_table_name = ''
     if 'TASK_TABLE' in os.environ:
         task_table_name = os.environ['TASK_TABLE']
-    print(f'get_task_table: table name is {task_table_name}.')
+    print('get_task_table: table name is %s.' % task_table_name)
 
     # get and return task table
     task_table = dynamodb.Table(task_table_name)
     if task_table is None:
-        print(f'get_task_table: {task_table_name} is missing.')
+        print('get_task_table: %s is missing.' % task_table_name)
         return None
     return task_table
 
@@ -30,7 +30,7 @@ def create_task_record(task_table, task, submit_timestamp):
     task_record['update_timestamp'] = str(time.time_ns() // 1000000)
 
     # add to task table and return task id
-    print(f'Task Record: {task_record}')
+    print('create_task_record: task_record = %s' % task_record)
     task_table.put_item(Item=task_record)
 
     return task_record

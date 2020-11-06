@@ -30,7 +30,7 @@ def get_env_var(env_var_name):
     if env_var_name in os.environ:
         env_var = os.environ[env_var_name]
     else:
-        print(f'get_env_var: Failed to get {env_var_name}.')
+        print('get_env_var: Failed to get %s.' % env_var_name)
     return env_var
 
 
@@ -81,8 +81,8 @@ def upload_task_issues(event, context):
         return False
 
     print('Env vars:')
-    print(f'result_bucket_name: {result_bucket_name}')
-    print(f'generate_task_summary_queue_name: {generate_task_summary_queue_name}')
+    print('result_bucket_name: %s' % result_bucket_name)
+    print('generate_task_summary_queue_name: %s' % generate_task_summary_queue_name)
 
     # get issue table
     issue_table = taskissue.get_issue_table()
@@ -94,8 +94,7 @@ def upload_task_issues(event, context):
     event_records = event['Records']
     for event_record in event_records:
         # debug: print event record
-        print('Event record:')
-        print(event_record)
+        print('event_record: %s' % event_record)
 
         # parse event record
         success = parse_event_record(event_record)
@@ -104,8 +103,7 @@ def upload_task_issues(event, context):
             continue
 
         # debug: print event record attributes
-        print('Event record attributes:')
-        print(f'task: {task}')
+        print('task: %s' % task)
 
         # get scan result tar blob in memory (max 3 GB)
         task_file_attribute_name = 'task_scan_result_tar'
