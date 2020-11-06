@@ -123,7 +123,7 @@ def create_task(event, context):
         if task_record is None:
             print('get_task_record failed.  Next.')
             continue
-        print('task_record: %s', task_record)
+        print('task_record: %s' % task_record)
 
         # send task record to process task queue
         action = 'process'
