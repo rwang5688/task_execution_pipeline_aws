@@ -29,7 +29,7 @@ def get_env_var(env_var_name):
     if env_var_name in os.environ:
         env_var = os.environ[env_var_name]
     else:
-        print(f'get_env_var: Failed to get {env_var_name}.')
+        print('get_env_var: Failed to get %s.' % env_var_name)
     return env_var
 
 
@@ -86,7 +86,7 @@ def create_task(event, context):
         return False
 
     print('Env vars:')
-    print(f'process_task_queue_name: {process_task_queue_name}')
+    print('process_task_queue_name: %s' % process_task_queue_name)
 
     # get task table
     task_table = tasktable.get_task_table()
@@ -98,8 +98,7 @@ def create_task(event, context):
     event_records = event['Records']
     for event_record in event_records:
         # debug: print event record
-        print('Event record:')
-        print(event_record)
+        print('event_record: %s' % event_record)
 
         # parse event record
         success = parse_event_record(event_record)
@@ -108,9 +107,8 @@ def create_task(event, context):
             continue
 
         # debug: print event record attributes
-        print('Event record attributes:')
-        print(f'task: {task}')
-        print(f'submit_timestamp: {submit_timestamp}')
+        print('task: %s' % task)
+        print('submit_timestamp: %s' % submit_timestamp)
 
         # create task record
         task_record = tasktable.create_task_record(task_table, task, submit_timestamp)
@@ -125,8 +123,7 @@ def create_task(event, context):
         if task_record is None:
             print('get_task_record failed.  Next.')
             continue
-        print('Task record:')
-        print(task_record)
+        print('task_record: %s', task_record)
 
         # send task record to process task queue
         action = 'process'

@@ -9,7 +9,7 @@ def get_env_var(env_var_name):
     if env_var_name in os.environ:
         env_var = os.environ[env_var_name]
     else:
-        print(f'get_env_var: Failed to get {env_var_name}.')
+        print('get_env_var: Failed to get %s.' % env_var_name)
     return env_var
 
 
@@ -103,8 +103,8 @@ def main():
         return
 
     print('Env vars:')
-    print(f'preprocess_bucket_name: {preprocess_bucket_name}')
-    print(f'process_task_queue_name: {process_task_queue_name}')
+    print('preprocess_bucket_name: %s' % preprocess_bucket_name)
+    print('process_task_queue_name: %s' % process_task_queue_name)
 
     message = taskmessage.receive_task_message(process_task_queue_name)
     if message is None:
@@ -125,25 +125,25 @@ def main():
     task_file_attribute_name = 'task_fileinfo_json'
     task_file_name = taskfile.download_task_file(preprocess_bucket_name, task, task_file_attribute_name)
     if task_file_name == '':
-        print(f'download_task_file failed: {task_file_attribute_name}.  Exit.')
+        print('download_task_file failed: %s.  Exit.' % task_file_attribute_name)
         return
 
-    print(f'{task_file_attribute_name}: {task_file_name}')
+    print('%s: %s' % (task_file_attribute_name, task_file_name))
 
     task_file_attribute_name = 'task_preprocess_tar'
     task_file_name = taskfile.download_task_file(preprocess_bucket_name, task, task_file_attribute_name)
     if task_file_name == '':
-        print(f'download_task_file failed: {task_file_attribute_name}.  Exit.')
+        print('download_task_file failed: %s.  Exit.' % task_file_attribute_name)
         return
 
-    print(f'{task_file_attribute_name}: {task_file_name}')
+    print('%s: %s' % (task_file_attribute_name, task_file_name))
 
     success = set_env_vars(task)
     if not success:
         print('set_env_vars failed.  Exit.')
         return
 
-    print(f'set_env_vars: {os.environ}')
+    print('set_env_vars: %s' % os.environ)
 
     success = execute_task_tool(task)
     if not success:
@@ -151,7 +151,7 @@ def main():
         return
 
     task_tool = task['task_tool']
-    print(f'execute_task_tool completed for {task_tool}.')
+    print('execute_task_tool completed for %s.' % task_tool)
 
     task_callback = 'task_result.py'
     user_id = task['user_id']
@@ -164,7 +164,7 @@ def main():
         print('execute_task_callback failed.  Exit.')
         return
 
-    print(f'execute_task_callback completed for {task_callback}.')
+    print('execute_task_callback completed for %s.' % task_callback)
 
     success = taskmessage.delete_task_message(process_task_queue_name, message)
     if not success:

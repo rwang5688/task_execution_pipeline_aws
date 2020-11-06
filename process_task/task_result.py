@@ -9,7 +9,7 @@ def get_env_var(env_var_name):
     if env_var_name in os.environ:
         env_var = os.environ[env_var_name]
     else:
-        print(f'get_env_var: Failed to get {env_var_name}.')
+        print('get_env_var: Failed to get %s.' % env_var_name)
     return env_var
 
 
@@ -99,9 +99,9 @@ def main():
         return
 
     print('Env vars:')
-    print(f'log_bucket_name: {log_bucket_name}')
-    print(f'result_bucket_name: {result_bucket_name}')
-    print(f'update_task_queue_name: {update_task_queue_name}')
+    print('log_bucket_name: %s' % log_bucket_name)
+    print('result_bucket_name: %s' % result_bucket_name)
+    print('update_task_queue_name: %s' % update_task_queue_name)
 
     success = parse_arguments()
     if not success:
@@ -109,24 +109,24 @@ def main():
         return
 
     print('Args:')
-    print(f'user_id: {user_id}')
-    print(f'task_id: {task_id}')
-    print(f'task_status: {task_status}')
-    print(f'task_dot_scan_log_tar: {task_dot_scan_log_tar}')
-    print(f'task_scan_result_tar: {task_scan_result_tar}')
+    print('user_id: %s' % user_id)
+    print('task_id: %s' % task_id)
+    print('task_status: %s' % task_status)
+    print('task_dot_scan_log_tar: %s' % task_dot_scan_log_tar)
+    print('task_scan_result_tar: %s' % task_scan_result_tar)
 
     task = init_task(user_id, task_id, task_status, task_dot_scan_log_tar, task_scan_result_tar)
 
     task_file_attribute_name = 'task_dot_scan_log_tar'
     success = taskfile.upload_task_file(log_bucket_name, task, task_file_attribute_name)
     if not success:
-        print(f'upload_task_file failed: {task_file_attribute_name}.  Exit.')
+        print('upload_task_file failed: %s.  Exit.' % task_file_attribute_name)
         return
 
     task_file_attribute_name = 'task_scan_result_tar'
     success = taskfile.upload_task_file(result_bucket_name, task, task_file_attribute_name)
     if not success:
-        print(f'upload_task_file failed: {task_file_attribute_name}.  Exit.')
+        print('upload_task_file failed: %s.  Exit.' % task_file_attribute_name)
         return
 
     action = 'update'

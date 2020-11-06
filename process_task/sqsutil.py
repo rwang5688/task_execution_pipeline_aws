@@ -8,7 +8,7 @@ def get_sqs_client():
     region_name = ''
     if 'TARGET_REGION' in os.environ:
         region_name = os.environ['TARGET_REGION']
-    print(f'get_sqs_client: region_name={region_name}')
+    print('get_sqs_client: region_name=%s' % region_name)
 
     session = boto3.Session(profile_name=None)
     sqs = session.client('sqs',
@@ -26,7 +26,7 @@ def list_queues():
     print('\nQueueUrls:')
     if 'QueueUrls' in response:
         for queue_url in response['QueueUrls']:
-            print(f'URL: {queue_url}')
+            print('URL: %s' % queue_url)
 
 
 def get_queue_url(queue_name):
