@@ -113,8 +113,7 @@ def update_task(event, context):
         if task_record is None:
             print('get_task_record failed.  Next.')
             continue
-        print('Task record:')
-        print(task_record)
+        print('task_record: %s' % task_record)
 
         # generate and update task urls
         task_dot_scan_log_tar = task_record['task_dot_scan_log_tar']
@@ -147,8 +146,7 @@ def update_task(event, context):
         if task_record is None:
             print('get_task_record failed.  Next.')
             continue
-        print('Task record:')
-        print(task_record)
+        print('task_record: %s' % task_record)
 
         # send task record to upload task issues queue
         action = 'upload_task_issues'
