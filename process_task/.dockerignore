@@ -143,6 +143,7 @@ cython_debug/
 .idea
 
 # process_task: executables, outputs
+bak
 env-cn*.sh
 env-us*.sh
 xvsa_scan
