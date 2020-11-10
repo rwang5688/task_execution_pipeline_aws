@@ -18,7 +18,7 @@ Resources:
           AttributeName: task_issue_number
           KeyType: RANGE
       ProvisionedThroughput:
-        ReadCapacityUnits: 1
-        WriteCapacityUnits: 1
+        ReadCapacityUnits: 10
+        WriteCapacityUnits: 10
       TableName: '${self:custom.issueTable}-${self:provider.stage}'
 
