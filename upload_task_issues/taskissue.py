@@ -71,40 +71,33 @@ def write_issue_record(issue_table, issue):
     return True
 
 
-def create_issue_record(issue_table, issue):
-    # create issue record
-    issue_record = issuetable.create_issue_record(issue_table, issue)
-    if issue_record is None:
-        print('write_issue_record: create_issue_record failed.')
-        return False
+def write_issue_records(issue_table, issues):
+    for issue in issues:
+        issue_record = issuetable.write_issue_record(issue_table, issue)
+        if issue_record is None:
+            print("write_issue_records: write_issue_record failed.")
+            return False
 
-    # debug: get and print issue record
-    task_id = issue_record['task_id']
-    task_issue_number = issue_record['task_issue_number']
-    issue_record = issuetable.get_issue_record(issue_table, task_id, task_issue_number)
-    if issue_record is None:
-        print('write_issue_record: get_issue_record failed.')
-        return False
-
-    print('issue_record: %s' % issue_record)
+        # debug: get and print issue record
+        task_id = issue_record['task_id']
+        task_issue_number = issue_record['task_issue_number']
+        issue_record = issuetable.get_issue_record(issue_table, task_id, task_issue_number)
+        if issue_record is None:
+            print("write_issue_records: get_issue_record failed.")
+            return False
+        print("issue_record: %s" % issue_record)
 
     return True
 
 
 def batch_write_issue_records(issue_table, issues):
-    # create issue record one at a time
-    # for task_issue in task_issues:
-    #    success = create_issue_record(issue_table, task_issue)
-    #    if not success:
-    #        print('write_task_issues: create_issue_record failed.  Next.')
-    #        continue
-    # test batch write
     n_total = len(issues)
-    n_begin = 0
-    n_end = 25
     batch_size = 25
+    n_begin = 0
+    n_end = batch_size
     while n_end <= n_total:
         issues_batch = issues[n_begin:n_end]
+        print("batch_write_issue_records: Batch=[%d:%d]." % (n_begin, n_end))
         success = issuetable.batch_write_issue_records(issue_table, issues_batch)
         if not success:
             return False
@@ -179,10 +172,10 @@ def write_task_issues(issue_table, bucket_name, task, scan_result_tar_blob):
                     print('write_task_issues: upload_tmp_file failed: %s.  Exit.' % csv_file_name)
                     return False
 
-                # batch write to issue table
+                # write issue records to issue table
                 success = batch_write_issue_records(issue_table, task_issues)
                 if not success:
-                    print('write_task_issues: batch_write_issue_crecords failed.  Next.')
+                    print('write_task_issues: write_issue_crecords failed.  Next.')
                     continue
 
                 # success: update task issue number
