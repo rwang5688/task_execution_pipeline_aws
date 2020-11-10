@@ -119,11 +119,17 @@ def write_task_issues(issue_table, bucket_name, task, scan_result_tar_blob):
                     continue
 
                 # write to issue table
-                for task_issue in task_issues:
-                    success = write_issue_record(issue_table, task_issue)
-                    if not success:
-                        print('write_task_issues: write_issue_record failed.  Next.')
-                        continue
+                # ... need to find a reliable way to write
+                # ... 1000's of records to DynamoDB
+                #for task_issue in task_issues:
+                #    success = write_issue_record(issue_table, task_issue)
+                #    if not success:
+                #        print('write_task_issues: write_issue_record failed.  Next.')
+                #        continue
+                #success = issuetable.batch_create_issue_records(issue_table, task_issues)
+                #if not success:
+                #    print('write_task_issues: batch_create_issue_crecords failed.  Next.')
+                #    continue
 
                 # write to csv file
                 success = csvfile.append_task_issues_csv_rows(csv_file_full_path, task_issues)

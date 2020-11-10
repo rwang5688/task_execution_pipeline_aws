@@ -42,3 +42,10 @@ def get_issue_record(issue_table, task_id, task_issue_number):
     issue_record = response['Item']
     return issue_record
 
+
+def batch_create_issue_records(issue_table, issues):
+    with issue_table.batch_writer() as batch:
+        for issue in issues:
+            batch.put_item(Item=issue)
+    return True
+
