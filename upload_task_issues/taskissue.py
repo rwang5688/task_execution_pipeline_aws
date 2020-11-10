@@ -1,3 +1,4 @@
+from os import truncate
 import tarfile
 from io import BytesIO
 from io import StringIO
@@ -16,30 +17,6 @@ def get_task_attribute_value(task, task_attribute_name):
         print('get_task_attribute_value: Task attribute %s is not defined.' %  task_attribute_name)
 
     return task_attribute_value
-
-
-def get_issue_table():
-    return issuetable.get_issue_table()
-
-
-def write_issue_record(issue_table, issue):
-    # create issue record
-    issue_record = issuetable.create_issue_record(issue_table, issue)
-    if issue_record is None:
-        print('write_issue_record: create_issue_record failed.')
-        return False
-
-    # debug: get and print issue record
-    task_id = issue_record['task_id']
-    task_issue_number = issue_record['task_issue_number']
-    issue_record = issuetable.get_issue_record(issue_table, task_id, task_issue_number)
-    if issue_record is None:
-        print('write_issue_record: get_issue_record failed.')
-        return False
-
-    print('issue_record: %s' % issue_record)
-
-    return True
 
 
 def upload_tmp_file(bucket_name, task, tmp_file_name):
@@ -67,6 +44,78 @@ def upload_tmp_file(bucket_name, task, tmp_file_name):
         return False
 
     # success
+    return True
+
+
+def get_issue_table():
+    return issuetable.get_issue_table()
+
+
+def write_issue_record(issue_table, issue):
+    # create issue record
+    issue_record = issuetable.create_issue_record(issue_table, issue)
+    if issue_record is None:
+        print('write_issue_record: create_issue_record failed.')
+        return False
+
+    # debug: get and print issue record
+    task_id = issue_record['task_id']
+    task_issue_number = issue_record['task_issue_number']
+    issue_record = issuetable.get_issue_record(issue_table, task_id, task_issue_number)
+    if issue_record is None:
+        print('write_issue_record: get_issue_record failed.')
+        return False
+
+    print('issue_record: %s' % issue_record)
+
+    return True
+
+
+def create_issue_record(issue_table, issue):
+    # create issue record
+    issue_record = issuetable.create_issue_record(issue_table, issue)
+    if issue_record is None:
+        print('write_issue_record: create_issue_record failed.')
+        return False
+
+    # debug: get and print issue record
+    task_id = issue_record['task_id']
+    task_issue_number = issue_record['task_issue_number']
+    issue_record = issuetable.get_issue_record(issue_table, task_id, task_issue_number)
+    if issue_record is None:
+        print('write_issue_record: get_issue_record failed.')
+        return False
+
+    print('issue_record: %s' % issue_record)
+
+    return True
+
+
+def batch_write_issue_records(issue_table, issues):
+    # create issue record one at a time
+    # for task_issue in task_issues:
+    #    success = create_issue_record(issue_table, task_issue)
+    #    if not success:
+    #        print('write_task_issues: create_issue_record failed.  Next.')
+    #        continue
+    # test batch write
+    n_total = len(issues)
+    n_begin = 0
+    n_end = 25
+    batch_size = 25
+    while n_end <= n_total:
+        issues_batch = issues[n_begin:n_end]
+        success = issuetable.batch_write_issue_records(issue_table, issues_batch)
+        if not success:
+            return False
+
+        n_begin = n_end
+        n_end = n_end + batch_size
+
+        # if necessary, truncate last batch
+        if n_end > n_total:
+            n_end = n_total
+
     return True
 
 
@@ -118,23 +167,22 @@ def write_task_issues(issue_table, bucket_name, task, scan_result_tar_blob):
                     print('write_task_issues: decode_dot_v_file_issues failed.  Next.')
                     continue
 
-                # write to issue table
-                # ... need to find a reliable way to write
-                # ... 1000's of records to DynamoDB
-                #for task_issue in task_issues:
-                #    success = write_issue_record(issue_table, task_issue)
-                #    if not success:
-                #        print('write_task_issues: write_issue_record failed.  Next.')
-                #        continue
-                #success = issuetable.batch_create_issue_records(issue_table, task_issues)
-                #if not success:
-                #    print('write_task_issues: batch_create_issue_crecords failed.  Next.')
-                #    continue
-
                 # write to csv file
                 success = csvfile.append_task_issues_csv_rows(csv_file_full_path, task_issues)
                 if not success:
                     print('write_task_issues: append_task_issues_csv_rows failed.  Next.')
+                    continue
+
+                # upload /tmp/$(task_id)_issues.csv to result data bucket
+                success = upload_tmp_file(bucket_name, task, csv_file_name)
+                if not success:
+                    print('write_task_issues: upload_tmp_file failed: %s.  Exit.' % csv_file_name)
+                    return False
+
+                # batch write to issue table
+                success = batch_write_issue_records(issue_table, task_issues)
+                if not success:
+                    print('write_task_issues: batch_write_issue_crecords failed.  Next.')
                     continue
 
                 # success: update task issue number
@@ -142,13 +190,6 @@ def write_task_issues(issue_table, bucket_name, task, scan_result_tar_blob):
                 task_issue_number += num_task_issues
                 print('write_task_issues: Wrote %d issues.' % num_task_issues)
                 print('write_task_issues: Next task_issue_number: %d.' % task_issue_number)
-
-
-    # upload /tmp/$(task_id)_issues.csv to result data bucket
-    success = upload_tmp_file(bucket_name, task, csv_file_name)
-    if not success:
-        print('write_task_issues: upload_tmp_file failed: %s.' % csv_file_name)
-        return False
 
     # success
     return True
