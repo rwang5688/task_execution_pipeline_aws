@@ -92,10 +92,14 @@ def write_issue_records(issue_table, issues):
 
 def batch_write_issue_records(issue_table, issues):
     n_total = len(issues)
+    # cap at 1000 for now
+    if n_total > 1000:
+        n_total = 1000
+
     batch_size = 25
     n_begin = 0
     n_end = batch_size
-    while n_end <= n_total:
+    while n_begin < n_end and n_end <= n_total:
         issues_batch = issues[n_begin:n_end]
         print("batch_write_issue_records: Batch=[%d:%d]." % (n_begin, n_end))
         success = issuetable.batch_write_issue_records(issue_table, issues_batch)
@@ -104,7 +108,6 @@ def batch_write_issue_records(issue_table, issues):
 
         n_begin = n_end
         n_end = n_end + batch_size
-
         # if necessary, truncate last batch
         if n_end > n_total:
             n_end = n_total
