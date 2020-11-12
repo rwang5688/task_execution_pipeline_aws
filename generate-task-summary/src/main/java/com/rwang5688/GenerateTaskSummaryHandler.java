@@ -80,10 +80,10 @@ public class GenerateTaskSummaryHandler implements RequestHandler<SQSEvent, Stri
         logger.info("Task: " + taskRecord.toString());
 
         // get task issues
-        List<Issue> taskIssues = new Issue().getTaskIssues(task_id);
-        for (Issue issue : taskIssues) {
-          logger.info("Issue: " + issue.toString());
-        }
+        //List<Issue> taskIssues = new Issue().getTaskIssues(task_id);
+        //for (Issue issue : taskIssues) {
+        // logger.info("Issue: " + issue.toString());
+        //}
       } catch (Exception ex) {
         logger.error("Error in retrieving task issues: " + ex);
       }
