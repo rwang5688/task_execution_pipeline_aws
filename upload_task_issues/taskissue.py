@@ -176,10 +176,10 @@ def write_task_issues(issue_table, bucket_name, task, scan_result_tar_blob):
                     return False
 
                 # write issue records to issue table
-                success = batch_write_issue_records(issue_table, task_issues)
-                if not success:
-                    print('write_task_issues: write_issue_crecords failed.  Next.')
-                    continue
+                #success = batch_write_issue_records(issue_table, task_issues)
+                #if not success:
+                #   print('write_task_issues: write_issue_crecords failed.  Next.')
+                #   continue
 
                 # success: update task issue number
                 num_task_issues = len(task_issues)
