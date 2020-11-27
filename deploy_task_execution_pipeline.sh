@@ -35,3 +35,8 @@ compile
 SERVICES=(resources create_task update_task upload_task_issues generate-task-summary)
 deploy
 
+# copy generate-task-summary resources
+cd generate-task-summary
+aws s3 sync src/main/resources/jrExport s3://${TASK_EXEC_RESULT_DATA_BUCKET}
+cd ..
+

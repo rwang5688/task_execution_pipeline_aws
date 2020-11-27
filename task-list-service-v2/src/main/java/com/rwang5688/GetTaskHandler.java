@@ -9,27 +9,39 @@ import org.slf4j.LoggerFactory;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.type.TypeReference;
 
 import com.rwang5688.dal.Task;
+import com.rwang5688.dal.TaskTable;
 
 
 public class GetTaskHandler implements RequestHandler<Map<String, Object>, ApiGatewayResponse> {
 
-	private static final Logger logger = LoggerFactory.getLogger(GetTaskHandler.class);
+    private static final Logger logger = LoggerFactory.getLogger(GetTaskHandler.class);
+    private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
 	@Override
 	public ApiGatewayResponse handleRequest(Map<String, Object> input, Context context) {
-        logger.info("received: {}", input);
+		// log execution details
+		logger.info("ENVIRONMENT VARIABLES: {}", gson.toJson(System.getenv()));
+		logger.info("CONTEXT: {}", gson.toJson(context));
+        logger.info("INPUT: {}", gson.toJson(input));
+
         try {
             // get the 'pathParameters' from input
             Map<String, String> pathParameters =  (Map<String, String>)input.get("pathParameters");
             String user_id = pathParameters.get("user_id");
             String task_id = pathParameters.get("task_id");
+            logger.info("user_id: " + user_id);
+            logger.info("task_id: " + task_id);
 
-            // get the Task by id
-            Task task = new Task().get(user_id, task_id);
+            // get Task by user_id and task_id
+            TaskTable taskTable = new TaskTable();
+            Task task = taskTable.get(user_id, task_id);
 
             // send the response back
             if (task != null) {
@@ -41,7 +53,7 @@ public class GetTaskHandler implements RequestHandler<Map<String, Object>, ApiGa
             } else {
                 return ApiGatewayResponse.builder()
                         .setStatusCode(404)
-                        .setObjectBody("Task with user_id=" + user_id + " task_id:=" + task_id + " not found.")
+                        .setObjectBody("Task not found for user_id=" + user_id + " task_id:=" + task_id + ".")
                         .setHeaders(Collections.singletonMap("X-Powered-By", "AWS Lambda & Serverless"))
                         .build();
             }

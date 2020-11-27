@@ -89,7 +89,7 @@ npm install
 npm run build
 
 # deploy frontend app
-aws s3 sync dist/ s3://$TASK_LIST_APPS_BUCKET
+aws s3 sync dist/ s3://${TASK_LIST_APPS_BUCKET}
 cd ..
 
 # compile task-list-service-v2 API functions

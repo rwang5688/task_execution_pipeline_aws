@@ -115,11 +115,11 @@ def main():
         print('upload_task_file failed: %s.  Exit.' % task_file_attribute_name)
         return
 
-    task_file_attribute_name = 'task_summary_pdf'
-    success = taskfile.upload_task_file(result_bucket_name, task, task_file_attribute_name)
-    if not success:
-        print('upload_task_file failed: %s.  Exit.' % task_file_attribute_name)
-        return
+    #task_file_attribute_name = 'task_summary_pdf'
+    #success = taskfile.upload_task_file(result_bucket_name, task, task_file_attribute_name)
+    #if not success:
+    #    print('upload_task_file failed: %s.  Exit.' % task_file_attribute_name)
+    #    return
 
     action = 'create'
     success = taskmessage.send_task_message(create_task_queue_name, action, task)
