@@ -1,0 +1,302 @@
+<?xml version = "1.0" encoding = "UTF-8"?>
+<!DOCTYPE jasperReport PUBLIC "//JasperReports//DTD Report Design//EN"
+        "http://jasperreports.sourceforge.net/dtds/jasperreport.dtd">
+
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports
+   http://jasperreports.sourceforge.net/xsd/jasperreport.xsd"
+              name="report2" topMargin="20" bottomMargin="20">
+
+    <field name="task_id">
+        <fieldDescription><![CDATA[task_id]]></fieldDescription>
+    </field>
+
+    <field name="task_issue_number" class="java.lang.Integer">
+        <fieldDescription><![CDATA[task_issue_number]]></fieldDescription>
+    </field>
+
+    <field name="issue_key">
+        <fieldDescription><![CDATA[issue_key]]></fieldDescription>
+    </field>
+
+    <field name="issue_certainty">
+        <fieldDescription><![CDATA[issue_certainty]]></fieldDescription>
+    </field>
+
+    <field name="issue_complexity" class="java.lang.Integer">
+        <fieldDescription><![CDATA[issue_complexity]]></fieldDescription>
+    </field>
+
+    <field name="file_path">
+        <fieldDescription><![CDATA[file_path]]></fieldDescription>
+    </field>
+
+    <field name="start_line_no" class="java.lang.Integer">
+        <fieldDescription><![CDATA[start_line_no]]></fieldDescription>
+    </field>
+
+    <field name="start_column_no" class="java.lang.Integer">
+        <fieldDescription><![CDATA[start_column_no]]></fieldDescription>
+    </field>
+
+    <field name="function_name">
+        <fieldDescription><![CDATA[function_name]]></fieldDescription>
+    </field>
+
+    <field name="variable_name">
+        <fieldDescription><![CDATA[variable_name]]></fieldDescription>
+    </field>
+
+    <field name="rule_set">
+        <fieldDescription><![CDATA[rule_set]]></fieldDescription>
+    </field>
+
+    <field name="rule_code">
+        <fieldDescription><![CDATA[rule_code]]></fieldDescription>
+    </field>
+
+    <field name="error_code">
+        <fieldDescription><![CDATA[error_code]]></fieldDescription>
+    </field>
+
+    <field name="message">
+        <fieldDescription><![CDATA[message]]></fieldDescription>
+    </field>
+
+    <field name="paths">
+        <fieldDescription><![CDATA[paths]]></fieldDescription>
+    </field>
+
+    <sortField name="task_issue_number"/>
+
+    <columnHeader>
+        <band height="15">
+
+            <staticText>
+                <reportElement x="0" y="0" width="300" height="15"/>
+                <textElement />
+                <text><![CDATA[]]> </text>
+            </staticText>
+
+            <staticText>
+                <reportElement x="0" y="0" width="50" height="15"/>
+                <textElement />
+                <text><![CDATA[task_id]]></text>
+            </staticText>
+
+            <staticText>
+                <reportElement x="100" y="0" width="100" height="15"/>
+                <textElement />
+                <text><![CDATA[task_issue_number]]></text>
+            </staticText>
+
+            <staticText>
+                <reportElement x="200" y="0" width="100" height="15"/>
+                <textElement/>
+                <text><![CDATA[issue_key]]></text>
+            </staticText>
+
+            <staticText>
+                <reportElement x="300" y="0" width="100" height="15"/>
+                <textElement/>
+                <text><![CDATA[issue_certainty]]></text>
+            </staticText>
+
+            <staticText>
+                <reportElement x="400" y="0" width="100" height="15"/>
+                <textElement/>
+                <text><![CDATA[issue_complexity]]></text>
+            </staticText>
+
+            <staticText>
+                <reportElement x="500" y="0" width="100" height="15"/>
+                <textElement/>
+                <text><![CDATA[file_path]]></text>
+            </staticText>
+
+            <staticText>
+                <reportElement x="600" y="0" width="100" height="15"/>
+                <textElement/>
+                <text><![CDATA[start_line_no]]></text>
+            </staticText>
+
+            <staticText>
+                <reportElement x="700" y="0" width="100" height="15"/>
+                <textElement/>
+                <text><![CDATA[start_column_no]]></text>
+            </staticText>
+
+            <staticText>
+                <reportElement x="800" y="0" width="100" height="15"/>
+                <textElement/>
+                <text><![CDATA[function_name]]></text>
+            </staticText>
+
+            <staticText>
+                <reportElement x="900" y="0" width="100" height="15"/>
+                <textElement/>
+                <text><![CDATA[variable_name]]></text>
+            </staticText>
+
+            <staticText>
+                <reportElement x="1000" y="0" width="100" height="15"/>
+                <textElement/>
+                <text><![CDATA[rule_set]]></text>
+            </staticText>
+
+            <staticText>
+                <reportElement x="1100" y="0" width="100" height="15"/>
+                <textElement/>
+                <text><![CDATA[rule_code]]></text>
+            </staticText>
+
+            <staticText>
+                <reportElement x="1200" y="0" width="100" height="15"/>
+                <textElement/>
+                <text><![CDATA[error_code]]></text>
+            </staticText>
+
+            <staticText>
+                <reportElement x="1300" y="0" width="100" height="15"/>
+                <textElement/>
+                <text><![CDATA[message]]></text>
+            </staticText>
+
+            <staticText>
+                <reportElement x="1400" y="0" width="100" height="15"/>
+                <textElement/>
+                <text><![CDATA[paths]]></text>
+            </staticText>
+
+        </band>
+    </columnHeader>
+
+    <detail>
+        <band height="15">
+
+            <textField>
+                <reportElement x="0" y="0" width="100" height="15"/>
+                <textElement textAlignment="Left"/>
+                <textFieldExpression>
+                    <![CDATA[$F{task_id}]]>
+                </textFieldExpression>
+            </textField>
+
+            <textField>
+                <reportElement x="100" y="0" width="50" height="15"/>
+                <textElement textAlignment="Right"/>
+                <textFieldExpression class="java.lang.Integer">
+                    <![CDATA[$F{task_issue_number}]]>
+                </textFieldExpression>
+            </textField>
+
+            <textField>
+                <reportElement x="200" y="0" width="100" height="15"/>
+                <textElement textAlignment="Left"/>
+                <textFieldExpression>
+                    <![CDATA[$F{issue_key}]]>
+                </textFieldExpression>
+            </textField>
+
+            <textField>
+                <reportElement x="300" y="0" width="100" height="15"/>
+                <textElement textAlignment="Center"/>
+                <textFieldExpression>
+                    <![CDATA[$F{issue_certainty}]]>
+                </textFieldExpression>
+            </textField>
+
+            <textField>
+                <reportElement x="400" y="0" width="50" height="15"/>
+                <textElement textAlignment="Right"/>
+                <textFieldExpression class="java.lang.Integer">
+                    <![CDATA[$F{issue_complexity}]]>
+                </textFieldExpression>
+            </textField>
+
+            <textField>
+                <reportElement x="500" y="0" width="100" height="15"/>
+                <textElement textAlignment="Left"/>
+                <textFieldExpression>
+                    <![CDATA[$F{file_path}]]>
+                </textFieldExpression>
+            </textField>
+
+            <textField>
+                <reportElement x="600" y="0" width="50" height="15"/>
+                <textElement textAlignment="Right"/>
+                <textFieldExpression class="java.lang.Integer">
+                    <![CDATA[$F{start_line_no}]]>
+                </textFieldExpression>
+            </textField>
+
+            <textField>
+                <reportElement x="700" y="0" width="50" height="15"/>
+                <textElement textAlignment="Right"/>
+                <textFieldExpression class="java.lang.Integer">
+                    <![CDATA[$F{start_column_no}]]>
+                </textFieldExpression>
+            </textField>
+
+            <textField>
+                <reportElement x="800" y="0" width="100" height="15"/>
+                <textElement textAlignment="Left"/>
+                <textFieldExpression>
+                    <![CDATA[$F{function_name}]]>
+                </textFieldExpression>
+            </textField>
+
+            <textField>
+                <reportElement x="900" y="0" width="100" height="15"/>
+                <textElement textAlignment="Left"/>
+                <textFieldExpression>
+                    <![CDATA[$F{variable_name}]]>
+                </textFieldExpression>
+            </textField>
+
+            <textField>
+                <reportElement x="1000" y="0" width="100" height="15"/>
+                <textElement textAlignment="Left"/>
+                <textFieldExpression>
+                    <![CDATA[$F{rule_set}]]>
+                </textFieldExpression>
+            </textField>
+
+            <textField>
+                <reportElement x="1100" y="0" width="100" height="15"/>
+                <textElement textAlignment="Left"/>
+                <textFieldExpression>
+                    <![CDATA[$F{rule_code}]]>
+                </textFieldExpression>
+            </textField>
+
+            <textField>
+                <reportElement x="1200" y="0" width="100" height="15"/>
+                <textElement textAlignment="Left"/>
+                <textFieldExpression>
+                    <![CDATA[$F{error_code}]]>
+                </textFieldExpression>
+            </textField>
+
+            <textField>
+                <reportElement x="1300" y="0" width="100" height="15"/>
+                <textElement textAlignment="Left"/>
+                <textFieldExpression>
+                    <![CDATA[$F{message}]]>
+                </textFieldExpression>
+            </textField>
+
+            <textField>
+                <reportElement x="1400" y="0" width="100" height="15"/>
+                <textElement textAlignment="Left"/>
+                <textFieldExpression>
+                    <![CDATA[$F{paths}]]>
+                </textFieldExpression>
+            </textField>
+
+        </band>
+    </detail>
+
+</jasperReport>
+
