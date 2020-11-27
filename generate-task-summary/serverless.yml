@@ -17,6 +17,7 @@ provider:
   region: ${env:TARGET_REGION}
   runtime: java8
   stage: ${opt:stage, 'dev'}
+  endpointType: regional
   iamRoleStatements:
     - Effect: Allow
       Action:
@@ -25,6 +26,8 @@ provider:
     - Effect: Allow
       Action:
         - s3:GetObject
+        - s3:CopyObject
+        - s3:PutObject
       Resource: "arn:${self:custom.cloud}:s3:::${self:custom.resultDataBucket}/*"
     - Effect: Allow
       Action:
