@@ -19,7 +19,7 @@ COPY ./xvsa $ENGINE_PATH
 ENV PATH=$PATH:${ENGINE_PATH}/bin
 
 # create working directory
-COPY env.sh process_task.py process_task.sh s3util.py sqsutil.py taskfile.py taskmessage.py task_result.py default_credentials.csv /process_task/
+COPY env.sh process_task.py process_task.sh s3util.py sqsutil.py taskfile.py taskjson.py taskmessage.py task_result.py default_credentials.csv /process_task/
 COPY ./bin /process_task/bin
 ENV PATH=$PATH:/process_task/bin
 WORKDIR /process_task

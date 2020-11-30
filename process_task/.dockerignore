@@ -153,4 +153,5 @@ fileinfo.json
 *.tar.gz
 *.preprocess
 *.zip
+xcal-task.json
 

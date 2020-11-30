@@ -231,7 +231,8 @@ public class GenerateTaskSummaryHandler implements RequestHandler<SQSEvent, Stri
         downloadTaskIssuesCSV();
         readTaskIssuesCSVData();
         copyTaskSummaryPDFFile();
-        exportTaskIssuesPDFFile();
+        // open issue: JRExport.exportPDFFile times out inside Lambda function
+        //exportTaskIssuesPDFFile();
       } catch (Exception e) {
         logger.error("handleRequest: " + e);
       }
