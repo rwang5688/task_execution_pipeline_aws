@@ -1,7 +1,8 @@
 import os
 import subprocess
-import taskmessage
 import taskfile
+import taskjson
+import taskmessage
 
 
 def get_env_var(env_var_name):
@@ -29,20 +30,6 @@ def get_env_vars():
     return True
 
 
-def read_process_stdout(process):
-    while True:
-        output = process.stdout.readline()
-        print(output.strip())
-        # Do something else
-        return_code = process.poll()
-        if return_code is not None:
-            print('RETURN CODE', return_code)
-            # Process has finished, read rest of the output
-            for output in process.stdout.readlines():
-                print(output.strip())
-            break
-
-
 def set_env_vars(task):
     task_id = ''
     if 'task_id' in task:
@@ -64,11 +51,25 @@ def set_env_vars(task):
     return True
 
 
+def read_process_stdout(process):
+    while True:
+        output = process.stdout.readline()
+        print(output.strip())
+        # Do something else
+        return_code = process.poll()
+        if return_code is not None:
+            print('RETURN CODE', return_code)
+            # Process has finished, read rest of the output
+            for output in process.stdout.readlines():
+                print(output.strip())
+            break
+
+
 def execute_task_tool(task):
     # get task_tool
-    task_tool = ''
-    if 'task_tool' in task:
-        task_tool = task['task_tool']
+    task_tool = ""
+    if "task_tool" in task:
+        task_tool = task["task_tool"]
     else:
         print('execute_task_tool: Missing task_tool.')
         return False
@@ -80,13 +81,17 @@ def execute_task_tool(task):
         env=os.environ)
     read_process_stdout(process)
 
+    # for now: always set task_status to "completed"
+    # later: read task_status from executing task_tool
+    task["task_status"] = "completed"
+
     # success
     return True
 
 
-def execute_task_callback(task_callback, user_id, task_id, task_status, task_dot_scan_log_tar, task_scan_result_tar):
-    # command: "python3 $(task_callback) $(user_id) $(task_id) $(task_status) ${task_dot_scan_log_tar} ${task_scan_result_tar}"
-    process = subprocess.Popen(["python3", task_callback, user_id, task_id, task_status, task_dot_scan_log_tar, task_scan_result_tar],
+def execute_task_callback(task_callback):
+    # command: "python3 $(task_callback)"
+    process = subprocess.Popen(["python3", task_callback],
         stdout=subprocess.PIPE, universal_newlines=True)
     read_process_stdout(process)
 
@@ -150,16 +155,19 @@ def main():
         print('execute_task_tool failed.  Exit.')
         return
 
-    task_tool = task['task_tool']
-    print('execute_task_tool completed for %s.' % task_tool)
+    task_tool = task["task_tool"]
+    task_status = task["task_status"]
+    print('execute_task_tool completed for task_tool=%s with task_status=%s.' % (task_tool, task_status))
+
+    success = taskjson.write_task_json(task)
+    if not success:
+        print("write_task_json failed.  Exit.")
+        return
+
+    print('write_task_json completed for task_tool=%s with task_status=%s.' % (task_tool, task_status))
 
     task_callback = 'task_result.py'
-    user_id = task['user_id']
-    task_id = task['task_id']
-    task_status = 'completed'
-    task_dot_scan_log_tar = task['task_dot_scan_log_tar']
-    task_scan_result_tar = task['task_scan_result_tar']
-    success = execute_task_callback(task_callback, user_id, task_id, task_status, task_dot_scan_log_tar, task_scan_result_tar)
+    success = execute_task_callback(task_callback)
     if not success:
         print('execute_task_callback failed.  Exit.')
         return
