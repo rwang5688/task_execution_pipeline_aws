@@ -1,14 +1,14 @@
 #!/bin/bash
 
-cd ..
+cd ../submit_task
 
 # TODO: We need to figure out how to set executable PATH in CICD environment
 # set PATH for executables
-export PATH=$PATH:$PWD/bin
+export PATH=$PATH:$PWD
 printenv PATH
 
-export TASK_EXEC_BIN=$PWD/bin
-printenv TASK_EXEC_BIN
+export SUBMIT_TASK=$PWD
+printenv SUBMIT_TASK
 
-cd install
+cd ../install
 
