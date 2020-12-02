@@ -4,8 +4,9 @@ export AWS_ACCOUNT_ID=700702834148
 export TARGET_CLOUD=aws
 export TARGET_REGION=us-west-2
 
-# task-list workflow and database specific environment variables
+# task-execution-pipeline specific environment variables
 export TASK_EXEC_PREPROCESS_DATA_BUCKET=task-exec-preprocess-data-bucket-rwang5688
+export TASK_EXEC_CACHE_DATA_BUCKET=task-exec-cache-data-bucket-rwang5688
 export TASK_EXEC_LOG_DATA_BUCKET=task-exec-log-data-bucket-rwang5688
 export TASK_EXEC_RESULT_DATA_BUCKET=task-exec-result-data-bucket-rwang5688
 export TASK_EXEC_CREATE_TASK_QUEUE=task-exec-create-task-queue-rwang5688
