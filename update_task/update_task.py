@@ -132,13 +132,13 @@ def update_task(event, context):
         task_issues_csv_url = taskurl.generate_result_data_bucket_object_url(
                                         user_id, task_id, task_issues_csv)
 
-        success = tasktable.update_task_urls(task_table, user_id, task_id,
+        success = tasktable.update_result_urls(task_table, user_id, task_id,
                                                 task_dot_scan_log_tar_url,
                                                 task_scan_result_tar_url,
                                                 task_summary_pdf_url,
                                                 task_issues_csv_url)
         if not success:
-            print('update_task_urls failed.  Next.')
+            print('update_result_urls failed.  Next.')
             continue
 
         # get task record

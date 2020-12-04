@@ -24,11 +24,12 @@ function renderEditArea (id) {
     if (id) {
       $('#user-id').val($('#' + id + ' #user_id').text());
       $('#task-id').val(id);
+      $('#project-name').val($('#' + id + ' #project_name').text());
       $('#task-tool').val($('#' + id + ' #task_tool').text());
       $('#task-extra-options').val($('#' + id + ' #task_extra_options').text());
-      $('#task-fileinfo-json').val($('#' + id + ' #task_fileinfo_json').text());
-      $('#task-preprocess-tar').val($('#' + id + ' #task_preprocess_tar').text());
-      $('#task-source-code-zip').val($('#' + id + ' #task_source_code_zip').text());
+      $('#task-fileinfo-json-url').val($('#' + id + ' #task_fileinfo_json_url').text());
+      $('#task-preprocess-tar-url').val($('#' + id + ' #task_preprocess_tar_url').text());
+      $('#task-source-code-zip-url').val($('#' + id + ' #task_source_code_zip_url').text());
       $('#task-status').val($('#' + id + ' #task_status').text());
       $('#task-dot-scan-log-tar-url').val($('#' + id + ' #task_dot_scan_log_tar_url').text());
       $('#task-scan-result-tar-url').val($('#' + id + ' #task_scan_result_tar_url').text());
