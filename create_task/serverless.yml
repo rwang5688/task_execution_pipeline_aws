@@ -8,6 +8,7 @@ custom:
   cloud: ${env:TARGET_CLOUD}
   region: ${env:TARGET_REGION}
   preprocessDataBucket: ${env:TASK_EXEC_PREPROCESS_DATA_BUCKET}
+  resultDataBucket: ${env:TASK_EXEC_RESULT_DATA_BUCKET}
   createTaskQueue: ${env:TASK_EXEC_CREATE_TASK_QUEUE}
   processTaskQueue: ${env:TASK_EXEC_PROCESS_TASK_QUEUE}
   dotenv:
@@ -25,6 +26,10 @@ provider:
       Action:
         - s3:GetObject
       Resource: "arn:${self:custom.cloud}:s3:::${self:custom.preprocessDataBucket}/*"
+    - Effect: Allow
+      Action:
+        - s3:GetObject
+      Resource: "arn:${self:custom.cloud}:s3:::${self:custom.resultDataBucket}/*"
     - Effect: Allow
       Action:
         - sqs:ListQueues
@@ -58,8 +63,10 @@ functions:
     role: arn:${self:custom.cloud}:iam::${self:custom.accountid}:role/task-execution-pipeline
     environment:
       ACCOUNT_ID: ${env:AWS_ACCOUNT_ID}
+      CLOUD: ${env:TARGET_CLOUD}
       REGION: ${env:TARGET_REGION}
       PREPROCESS_DATA_BUCKET: ${env:TASK_EXEC_PREPROCESS_DATA_BUCKET}
+      RESULT_DATA_BUCKET: ${env:TASK_EXEC_RESULT_DATA_BUCKET}
       CREATE_TASK_QUEUE: ${env:TASK_EXEC_CREATE_TASK_QUEUE}
       PROCESS_TASK_QUEUE: ${env:TASK_EXEC_PROCESS_TASK_QUEUE}
       TASK_TABLE: "${env:TASK_EXEC_TASK_TABLE}-${self:provider.stage}"

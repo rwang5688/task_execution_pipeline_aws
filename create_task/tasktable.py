@@ -62,7 +62,28 @@ def update_task_status(task_table, user_id, task_id, task_status):
     return True
 
 
-def update_task_urls(task_table, user_id, task_id,
+def update_preprocess_urls(task_table, user_id, task_id,
+    task_fileinfo_json_url, task_preprocess_tar_url,
+    task_source_code_zip_url):
+    task_table.update_item(
+        Key={
+            'user_id': user_id,
+            'task_id': task_id
+        },
+        UpdateExpression='SET \
+            task_fileinfo_json_url = :val1, \
+            task_preprocess_tar_url = :val2, \
+            task_source_code_zip_url = :val3',
+        ExpressionAttributeValues={
+            ':val1': task_fileinfo_json_url,
+            ':val2': task_preprocess_tar_url,
+            ':val3': task_source_code_zip_url
+        }
+    )
+    return True
+
+
+def update_result_urls(task_table, user_id, task_id,
     task_dot_scan_log_tar_url, task_scan_result_tar_url,
     task_summary_pdf_url, task_issues_csv_url):
     task_table.update_item(

@@ -6,6 +6,7 @@ from botocore.exceptions import ClientError
 from aws_xray_sdk.core import xray_recorder
 from aws_xray_sdk.core import patch_all
 import tasktable
+import taskurl
 import taskmessage
 
 
@@ -119,6 +120,33 @@ def create_task(event, context):
         # debug: get and print task record
         user_id = task_record['user_id']
         task_id = task_record['task_id']
+        task_record = tasktable.get_task_record(task_table, user_id, task_id)
+        if task_record is None:
+            print('get_task_record failed.  Next.')
+            continue
+        print('task_record: %s' % task_record)
+
+        task_fileinfo_json = task_record['task_fileinfo_json']
+        task_fileinfo_json_url = taskurl.generate_preprocess_data_bucket_object_url(
+                                        user_id, task_id, task_fileinfo_json)
+
+        task_preprocess_tar = task_record['task_preprocess_tar']
+        task_preprocess_tar_url = taskurl.generate_preprocess_data_bucket_object_url(
+                                        user_id, task_id, task_preprocess_tar)
+
+        task_source_code_zip = task_record['task_source_code_zip']
+        task_source_code_zip_url = taskurl.generate_result_data_bucket_object_url(
+                                        user_id, task_id, task_source_code_zip)
+
+        success = tasktable.update_preprocess_urls(task_table, user_id, task_id,
+                                                task_fileinfo_json_url,
+                                                task_preprocess_tar_url,
+                                                task_source_code_zip_url)
+        if not success:
+            print('update_preprocess_urls failed.  Next.')
+            continue
+
+        # get task record
         task_record = tasktable.get_task_record(task_table, user_id, task_id)
         if task_record is None:
             print('get_task_record failed.  Next.')
