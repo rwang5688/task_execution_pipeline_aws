@@ -43,6 +43,36 @@ def get_task_file_blob(bucket_name, task, task_file_attribute_name):
     return task_file_blob
 
 
+def upload_task_file(bucket_name, task, task_file_attribute_name):
+    # get bucket
+    bucket = s3util.get_bucket(bucket_name)
+    if bucket is None:
+        print('upload_task_file: Bucket %s does not exist.' % bucket_name)
+        return False
+
+    # get user_id, task_id, task_file_name
+    user_id = get_task_attribute_value(task, 'user_id')
+    if user_id == '':
+        return False
+
+    task_id = get_task_attribute_value(task, 'task_id')
+    if task_id == '':
+        return False
+
+    task_file_name = get_task_attribute_value(task, task_file_attribute_name)
+    if task_file_name == '':
+        return False
+
+    # upload task file
+    success = s3util.upload_file(task_file_name, bucket["Name"], user_id + "/" + task_id + "/" + task_file_name)
+    if not success:
+        print('upload_task_file: Failed to upload task file %s.' % task_file_name)
+        return False
+
+    # success
+    return True
+
+
 def download_task_file(bucket_name, task, task_file_attribute_name):
     # get bucket
     bucket = s3util.get_bucket(bucket_name)
@@ -72,34 +102,4 @@ def download_task_file(bucket_name, task, task_file_attribute_name):
 
     # success
     return task_file_name
-
-
-def upload_task_file(bucket_name, task, task_file_attribute_name):
-    # get bucket
-    bucket = s3util.get_bucket(bucket_name)
-    if bucket is None:
-        print('upload_task_file: Bucket %s does not exist.' % bucket_name)
-        return False
-
-    # get user_id, task_id, task_file_name
-    user_id = get_task_attribute_value(task, 'user_id')
-    if user_id == '':
-        return False
-
-    task_id = get_task_attribute_value(task, 'task_id')
-    if task_id == '':
-        return False
-
-    task_file_name = get_task_attribute_value(task, task_file_attribute_name)
-    if task_file_name == '':
-        return False
-
-    # upload task file
-    success = s3util.upload_file(task_file_name, bucket["Name"], user_id + "/" + task_id + "/" + task_file_name)
-    if not success:
-        print('upload_task_file: Failed to upload task file %s.' % task_file_name)
-        return False
-
-    # success
-    return True
 
