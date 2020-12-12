@@ -49,6 +49,7 @@ def get_file_object(bucket_name, object_name):
 
     try:
         result = s3.get_object(Bucket=bucket_name, Key=object_name)
+        print('s3util.get_file_object: object_name=%s, result=%s' % (object_name, result))
     except ClientError as e:
         logging.error(e)
         return None
@@ -69,14 +70,14 @@ def list_files(bucket_name):
             print('Key: %s' % bucketFile["Key"])
 
 
-def upload_file(file_name, bucket, object_name=None):
+def upload_file(file_name, bucket_name, object_name=None):
     if object_name is None:
         object_name = file_name
 
     s3 = get_s3_client()
     try:
-        response = s3.upload_file(file_name, bucket, object_name)
-        print('s3util.upload_file: response=%s' % response)
+        response = s3.upload_file(file_name, bucket_name, object_name)
+        print('s3util.upload_file: file_name=%s, response=%s' % (file_name, response))
     except ClientError as e:
         logging.error(e)
         return False
@@ -90,7 +91,7 @@ def download_file(bucket_name, object_name, file_name=None):
     s3 = get_s3_client()
     try:
         response = s3.download_file(bucket_name, object_name, file_name)
-        print('s3util.download_file: response=%s' % response)
+        print('s3util.download_file: object_name=%s, response=%s' % (object_name, response))
     except ClientError as e:
         logging.error(e)
         return False

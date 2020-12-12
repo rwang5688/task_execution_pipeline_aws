@@ -35,6 +35,22 @@ def get_env_vars():
     return True
 
 
+def upload_result_files(task):
+    task_file_attribute_name = 'task_dot_scan_log_tar'
+    task_file_name = taskfile.upload_task_file(log_bucket_name, task, task_file_attribute_name)
+    if task_file_name == '':
+        print('upload_task_file failed: %s.  Exit.' % task_file_attribute_name)
+        return False
+
+    task_file_attribute_name = 'task_scan_result_tar'
+    task_file_name = taskfile.upload_task_file(result_bucket_name, task, task_file_attribute_name)
+    if task_file_name == '':
+        print('upload_task_file failed: %s.  Exit.' % task_file_attribute_name)
+        return False
+
+    return True
+
+
 def main():
     print('\nStarting task_result.py ...')
 
@@ -58,16 +74,9 @@ def main():
     print("task:")
     print(task)
 
-    task_file_attribute_name = 'task_dot_scan_log_tar'
-    success = taskfile.upload_task_file(log_bucket_name, task, task_file_attribute_name)
+    success = upload_result_files(task)
     if not success:
-        print('upload_task_file failed: %s.  Exit.' % task_file_attribute_name)
-        return
-
-    task_file_attribute_name = 'task_scan_result_tar'
-    success = taskfile.upload_task_file(result_bucket_name, task, task_file_attribute_name)
-    if not success:
-        print('upload_task_file failed: %s.  Exit.' % task_file_attribute_name)
+        print('upload_result_files failed: task=%s.  Exit.' % task)
         return
 
     action = 'update'
