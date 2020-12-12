@@ -2,6 +2,7 @@ import os
 import json
 import copy
 import uuid
+import cachefile
 import taskfile
 import taskmessage
 
@@ -17,11 +18,16 @@ def get_env_var(env_var_name):
 
 def get_env_vars():
     global preprocess_bucket_name
+    global cache_bucket_name
     global result_bucket_name
     global create_task_queue_name
 
     preprocess_bucket_name = get_env_var('TASK_EXEC_PREPROCESS_DATA_BUCKET')
     if preprocess_bucket_name == '':
+        return False
+
+    cache_bucket_name = get_env_var('TASK_EXEC_CACHE_DATA_BUCKET')
+    if cache_bucket_name == '':
         return False
 
     result_bucket_name = get_env_var('TASK_EXEC_RESULT_DATA_BUCKET')
@@ -61,6 +67,53 @@ def get_json_data(file_name):
     return None
 
 
+def upload_preprocess_files(task):
+    task_file_attribute_name = 'task_fileinfo_json'
+    task_file_name = taskfile.upload_task_file(preprocess_bucket_name, task, task_file_attribute_name)
+    if task_file_name == '':
+        print('upload_task_file failed: %s.' % task_file_attribute_name)
+        return False
+
+    task_file_attribute_name = 'task_preprocess_tar'
+    task_file_name = taskfile.upload_task_file(preprocess_bucket_name, task, task_file_attribute_name)
+    if task_file_name == '':
+        print('upload_task_file failed: %s.' % task_file_attribute_name)
+        return False
+
+    task_file_attribute_name = 'task_source_code_zip'
+    task_file_name = taskfile.upload_task_file(result_bucket_name, task, task_file_attribute_name)
+    if task_file_name == '':
+        print('upload_task_file failed: %s.' % task_file_attribute_name)
+        return False
+
+    return True
+
+
+def upload_cache_files(task):
+    # cache: java_rt_lib
+    cache_name = 'java_rt_lib'
+    cache_id_attribute_name = 'task_rt_lib_id'
+    cache_file_attribute_name = 'task_rt_lib_tar'
+    if cache_file_attribute_name not in task:
+        print('upload_cache_file: No need for cache %s.' % cache_name)
+        return True
+
+    cache_file_blob = cachefile.get_cache_file_blob(cache_bucket_name, task, \
+                        cache_name, cache_id_attribute_name, cache_file_attribute_name)
+    if cache_file_blob is not None:
+        print('upload_cache_file: Cache file exists for %s.' % cache_name)
+        return True
+
+    cache_file_name = cachefile.upload_cache_file(cache_bucket_name, task, \
+                        cache_name, cache_id_attribute_name, cache_file_attribute_name)
+    if cache_file_name == '':
+        print('upload_cache_file failed: %s.' % cache_file_attribute_name)
+        return False
+
+    # success
+    return True
+
+
 def main():
     print('\nStarting submit_task.py ...')
 
@@ -97,29 +150,15 @@ def main():
     print('Task:')
     print(task)
 
-    task_file_attribute_name = 'task_fileinfo_json'
-    success = taskfile.upload_task_file(preprocess_bucket_name, task, task_file_attribute_name)
+    success = upload_preprocess_files(task)
     if not success:
-        print('upload_task_file failed: %s.  Exit.' % task_file_attribute_name)
+        print('upload_preprocess_files failed: task=%s.  Exit.' % task)
         return
 
-    task_file_attribute_name = 'task_preprocess_tar'
-    success = taskfile.upload_task_file(preprocess_bucket_name, task, task_file_attribute_name)
+    success = upload_cache_files(task)
     if not success:
-        print('upload_task_file failed: %s.  Exit.' % task_file_attribute_name)
+        print('upload_cache_files failed: task=%s.  Exit.' % task)
         return
-
-    task_file_attribute_name = 'task_source_code_zip'
-    success = taskfile.upload_task_file(result_bucket_name, task, task_file_attribute_name)
-    if not success:
-        print('upload_task_file failed: %s.  Exit.' % task_file_attribute_name)
-        return
-
-    #task_file_attribute_name = 'task_summary_pdf'
-    #success = taskfile.upload_task_file(result_bucket_name, task, task_file_attribute_name)
-    #if not success:
-    #    print('upload_task_file failed: %s.  Exit.' % task_file_attribute_name)
-    #    return
 
     action = 'create'
     success = taskmessage.send_task_message(create_task_queue_name, action, task)

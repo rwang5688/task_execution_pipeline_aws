@@ -38,7 +38,7 @@ def upload_tmp_file(bucket_name, task, tmp_file_name):
     # upload file
     tmp_file_full_path = '/tmp/' + tmp_file_name
     object_name = user_id + "/" + task_id + "/" + tmp_file_name
-    success = s3util.upload_file(tmp_file_full_path, bucket["Name"], object_name)
+    success = s3util.upload_file(tmp_file_full_path, bucket_name, object_name)
     if not success:
         print('upload_tmp_file: Failed to upload object %s.' % object_name)
         return False
