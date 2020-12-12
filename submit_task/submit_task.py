@@ -71,19 +71,19 @@ def upload_preprocess_files(task):
     task_file_attribute_name = 'task_fileinfo_json'
     task_file_name = taskfile.upload_task_file(preprocess_bucket_name, task, task_file_attribute_name)
     if task_file_name == '':
-        print('upload_task_file failed: %s.' % task_file_attribute_name)
+        print('upload_preprocess_files failed: %s.' % task_file_attribute_name)
         return False
 
     task_file_attribute_name = 'task_preprocess_tar'
     task_file_name = taskfile.upload_task_file(preprocess_bucket_name, task, task_file_attribute_name)
     if task_file_name == '':
-        print('upload_task_file failed: %s.' % task_file_attribute_name)
+        print('upload_preprocess_files failed: %s.' % task_file_attribute_name)
         return False
 
     task_file_attribute_name = 'task_source_code_zip'
     task_file_name = taskfile.upload_task_file(result_bucket_name, task, task_file_attribute_name)
     if task_file_name == '':
-        print('upload_task_file failed: %s.' % task_file_attribute_name)
+        print('upload_preprocess_files failed: %s.' % task_file_attribute_name)
         return False
 
     return True
@@ -95,19 +95,19 @@ def upload_cache_files(task):
     cache_id_attribute_name = 'task_rt_lib_id'
     cache_file_attribute_name = 'task_rt_lib_tar'
     if cache_file_attribute_name not in task:
-        print('upload_cache_file: No need for cache %s.' % cache_name)
+        print('upload_cache_files: No need for cache %s.' % cache_name)
         return True
 
     cache_file_blob = cachefile.get_cache_file_blob(cache_bucket_name, task, \
                         cache_name, cache_id_attribute_name, cache_file_attribute_name)
     if cache_file_blob is not None:
-        print('upload_cache_file: Cache file exists for %s.' % cache_name)
+        print('upload_cache_files: Cache file exists for %s.' % cache_name)
         return True
 
     cache_file_name = cachefile.upload_cache_file(cache_bucket_name, task, \
                         cache_name, cache_id_attribute_name, cache_file_attribute_name)
     if cache_file_name == '':
-        print('upload_cache_file failed: %s.' % cache_file_attribute_name)
+        print('upload_cache_files failed: %s.' % cache_file_attribute_name)
         return False
 
     # success
