@@ -16,6 +16,7 @@ function remove () {
 
 # remove data
 aws s3 rm s3://${TASK_EXEC_PREPROCESS_DATA_BUCKET} --recursive
+aws s3 rm s3://${TASK_EXEC_CACHE_DATA_BUCKET} --recursive
 aws s3 rm s3://${TASK_EXEC_LOG_DATA_BUCKET} --recursive
 aws s3 rm s3://${TASK_EXEC_RESULT_DATA_BUCKET} --recursive
 

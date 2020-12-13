@@ -11,8 +11,19 @@ using namespace std;
 int execute_workload(int argc, char **argv)
 {
     // simulate workload by executing "ls" on preprocess directory
-    string command = "ls";
-    command.append(" " + string(argv[1]) + "/*/preprocess");
+    string command = "ls -lFs";
+    command.append(" " + string(argv[1]) + "/*");
+
+    // debug: print command
+    cout << "Executing: " << command << endl;
+    cout.flush();
+
+    // execute command
+    system(command.c_str());
+
+    // simulate workload by executing "ls" on preprocess directory
+    command = "ls -lFs";
+    command.append(" " + string(argv[1]) + "/*/*");
 
     // debug: print command
     cout << "Executing: " << command << endl;

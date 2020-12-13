@@ -61,7 +61,9 @@ def upload_cache_file(bucket_name, task, \
 
     # upload {cache_name}/{cache_id}/{cache_file_name}
     cache_file_object_name = cache_name + "/" + cache_id + "/" + cache_file_name
-    upload_file_name = local_cache_dir + cache_file_name
+    upload_file_name = cache_file_name
+    if not local_cache_dir == "":
+        upload_file_name = local_cache_dir + "/" + cache_file_name
     success = s3util.upload_file(upload_file_name, bucket_name, cache_file_object_name)
     if not success:
         print('upload_cache_file: Failed to upload file %s.' % cache_file_name)
@@ -90,7 +92,9 @@ def download_cache_file(bucket_name, task, \
 
     # download {cache_name}/{cache_id}/{cache_file_name}
     cache_file_object_name = cache_name + "/" + cache_id + "/" + cache_file_name
-    download_file_name = local_cache_dir + cache_file_name
+    download_file_name = cache_file_name
+    if not local_cache_dir == "":
+        download_file_name = local_cache_dir + "/" + cache_file_name
     success = s3util.download_file(bucket_name, cache_file_object_name, download_file_name)
     if not success:
         print('download_cache_file: Failed to download file %s.' % cache_file_name)
