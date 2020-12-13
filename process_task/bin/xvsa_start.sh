@@ -11,19 +11,26 @@ echo "SCAN_EXTRA_SKIP_VTABLE_OPTION: ${SCAN_EXTRA_VTABLE_OPTION}"
 
 mkdir -p ${SCAN_TASK_ID}.preprocess
 if [ -f preprocess.tar.gz ]; then
-    echo "[CMD] tar -zxf preprocess.tar.gz -C ${SCAN_TASK_ID}.preprocess"
-    tar -zxf preprocess.tar.gz -C ${SCAN_TASK_ID}.preprocess
+    echo "[CMD] tar -xvzf preprocess.tar.gz -C ${SCAN_TASK_ID}.preprocess"
+    tar -xvzf preprocess.tar.gz -C ${SCAN_TASK_ID}.preprocess
+fi
+
+if [ -f rt.tgz ]; then
+    echo "[CMD] tar -xvzf rt.tgz -C extra-object"
+    tar -xvzf rt.tgz -C extra-object
+    echo "[CMD] ls -lFs extra-object/*/*"
+    ls -lFs extra-object/*/*
 fi
 
 echo "[CMD] xvsa_scan ${SCAN_TASK_ID}.preprocess"
 xvsa_scan ${SCAN_TASK_ID}.preprocess
 
-echo "[CMD] tar -zcf .scan_log.tar.gz .scan_log"
-tar -zcf .scan_log.tar.gz .scan_log
+echo "[CMD] tar -cvzf .scan_log.tar.gz .scan_log"
+tar -cvzf .scan_log.tar.gz .scan_log
 
 echo "[CMD] mv scan_result.v ${SCAN_TASK_ID}.v"
 mv scan_result/xvsa-xfa-dummy.v scan_result/${SCAN_TASK_ID}.v
 
-echo "[CMD] tar -zcf scan_result.tar.gz scan_result"
-tar -zcf scan_result.tar.gz scan_result
+echo "[CMD] tar -cvzf scan_result.tar.gz scan_result"
+tar -cvzf scan_result.tar.gz scan_result
 

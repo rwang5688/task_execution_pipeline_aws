@@ -1,5 +1,6 @@
 import os
 import subprocess
+import cachefile
 import taskfile
 import taskjson
 import taskmessage
@@ -16,14 +17,55 @@ def get_env_var(env_var_name):
 
 def get_env_vars():
     global preprocess_bucket_name
+    global cache_bucket_name
     global process_task_queue_name
 
     preprocess_bucket_name = get_env_var('TASK_EXEC_PREPROCESS_DATA_BUCKET')
     if preprocess_bucket_name == '':
         return False
 
+    cache_bucket_name = get_env_var('TASK_EXEC_CACHE_DATA_BUCKET')
+    if cache_bucket_name == '':
+        return False
+
     process_task_queue_name = get_env_var('TASK_EXEC_PROCESS_TASK_QUEUE')
     if process_task_queue_name == '':
+        return False
+
+    # success
+    return True
+
+
+def download_preprocess_files(task):
+    task_file_attribute_name = 'task_fileinfo_json'
+    task_file_name = taskfile.download_task_file(preprocess_bucket_name, task, task_file_attribute_name)
+    if task_file_name == '':
+        print('download_task_file failed: %s.' % task_file_attribute_name)
+        return False
+
+    task_file_attribute_name = 'task_preprocess_tar'
+    task_file_name = taskfile.download_task_file(preprocess_bucket_name, task, task_file_attribute_name)
+    if task_file_name == '':
+        print('download_task_file failed: %s.' % task_file_attribute_name)
+        return False
+
+    # success
+    return True
+
+
+def download_cache_files(task):
+    # cache: java_rt_lib
+    cache_name = 'java_rt_lib'
+    cache_id_attribute_name = 'java_rt_lib_id'
+    cache_file_attribute_name = 'java_rt_lib_tar'
+    if cache_file_attribute_name not in task:
+        print('download_cache_files: No need for cache %s.' % cache_name)
+        return True
+
+    download_file_name = cachefile.download_cache_file(cache_bucket_name, task, \
+                        cache_name, cache_id_attribute_name, cache_file_attribute_name)
+    if download_file_name == '':
+        print('download_cache_files failed: %s.' % cache_file_attribute_name)
         return False
 
     # success
@@ -109,6 +151,7 @@ def main():
 
     print('Env vars:')
     print('preprocess_bucket_name: %s' % preprocess_bucket_name)
+    print('cache_bucket_name: %s' % cache_bucket_name)
     print('process_task_queue_name: %s' % process_task_queue_name)
 
     message = taskmessage.receive_task_message(process_task_queue_name)
@@ -127,21 +170,17 @@ def main():
     print('Task:')
     print(task)
 
-    task_file_attribute_name = 'task_fileinfo_json'
-    task_file_name = taskfile.download_task_file(preprocess_bucket_name, task, task_file_attribute_name)
-    if task_file_name == '':
-        print('download_task_file failed: %s.  Exit.' % task_file_attribute_name)
+    success = download_preprocess_files(task)
+    if not success:
+        print('download_preprocess_files failed.  Exit.')
         return
 
-    print('%s: %s' % (task_file_attribute_name, task_file_name))
-
-    task_file_attribute_name = 'task_preprocess_tar'
-    task_file_name = taskfile.download_task_file(preprocess_bucket_name, task, task_file_attribute_name)
-    if task_file_name == '':
-        print('download_task_file failed: %s.  Exit.' % task_file_attribute_name)
+    # tar -xvzf doesn't work prooperly in Windows Bash
+    # need to add the tar command to xvsa_start.sh
+    success = download_cache_files(task)
+    if not success:
+        print('download_cache_files failed.  Exit.')
         return
-
-    print('%s: %s' % (task_file_attribute_name, task_file_name))
 
     success = set_env_vars(task)
     if not success:

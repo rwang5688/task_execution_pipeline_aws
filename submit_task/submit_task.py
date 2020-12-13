@@ -86,14 +86,15 @@ def upload_preprocess_files(task):
         print('upload_preprocess_files failed: %s.' % task_file_attribute_name)
         return False
 
+    # success
     return True
 
 
 def upload_cache_files(task):
     # cache: java_rt_lib
     cache_name = 'java_rt_lib'
-    cache_id_attribute_name = 'task_rt_lib_id'
-    cache_file_attribute_name = 'task_rt_lib_tar'
+    cache_id_attribute_name = 'java_rt_lib_id'
+    cache_file_attribute_name = 'java_rt_lib_tar'
     if cache_file_attribute_name not in task:
         print('upload_cache_files: No need for cache %s.' % cache_name)
         return True
@@ -104,9 +105,9 @@ def upload_cache_files(task):
         print('upload_cache_files: Cache file exists for %s.' % cache_name)
         return True
 
-    cache_file_name = cachefile.upload_cache_file(cache_bucket_name, task, \
+    upload_file_name = cachefile.upload_cache_file(cache_bucket_name, task, \
                         cache_name, cache_id_attribute_name, cache_file_attribute_name)
-    if cache_file_name == '':
+    if upload_file_name == '':
         print('upload_cache_files failed: %s.' % cache_file_attribute_name)
         return False
 
@@ -124,6 +125,7 @@ def main():
 
     print('Env vars:')
     print('preprocess_bucket_name: %s' % preprocess_bucket_name)
+    print('cache_bucket_name: %s' % cache_bucket_name)
     print('result_bucket_name: %s' % result_bucket_name)
     print('create_task_queue_name: %s' % create_task_queue_name)
 
