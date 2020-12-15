@@ -1,0 +1,70 @@
+service: process-task-service
+frameworkVersion: ">=1.30.0"
+plugins:
+  - serverless-dotenv-plugin
+custom:
+  accountid: ${env:AWS_ACCOUNT_ID}
+  cloud: ${env:TARGET_CLOUD}
+  region: ${env:TARGET_REGION}
+  preprocessDataBucket: ${env:TASK_EXEC_PREPROCESS_DATA_BUCKET}
+  cacheDataBucket: ${env:TASK_EXEC_CACHE_DATA_BUCKET}
+  logDataBucket: ${env:TASK_EXEC_LOG_DATA_BUCKET}
+  resultDataBucket: ${env:TASK_EXEC_RESULT_DATA_BUCKET}
+  processTaskTriggerQueue: ${env:TASK_EXEC_PROCESS_TASK_TRIGGER_QUEUE}
+  processTaskQueue: ${env:TASK_EXEC_PROCESS_TASK_QUEUE}
+  updateTaskQueue: ${env:TASK_EXEC_UPDATE_TASK_QUEUE}
+  dotenv:
+    path: ../.env
+
+provider:
+  name: aws
+  region: ${env:TARGET_REGION}
+  stage: dev
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - s3:GetObject
+      Resource: "arn:${self:custom.cloud}:s3:::${self:custom.preprocessDataBucket}/*"
+    - Effect: Allow
+      Action:
+        - s3:GetObject
+      Resource: "arn:${self:custom.cloud}:s3:::${self:custom.cacheDataBucket}/*"
+    - Effect: Allow
+      Action:
+        - s3:GetObject
+      Resource: "arn:${self:custom.cloud}:s3:::${self:custom.logDataBucket}/*"
+    - Effect: Allow
+      Action:
+        - s3:GetObject
+      Resource: "arn:${self:custom.cloud}:s3:::${self:custom.resultDataBucket}/*"
+    - Effect: Allow
+      Action:
+        - sqs:ListQueues
+      Resource: "arn:${self:custom.cloud}:sqs:${self:provider.region}:*:*"
+    - Effect: Allow
+      Action:
+        - sqs:ReceiveMessage
+        - sqs:DeleteMessage
+        - sqs:GetQueueUrl
+      Resource: "arn:${self:custom.cloud}:sqs:*:*:${self:custom.processTaskTriggerQueue}"
+    - Effect: Allow
+      Action:
+        - sqs:ReceiveMessage
+        - sqs:DeleteMessage
+        - sqs:GetQueueUrl
+      Resource: "arn:${self:custom.cloud}:sqs:*:*:${self:custom.processTaskQueue}"
+    - Effect: Allow
+      Action:
+        - sqs:SendMessage
+        - sqs:DeleteMessage
+        - sqs:GetQueueUrl
+      Resource: "arn:${self:custom.cloud}:sqs:*:*:${self:custom.updateTaskQueue}"
+
+functions:
+  process_task:
+    image: ${self:custom.accountid}.dkr.ecr.${self:provider.region}.amazonaws.com/process-task-cn@sha256:f86cbda15cbb51b0228ed8a5e23c18c56cb05a461d83824abe39eff322ea1b6c
+    role: arn:${self:custom.cloud}:iam::${self:custom.accountid}:role/task-execution-pipeline
+    events:
+      - sqs:
+          arn: "arn:${self:custom.cloud}:sqs:${self:provider.region}:${self:custom.accountid}:${self:custom.processTaskTriggerQueue}"
+
