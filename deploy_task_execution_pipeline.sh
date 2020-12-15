@@ -40,3 +40,11 @@ cd generate-task-summary
 aws s3 sync src/main/resources/jrExport s3://${TASK_EXEC_RESULT_DATA_BUCKET}
 cd ..
 
+# Lambda with container image doesn't work as expected
+# when we need to write to file system
+# ... comment out for now
+#if [[ ${TARGET_CLOUD} == "aws" ]]; then
+#  SERVICES=(process_task_service)
+#  deploy
+#fi
+
