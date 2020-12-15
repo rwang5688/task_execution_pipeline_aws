@@ -3,6 +3,10 @@ Resources:
     Type: "AWS::SQS::Queue"
     Properties:
       QueueName: "${self:custom.createTaskQueue}"
+  ProcessTaskTriggerQueue:
+    Type: "AWS::SQS::Queue"
+    Properties:
+      QueueName: "${self:custom.processTaskTriggerQueue}"
   ProcessTaskQueue:
     Type: "AWS::SQS::Queue"
     Properties:

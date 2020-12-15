@@ -11,6 +11,7 @@ custom:
   logDataBucket: ${env:TASK_EXEC_LOG_DATA_BUCKET}
   resultDataBucket: ${env:TASK_EXEC_RESULT_DATA_BUCKET}
   createTaskQueue: ${env:TASK_EXEC_CREATE_TASK_QUEUE}
+  processTaskTriggerQueue: ${env:TASK_EXEC_PROCESS_TASK_TRIGGER_QUEUE}
   processTaskQueue: ${env:TASK_EXEC_PROCESS_TASK_QUEUE}
   updateTaskQueue: ${env:TASK_EXEC_UPDATE_TASK_QUEUE}
   uploadTaskIssuesQueue: ${env:TASK_EXEC_UPLOAD_TASK_ISSUES_QUEUE}

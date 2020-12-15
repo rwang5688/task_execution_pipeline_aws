@@ -11,6 +11,7 @@ custom:
   resultDataBucket: ${env:TASK_EXEC_RESULT_DATA_BUCKET}
   createTaskQueue: ${env:TASK_EXEC_CREATE_TASK_QUEUE}
   processTaskQueue: ${env:TASK_EXEC_PROCESS_TASK_QUEUE}
+  processTaskTriggerQueue: ${env:TASK_EXEC_PROCESS_TASK_TRIGGER_QUEUE}
   dotenv:
     path: ../.env
   pythonRequirements:
@@ -48,6 +49,12 @@ provider:
       Resource: "arn:${self:custom.cloud}:sqs:*:*:${self:custom.processTaskQueue}"
     - Effect: Allow
       Action:
+        - sqs:SendMessage
+        - sqs:DeleteMessage
+        - sqs:GetQueueUrl
+      Resource: "arn:${self:custom.cloud}:sqs:*:*:${self:custom.processTaskTriggerQueue}"
+    - Effect: Allow
+      Action:
         - dynamodb:DescribeTable
         - dynamodb:Query
         - dynamodb:Scan
@@ -69,6 +76,7 @@ functions:
       RESULT_DATA_BUCKET: ${env:TASK_EXEC_RESULT_DATA_BUCKET}
       CREATE_TASK_QUEUE: ${env:TASK_EXEC_CREATE_TASK_QUEUE}
       PROCESS_TASK_QUEUE: ${env:TASK_EXEC_PROCESS_TASK_QUEUE}
+      PROCESS_TASK_TRIGGER_QUEUE: ${env:TASK_EXEC_PROCESS_TASK_TRIGGER_QUEUE}
       TASK_TABLE: "${env:TASK_EXEC_TASK_TABLE}-${self:provider.stage}"
     events:
       - sqs:

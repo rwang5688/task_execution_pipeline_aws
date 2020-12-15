@@ -35,10 +35,20 @@ def get_env_var(env_var_name):
 
 
 def get_env_vars():
+    global cloud
     global process_task_queue_name
+    global process_task_trigger_queue_name
+
+    cloud = get_env_var('CLOUD')
+    if cloud == '':
+        return False
 
     process_task_queue_name = get_env_var('PROCESS_TASK_QUEUE')
     if process_task_queue_name == '':
+        return False
+
+    process_task_trigger_queue_name = get_env_var('PROCESS_TASK_TRIGGER_QUEUE')
+    if process_task_trigger_queue_name == '':
         return False
 
     # success
@@ -87,7 +97,9 @@ def create_task(event, context):
         return False
 
     print('Env vars:')
+    print('cloud: %s' % cloud)
     print('process_task_queue_name: %s' % process_task_queue_name)
+    print('process_task_trigger_queue_name: %s' % process_task_trigger_queue_name)
 
     # get task table
     task_table = tasktable.get_task_table()
@@ -159,6 +171,15 @@ def create_task(event, context):
         if not success:
             print('send_message failed for process task queue.  Next.')
             continue
+
+        # Note: Lambda with container image NOT available on aws-cn yet
+        if cloud == 'aws':
+            # send task record to process task trigger queue
+            action = 'process'
+            success = taskmessage.send_task_message(process_task_trigger_queue_name, action, task_record)
+            if not success:
+                print('send_message failed for process task trigger queue.  Next.')
+                continue
 
         # Note: Start ECS Fargate cluster to process task.
         # ECS Fargate cluster appear to start a task as soon as process queue has message.
