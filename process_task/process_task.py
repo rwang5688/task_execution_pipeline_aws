@@ -54,19 +54,27 @@ def download_preprocess_files(task):
 
 
 def download_cache_files(task):
-    # cache: java_rt_lib
+    # cache: java_rt_out first, then java_rt_lib
     cache_name = 'java_rt_lib'
     cache_id_attribute_name = 'java_rt_lib_id'
-    cache_file_attribute_name = 'java_rt_lib_tar'
-    if cache_file_attribute_name not in task:
+    cache_rt_lib_attribute_name = 'java_rt_lib_tar'
+    cache_rt_out_attribute_name = 'java_rt_out_tar'
+    if (cache_rt_out_attribute_name and cache_rt_lib_attribute_name) not in task:
         print('download_cache_files: No need for cache %s.' % cache_name)
         return True
 
-    download_file_name = cachefile.download_cache_file(cache_bucket_name, task, \
-                        cache_name, cache_id_attribute_name, cache_file_attribute_name)
+    # first try downloading rt_o.tgz
+    download_file_name = cachefile.download_cache_file(cache_bucket_name, task,
+                        cache_name, cache_id_attribute_name, cache_rt_out_attribute_name)
     if download_file_name == '':
-        print('download_cache_files failed: %s.' % cache_file_attribute_name)
-        return False
+        # next try downloading rt.tgz
+        print('download_cache_files failed: %s.' % cache_rt_out_attribute_name)
+        download_file_name = cachefile.download_cache_file(cache_bucket_name, task,
+                            cache_name, cache_id_attribute_name, cache_rt_lib_attribute_name)
+        if download_file_name == '':
+            # error
+            print('download_cache_files failed: %s.' % cache_rt_lib_attribute_name)
+            return False
 
     # success
     return True
@@ -175,7 +183,7 @@ def main():
         print('download_preprocess_files failed.  Exit.')
         return
 
-    # tar -xvzf doesn't work prooperly in Windows Bash
+    # tar -xvzf doesn't work properly in Windows Bash
     # need to add the tar command to xvsa_start.sh
     success = download_cache_files(task)
     if not success:

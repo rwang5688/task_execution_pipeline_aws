@@ -32,16 +32,11 @@ def get_task_file_blob(bucket_name, task, task_file_attribute_name):
 
     # get {user_id}/{task_id}/{task_file_name}
     task_file_object_name = user_id + "/" + task_id + "/" + task_file_name
-    task_file_object = s3util.get_file_object(bucket_name, task_file_object_name)
-    if task_file_object is None:
-        print('get_task_file_blob: Failed to get file object %s' % task_file_object_name)
+    task_file_blob = s3util.get_file_blob(bucket_name, task_file_object_name)
+    if task_file_blob is None:
+        print('get_task_file_blob: Failed to get file blob %s' % task_file_object_name)
         return None
 
-    # debug
-    print('get_task_file_blob: Got file object %s.' % task_file_object_name)
-
-    # extract blob from object
-    task_file_blob = task_file_object['Body'].read()
     return task_file_blob
 
 

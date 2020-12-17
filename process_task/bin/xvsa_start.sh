@@ -15,11 +15,25 @@ if [ -f preprocess.tar.gz ]; then
     tar -xvzf preprocess.tar.gz -C ${SCAN_TASK_ID}.preprocess
 fi
 
-if [ -f rt.tgz ]; then
+# for java
+mkdir -p extra-object
+upload_rt_out=0
+if [ -f rt_o.tgz ]; then
+    echo "[CMD] tar -xvzf rt_o.tgz -C extra-object"
+    tar -xvzf rt_o.tgz -C extra-object
+elif [ -f rt.tgz ]; then
     echo "[CMD] tar -xvzf rt.tgz -C extra-object"
     tar -xvzf rt.tgz -C extra-object
-    echo "[CMD] ls -lFs extra-object/*/*"
-    ls -lFs extra-object/*/*
+    upload_rt_out=1
+fi
+
+# for debug use
+echo "[CMD] ls -lFs extra-object/*/*"
+ls -lFs extra-object/*/*
+
+if [ ! -d extra-object ]; then
+    echo "[ no extra object directory found ]"
+    exit 3
 fi
 
 echo "[CMD] xvsa_scan ${SCAN_TASK_ID}.preprocess"
@@ -33,4 +47,15 @@ mv scan_result/xvsa-xfa-dummy.v scan_result/${SCAN_TASK_ID}.v
 
 echo "[CMD] tar -cvzf scan_result.tar.gz scan_result"
 tar -cvzf scan_result.tar.gz scan_result
+
+# for java, package rt.o
+if [ $upload_rt_out -eq 1 ]; then
+    if [ ! -f extra-object/rt_o.tgz ]; then
+        echo "package rt.o"
+        cd extra-object
+        echo "[CMD] find . -name rt.o | xargs tar -zcvf rt_o.tgz"
+        find . -name rt.o | xargs tar -zcvf rt_o.tgz
+        cd -
+    fi
+fi
 
