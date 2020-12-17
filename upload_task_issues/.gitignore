@@ -147,6 +147,7 @@ node_modules
 # Serverless Framework
 .serverless
 
-# writeTaskIssuesCSV test output
+# dotvfile_to_csvfile input and output
+*.v
 *.csv
 
