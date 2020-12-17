@@ -69,7 +69,7 @@ def send_task_message(queue_name, action, task):
     # debug: receive message
     message = sqsutil.receive_message(queue_url)
     if message is None:
-        print('send_task_message: cannot retrieve sent messge.')
+        print('send_task_message: cannot retrieve sent message.')
         print('(When downstream Lambda function is running, missing message is expected.)')
     print('Received message:')
     print(message)
