@@ -71,8 +71,9 @@ def send_task_message(queue_name, action, task):
     if message is None:
         print('send_task_message: cannot retrieve sent message.')
         print('(When downstream Lambda function is running, missing message is expected.)')
-    print('Received message:')
-    print(message)
+    else:
+        print('Received message:')
+        print(message)
 
     # success
     return True
