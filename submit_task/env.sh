@@ -17,4 +17,5 @@ export TASK_EXEC_UPLOAD_TASK_ISSUES_QUEUE=task-exec-upload-task-issues-queue-rwa
 export TASK_EXEC_GENERATE_TASK_SUMMARY_QUEUE=task-exec-generate-task-summary-queue-rwang5688
 export TASK_EXEC_TASK_TABLE=task-exec-task-table-rwang5688
 export TASK_EXEC_ISSUE_TABLE=task-exec-issue-table-rwang5688
+export XCALIBYTE_DIR_NAME=.xcalibyte
 
