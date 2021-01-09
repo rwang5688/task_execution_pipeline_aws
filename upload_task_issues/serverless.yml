@@ -60,6 +60,7 @@ provider:
 functions:
   upload_task_issues:
     handler: upload_task_issues.upload_task_issues
+    timeout: 600
     role: arn:${self:custom.cloud}:iam::${self:custom.accountid}:role/task-execution-pipeline
     environment:
       ACCOUNT_ID: ${env:AWS_ACCOUNT_ID}

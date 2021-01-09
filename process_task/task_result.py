@@ -55,7 +55,6 @@ def upload_cache_files(task):
         print('upload_cache_files: File exists for %s.' % cache_file_attribute_name)
         return True
 
-
     upload_file_name = cachefile.upload_cache_file(cache_bucket_name, task,
                         cache_name, cache_id_attribute_name, cache_file_attribute_name,
                         local_cache_dir="extra-object")
@@ -68,11 +67,19 @@ def upload_cache_files(task):
     return True
 
 
-def upload_result_files(task):
+def upload_log_files(task):
     task_file_attribute_name = 'task_dot_scan_log_tar'
     task_file_name = taskfile.upload_task_file(log_bucket_name, task, task_file_attribute_name)
     if task_file_name == '':
-        print('upload_result_files failed: %s.' % task_file_attribute_name)
+        print('upload_log_files failed: %s.' % task_file_attribute_name)
+        return False
+
+    # success
+    return True
+
+
+def upload_result_files(task):
+    if not upload_log_files(task):
         return False
 
     task_file_attribute_name = 'task_scan_result_tar'
@@ -109,15 +116,19 @@ def main():
     print("task:")
     print(task)
 
-    success = upload_cache_files(task)
-    if not success:
-        print('upload_cache_files failed: task=%s.  Exit.' % task)
-        return
+    if task["task_status"] != "scan-failed":
+        success = upload_cache_files(task)
+        if not success:
+            print('upload_cache_files failed: task=%s.' % task)
 
-    success = upload_result_files(task)
-    if not success:
-        print('upload_result_files failed: task=%s.  Exit.' % task)
-        return
+        # upload_result_files method will also upload log files
+        success = upload_result_files(task)
+        if not success:
+            print('upload_result_files failed: task=%s.' % task)
+    else:
+        success = upload_log_files(task)
+        if not success:
+            print('upload_log_files failed: task=%s.' % task)
 
     action = 'update'
     success = taskmessage.send_task_message(update_task_queue_name, action, task)
