@@ -38,6 +38,7 @@ fi
 
 echo "[CMD] xvsa_scan ${SCAN_TASK_ID}.preprocess"
 xvsa_scan ${SCAN_TASK_ID}.preprocess
+xvsa_scan_ret=$?
 
 echo "[CMD] tar -cvzf .scan_log.tar.gz .scan_log"
 tar -cvzf .scan_log.tar.gz .scan_log
@@ -47,6 +48,11 @@ mv scan_result/xvsa-xfa-dummy.v scan_result/${SCAN_TASK_ID}.v
 
 echo "[CMD] tar -cvzf scan_result.tar.gz scan_result"
 tar -cvzf scan_result.tar.gz scan_result
+
+if [ ${xvsa_scan_ret} -ne 0 ]; then
+    echo "$ xvsa scan failed, return ${xvsa_scan_ret}, please check the scan log for error messages"
+    exit ${xvsa_scan_ret}
+fi
 
 # for java, package rt.o
 if [ $upload_rt_out -eq 1 ]; then
@@ -58,4 +64,3 @@ if [ $upload_rt_out -eq 1 ]; then
         cd -
     fi
 fi
-

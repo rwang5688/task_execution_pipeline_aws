@@ -113,11 +113,11 @@ def read_process_stdout(process):
             for output in process.stdout.readlines():
                 print(output.strip())
             break
+    return return_code
 
 
 def execute_task_tool(task):
     # get task_tool
-    task_tool = ""
     if "task_tool" in task:
         task_tool = task["task_tool"]
     else:
@@ -129,24 +129,29 @@ def execute_task_tool(task):
         shell=True,
         stdout=subprocess.PIPE, universal_newlines=True,
         env=os.environ)
-    read_process_stdout(process)
+    return_code = read_process_stdout(process)
 
     # for now: always set task_status to "completed"
     # later: read task_status from executing task_tool
-    task["task_status"] = "completed"
-
-    # success
-    return True
+    if return_code == 0:
+        task["task_status"] = "completed"
+        # success
+        return True
+    else:
+        task["task_status"] = "scan-failed"
+        return False
 
 
 def execute_task_callback(task_callback):
     # command: "python3 $(task_callback)"
     process = subprocess.Popen(["python3", task_callback],
         stdout=subprocess.PIPE, universal_newlines=True)
-    read_process_stdout(process)
-
-    # success
-    return True
+    return_code = read_process_stdout(process)
+    if return_code != 0:
+        return False
+    else:
+        # success
+        return True
 
 
 def main():
@@ -199,8 +204,7 @@ def main():
 
     success = execute_task_tool(task)
     if not success:
-        print('execute_task_tool failed.  Exit.')
-        return
+        print('execute_task_tool failed.')
 
     task_tool = task["task_tool"]
     task_status = task["task_status"]
@@ -216,8 +220,7 @@ def main():
     task_callback = 'task_result.py'
     success = execute_task_callback(task_callback)
     if not success:
-        print('execute_task_callback failed.  Exit.')
-        return
+        print('execute_task_callback failed.')
 
     print('execute_task_callback completed for %s.' % task_callback)
 

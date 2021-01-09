@@ -19,8 +19,10 @@ Resources:
     Type: "AWS::SQS::Queue"
     Properties:
       QueueName: "${self:custom.uploadTaskIssuesQueue}"
+      VisibilityTimeout: 3000
   GenerateTaskSummaryQueue:
     Type: "AWS::SQS::Queue"
     Properties:
       QueueName: "${self:custom.generateTaskSummaryQueue}"
+      VisibilityTimeout: 3000
 
