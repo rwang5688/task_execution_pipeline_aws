@@ -56,7 +56,7 @@ def decode_dot_v_issue_paths(dot_v_fid_dict, dot_v_issue_paths):
         for task_issue_path_key in task_issue_path.keys():
             if task_issue_path_key == 'file_path':
                 if 'fid' in dot_v_issue_path.keys():
-                    task_issue_path['file_path'] = dot_v_fid_dict[dot_v_issue_path['fid']]
+                    task_issue_path['file_path'] = dot_v_fid_dict.get(dot_v_issue_path['fid'], 'errors-occur-in-scan-result-file')
             else:
                 # task_issue_path[task_issue_path_key] maps to dot_v_issue_path_key
                 dot_v_issue_path_key = task_issue_path[task_issue_path_key]
@@ -81,7 +81,7 @@ def decode_dot_v_issue(task_id, task_issue_number, dot_v_fid_dict, dot_v_issue):
             task_issue['task_issue_number'] = task_issue_number
         elif task_issue_key == 'file_path':
             if 'fid' in dot_v_issue.keys():
-                task_issue['file_path'] = dot_v_fid_dict[dot_v_issue['fid']]
+                task_issue['file_path'] = dot_v_fid_dict.get(dot_v_issue['fid'], 'errors-occur-in-scan-result-file')
         elif task_issue_key == 'paths':
             if 'paths' in dot_v_issue.keys():
                 dot_v_issue_paths = dot_v_issue['paths']

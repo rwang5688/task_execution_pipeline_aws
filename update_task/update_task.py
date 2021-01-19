@@ -120,9 +120,9 @@ def update_task(event, context):
         task_dot_scan_log_tar_url = taskurl.generate_log_data_bucket_object_url(
                                         user_id, task_id, task_dot_scan_log_tar)
 
-        task_scan_result_tar_url = None
-        task_summary_pdf_url = None
-        task_issues_csv_url = None
+        task_scan_result_tar_url = ""
+        task_summary_pdf_url = ""
+        task_issues_csv_url = ""
         if task_status != "scan-failed":
             task_scan_result_tar = task_record['task_scan_result_tar']
             task_scan_result_tar_url = taskurl.generate_result_data_bucket_object_url(
