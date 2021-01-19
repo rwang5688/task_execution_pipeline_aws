@@ -1,5 +1,7 @@
 import os
 import subprocess
+import time
+
 import cachefile
 import taskfile
 import taskjson
@@ -155,6 +157,8 @@ def execute_task_callback(task_callback):
 
 
 def main():
+    print("process task starts at %s" % time.asctime())
+    process_task_start = time.time()
     print('\nStarting process_task.py ...')
 
     success = get_env_vars()
@@ -202,9 +206,13 @@ def main():
 
     print('set_env_vars: %s' % os.environ)
 
+    print("execute_task_tool starts at %s" % time.asctime())
+    scan_start = time.time()
     success = execute_task_tool(task)
     if not success:
         print('execute_task_tool failed.')
+    scan_end = time.time()
+    print("execute_task_tool ends at %s, it takes %s seconds" % (time.asctime(), scan_end - scan_start))
 
     task_tool = task["task_tool"]
     task_status = task["task_status"]
@@ -232,6 +240,8 @@ def main():
     # success
     print('\nReceived and deleted message:')
     print(message)
+    process_task_end = time.time()
+    print("process task ends at %s, it takes %s seconds" % (time.asctime(), process_task_end - process_task_start))
 
 
 if __name__ == '__main__':
