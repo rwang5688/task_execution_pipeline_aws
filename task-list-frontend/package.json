@@ -7,12 +7,14 @@
     "aws-amplify": "^3.3.14",
     "bootstrap": "^4.3.1",
     "dotenv-webpack": "^1.7.0",
+    "immer": ">=8.0.1",
     "jquery": "^3.4.1",
     "jquery-datepicker": "^1.12.3",
     "webpack-jquery-ui": "^2.0.1"
   },
   "devDependencies": {
     "css-loader": "^1.0.0",
+    "immer": ">=8.0.1",
     "serverless-single-page-app-plugin": "^1.0.2",
     "serverless-dotenv-plugin": "^2.0.1",
     "style-loader": "^0.23.1",
