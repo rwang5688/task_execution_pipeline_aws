@@ -32,14 +32,12 @@ def list_queues():
 def get_queue_url(queue_name):
     sqs = get_sqs_client()
 
-    # Make sure queue name exists
-    response = sqs.list_queues()
-
     # Get URL for SQS queue
     try:
         response = sqs.get_queue_url(QueueName=queue_name)
     except ClientError as e:
-        logging.error(e)
+        logging.error("get_queue_url: % does not exist." % queue_name)
+        logging.exception(e)
         return None
 
     return response['QueueUrl']

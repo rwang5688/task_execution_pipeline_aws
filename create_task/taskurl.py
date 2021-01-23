@@ -5,7 +5,7 @@ def get_bucket_name_from_env_var(env_var_name):
     bucket_name = ''
     if env_var_name in os.environ:
         bucket_name = os.environ[env_var_name]
-    print('get_bucket_name: env_var_name=%s, bucket_name=%s.' % (env_var_name, bucket_name))
+    print('get_bucket_name_from_env_var: env_var_name=%s, bucket_name=%s.' % (env_var_name, bucket_name))
     return bucket_name
 
 
