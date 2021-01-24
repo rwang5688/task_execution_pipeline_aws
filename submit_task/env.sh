@@ -1,6 +1,6 @@
 #!/bin/bash
 # AWS specific environment variables
-export AWS_ACCOUNT_ID=700702834148
+export AWS_ACCOUNT_ID=AWSACCOUNTID
 export TARGET_CLOUD=aws
 export TARGET_REGION=us-west-2
 
