@@ -146,6 +146,8 @@ cython_debug/
 bak
 env-cn*.sh
 env-us*.sh
+*-rwang5688
+*-wangrob
 xvsa_scan
 xvsa_scan.exe
 fileinfo.json
