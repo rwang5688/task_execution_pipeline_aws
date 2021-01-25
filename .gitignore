@@ -8,4 +8,6 @@
 # backup env files
 .env-cn*
 .env-us*
+*-rwang5688
+*-wangrob
 
