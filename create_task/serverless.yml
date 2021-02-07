@@ -15,7 +15,7 @@ custom:
   dotenv:
     path: ../.env
   pythonRequirements:
-    dockerizePip: non-linux
+    dockerizePip: false
 
 provider:
   name: aws
