@@ -11,6 +11,7 @@ Resources:
     Type: "AWS::SQS::Queue"
     Properties:
       QueueName: "${self:custom.processTaskQueue}"
+      VisibilityTimeout: 9000
   UpdateTaskQueue:
     Type: "AWS::SQS::Queue"
     Properties:
