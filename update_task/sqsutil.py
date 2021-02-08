@@ -65,7 +65,6 @@ def receive_message(queue_url):
         MessageAttributeNames=[
             'All'
         ],
-        VisibilityTimeout=0,
         WaitTimeSeconds=0
     )
     message = None
