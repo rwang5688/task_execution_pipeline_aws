@@ -65,7 +65,7 @@ def receive_message(queue_url):
         MessageAttributeNames=[
             'All'
         ],
-        WaitTimeSeconds=0
+        WaitTimeSeconds=20
     )
     message = None
     if 'Messages' in response:

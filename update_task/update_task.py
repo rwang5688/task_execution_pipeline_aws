@@ -86,6 +86,7 @@ def update_task(event, context):
 
     # update task records
     event_records = event['Records']
+    print('begin to process %s event records...' % len(event_records))
     for event_record in event_records:
         # debug: print event record
         print('event_record: %s' % event_record)
