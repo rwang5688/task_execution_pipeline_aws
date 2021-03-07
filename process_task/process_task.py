@@ -133,8 +133,6 @@ def execute_task_tool(task):
         env=os.environ)
     return_code = read_process_stdout(process)
 
-    # for now: always set task_status to "completed"
-    # later: read task_status from executing task_tool
     if return_code == 0:
         task["task_status"] = "completed"
         # success

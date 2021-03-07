@@ -8,6 +8,7 @@ from aws_xray_sdk.core import patch_all
 import tasktable
 import taskurl
 import taskmessage
+import ecsutil
 
 
 logger = logging.getLogger()
@@ -38,6 +39,11 @@ def get_env_vars():
     global cloud
     global process_task_queue_name
     global process_task_trigger_queue_name
+    global ecs_cluster_name
+    global ecs_task_definition
+    global ecs_task_network_vpc_subnet1
+    global ecs_task_network_vpc_subnet2
+    global ecs_task_network_vpc_security_group
 
     cloud = get_env_var('CLOUD')
     if cloud == '':
@@ -49,6 +55,23 @@ def get_env_vars():
 
     process_task_trigger_queue_name = get_env_var('PROCESS_TASK_TRIGGER_QUEUE')
     if process_task_trigger_queue_name == '':
+        return False
+
+    ecs_cluster_name = get_env_var('ECS_CLUSTER_NAME')
+    if ecs_cluster_name == '':
+        return False
+
+    ecs_task_definition = get_env_var('ECS_TASK_DEFINITION')
+    if ecs_task_definition == '':
+        return False
+
+    ecs_task_network_vpc_subnet1 = get_env_var('ECS_TASK_NETWORK_VPC_SUBNET1')
+    ecs_task_network_vpc_subnet2 = get_env_var('ECS_TASK_NETWORK_VPC_SUBNET2')
+    if ecs_task_network_vpc_subnet1 == '' and ecs_task_network_vpc_subnet2 == '':
+        return False
+
+    ecs_task_network_vpc_security_group = get_env_var('ECS_TASK_NETWORK_VPC_SECURITY_GROUP')
+    if ecs_task_network_vpc_security_group == '':
         return False
 
     # success
@@ -100,6 +123,11 @@ def create_task(event, context):
     print('cloud: %s' % cloud)
     print('process_task_queue_name: %s' % process_task_queue_name)
     print('process_task_trigger_queue_name: %s' % process_task_trigger_queue_name)
+    print('ecs_cluster_name: %s' % ecs_cluster_name)
+    print('ecs_task_definition: %s' % ecs_task_definition)
+    print('ecs_task_network_vpc_subnet1: %s' % ecs_task_network_vpc_subnet1)
+    print('ecs_task_network_vpc_subnet2: %s' % ecs_task_network_vpc_subnet2)
+    print('ecs_task_network_vpc_security_group: %s' % ecs_task_network_vpc_security_group)
 
     # get task table
     task_table = tasktable.get_task_table()
@@ -109,6 +137,7 @@ def create_task(event, context):
 
     # create task records
     event_records = event['Records']
+    print('begin to process %s event records...' % len(event_records))
     for event_record in event_records:
         # debug: print event record
         print('event_record: %s' % event_record)
@@ -183,8 +212,17 @@ def create_task(event, context):
                 print('send_message failed for process task trigger queue.  Next.')
                 continue
 
+        ecs_task_network_vpc_subnets = list()
+        if ecs_task_network_vpc_subnet1 != '':
+            ecs_task_network_vpc_subnets.append(ecs_task_network_vpc_subnet1)
+        if ecs_task_network_vpc_subnet2 != '':
+            ecs_task_network_vpc_subnets.append(ecs_task_network_vpc_subnet2)
         # Note: Start ECS Fargate cluster to process task.
         # ECS Fargate cluster appear to start a task as soon as process queue has message.
+        success = ecsutil.run_fargate_task(ecs_cluster_name, ecs_task_definition,
+                                        ecs_task_network_vpc_subnets, ecs_task_network_vpc_security_group)
+        if not success:
+            print('run_fargate_task failed, continue lambda function to make message delete from queue automatically')
 
         # if send_task_message succeeds, update task status to "started"
         task_status = 'started'
